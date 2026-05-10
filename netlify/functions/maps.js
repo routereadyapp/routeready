@@ -3,7 +3,7 @@ const https = require('https');
 exports.handler = async function(event) {
   const params = event.queryStringParameters;
   const { origin, destination, waypoints, mode } = params;
-  const KEY = 'AIzaSyDuYgGbbYy0U23ZJVdp4Q4BU-LHXDmyxNs';
+  const KEY = process.env.GOOGLE_MAPS_KEY;
 
   let url;
 
