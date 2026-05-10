@@ -8,14 +8,11 @@ exports.handler = async function(event) {
   let url;
 
   if (mode === 'optimize') {
-    // Directions API con waypoint optimization — Google ordena las paradas
     const waypointStr = waypoints.split('|').map(w => encodeURIComponent(w)).join('|');
     url = `https://maps.googleapis.com/maps/api/directions/json?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&waypoints=optimize:true|${waypointStr}&units=imperial&key=${KEY}`;
   } else if (mode === 'directions') {
-    // Directions API simple — un origen a un destino
     url = `https://maps.googleapis.com/maps/api/directions/json?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&units=imperial&key=${KEY}`;
   } else {
-    // Distance Matrix — origen a múltiples destinos
     url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(waypoints)}&units=imperial&key=${KEY}`;
   }
 
