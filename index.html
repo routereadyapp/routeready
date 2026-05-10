@@ -23,101 +23,6 @@
     --red2: #FDECEA;
     --shadow: 0 4px 24px rgba(107,26,42,0.12);
     --shadow2: 0 2px 8px rgba(107,26,42,0.07);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--burgundy3); min-height: 100vh; }
-
-  header { background: var(--burgundy); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 64px; border-bottom: 3px solid var(--gold); position: sticky; top: 0; z-index: 100; }
-  .logo { display: flex; align-items: center; gap: 10px; }
-  .logo-icon { width: 34px; height: 34px; background: var(--gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-  .logo-text { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--white); }
-  .logo-text span { color: var(--gold); }
-  .lang-toggle { display: flex; background: var(--burgundy3); border-radius: 20px; padding: 3px; gap: 2px; }
-  .lang-btn { padding: 5px 14px; border-radius: 16px; border: none; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--gold3); }
-  .lang-btn.active { background: var(--gold); color: var(--burgundy); }
-
-  .tabs { display: flex; background: var(--burgundy3); border-bottom: 3px solid var(--gold); }
-  .tab { flex: 1; padding: 14px 20px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--gold3); border: none; background: transparent; transition: all 0.2s; opacity: 0.7; }
-  .tab.active { color: var(--gold); background: var(--burgundy); border-bottom: 3px solid var(--gold); margin-bottom: -3px; opacity: 1; }
-  .tab:hover:not(.active) { opacity: 1; }
-  .tab-icon { font-size: 16px; display: block; margin-bottom: 2px; }
-  .panel { display: none; }
-  .panel.active { display: block; }
-
-  .app { max-width: 960px; margin: 0 auto; padding: 28px 20px 80px; }
-  .page-title { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--burgundy); margin-bottom: 4px; }
-  .page-sub { font-size: 13px; color: var(--gray); margin-bottom: 24px; line-height: 1.5; }
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
-
-  .card { background: var(--white); border-radius: 16px; padding: 24px; box-shadow: var(--shadow2); border: 1px solid var(--lightgray); }
-  .card-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--lightgray); }
-  .field { margin-bottom: 14px; }
-  .field label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gray); margin-bottom: 6px; }
-  .field input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--lightgray); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--burgundy3); background: var(--white); outline: none; transition: border-color 0.2s; }
-  .field input:focus { border-color: var(--gold); }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-  .prop-list { display: flex; flex-direction: column; gap: 8px; }
-  .prop-item { display: flex; align-items: center; gap: 8px; animation: fadeIn 0.25s ease; }
-  @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
-  .prop-num { width: 26px; height: 26px; border-radius: 50%; background: var(--burgundy); color: var(--white); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .prop-input { flex: 1; padding: 9px 12px; border: 1.5px solid var(--lightgray); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--burgundy3); outline: none; transition: border-color 0.2s; }
-  .prop-input:focus { border-color: var(--gold); }
-  .prop-price { width: 85px; padding: 9px 10px; border: 1.5px solid var(--lightgray); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--green); font-weight: 600; outline: none; }
-  .prop-price:focus { border-color: var(--gold); }
-  .prop-remove { width: 26px; height: 26px; border-radius: 50%; border: none; background: var(--lightgray); color: var(--gray); cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
-  .prop-remove:hover { background: var(--red2); color: var(--red); }
-  .add-btn { width: 100%; padding: 10px; border: 2px dashed var(--lightgray); border-radius: 8px; background: transparent; color: var(--gray); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
-  .add-btn:hover { border-color: var(--gold); color: var(--gold); }
-
-  .order-toggle { display: flex; gap: 10px; margin-bottom: 16px; }
-  .order-opt { flex: 1; padding: 12px 10px; border-radius: 10px; border: 2px solid var(--lightgray); cursor: pointer; text-align: center; transition: all 0.2s; background: var(--white); }
-  .order-opt.selected { border-color: var(--gold); background: #FFF8EE; }
-  .order-opt-icon { font-size: 22px; display: block; margin-bottom: 4px; }
-  .order-opt-label { font-size: 12px; font-weight: 700; color: var(--burgundy); }
-  .order-opt-sub { font-size: 10px; color: var(--gray); margin-top: 2px; }
-
-  .primary-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--burgundy), var(--burgundy2)); color: var(--gold2); border: none; border-radius: 12px; font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 18px; transition: all 0.2s; box-shadow: 0 4px 16px rgba(107,26,42,0.3); display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.3px; }
-  .primary-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(107,26,42,0.4); }
-  .primary-btn:disabled { background: var(--lightgray); color: var(--gray); cursor: not-allowed; transform: none; box-shadow: none; }
-
-  .spinner { width: 18px; height: 18px; border: 2px solid rgba(201,168,76,0.3); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
-  .spinner.show { display: block; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .api-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--green2); color: var(--green); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; margin-bottom: 14px; }
-
-  .opt-result { animation: fadeIn 0.3s ease; }
-  .opt-header { background: linear-gradient(135deg, var(--burgundy), var(--burgundy2)); border-radius: 12px 12px 0 0; padding: 16px 20px; }
-  .opt-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
-  .opt-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--white); }
-  .opt-body { border: 2px solid var(--gold); border-top: none; border-radius: 0 0 12px 12px; background: var(--white); padding: 20px; }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RouteReady</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --burgundy: #6B1A2A;
-    --burgundy2: #8B2438;
-    --burgundy3: #4A1020;
-    --gold: #C9A84C;
-    --gold2: #E8C97A;
-    --gold3: #F5E0A0;
-    --cream: #FBF6F0;
-    --white: #FFFFFF;
-    --gray: #8A7A7A;
-    --lightgray: #EDE5E0;
-    --green: #1A6B3A;
-    --green2: #E8F5EE;
-    --red: #C0392B;
-    --red2: #FDECEA;
-    --shadow: 0 4px 24px rgba(107,26,42,0.12);
-    --shadow2: 0 2px 8px rgba(107,26,42,0.07);
     --blue: #1A4A8B;
     --blue2: #EEF3FC;
   }
@@ -352,8 +257,6 @@
   .opt-drive-badge { background: var(--burgundy); color: var(--gold2); padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
   .opt-drive-dist { font-size: 11px; color: var(--gray); }
 
-  .opt-origin-row { display: flex; align-items: center; gap: 8px; padding: 8px 0 4px 0; }
-  .opt-origin-label { font-size: 12px; font-weight: 700; color: var(--burgundy); background: var(--cream); padding: 4px 10px; border-radius: 8px; border: 1.5px solid var(--lightgray); }
   .use-order-btn { width: 100%; padding: 13px; background: var(--burgundy); color: var(--gold2); border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 16px; transition: all 0.2s; }
   .use-order-btn:hover { background: var(--burgundy2); }
   .copy-order-btn { width: 100%; padding: 11px; background: var(--cream); color: var(--burgundy); border: 1.5px solid var(--lightgray); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
@@ -987,75 +890,42 @@ async function optimizeRoute() {
   document.getElementById('optimizeBtn').disabled = true; er.classList.remove('show');
   try {
     const origin = document.getElementById('planStart').value || 'My Location';
-
-    // Step 1: Distance from origin to each property (for sorting)
     const data = await getDistances(origin, filled.map(p => p.address));
     const withDist = filled.map((p, i) => {
       const el = data.rows[0].elements[i];
       return {...p, distM: el.status==='OK' ? el.distance.value : 99999, distText: el.status==='OK' ? el.distance.text : '?', durText: el.status==='OK' ? el.duration.text : '?'};
     });
-
-    // Step 2: Sort by distance from origin
     const sorted = [...withDist].sort((a, b) => orderPref === 'closest' ? a.distM - b.distM : b.distM - a.distM);
-
-    // Step 3: Re-index sorted array with sequential keys (0,1,2...) to avoid ID mismatch bug
-    const sortedKeyed = sorted.map((p, i) => ({...p, sortIdx: i}));
-
-    // Step 4: Drive time origin → first stop
     const driveMap = {};
-    try {
-      const firstLeg = await getDistances(origin, [sortedKeyed[0].address]);
-      const fe = firstLeg.rows[0].elements[0];
-      if (fe.status === 'OK') driveMap['origin_0'] = {minutes: Math.round(fe.duration.value/60), text: fe.duration.text, dist: fe.distance.text};
-    } catch(e) {}
-
-    // Step 5: Drive times between consecutive stops using sortIdx keys
-    for (let i = 0; i < sortedKeyed.length - 1; i++) {
+    for (let i = 0; i < sorted.length - 1; i++) {
       try {
-        const leg = await getDistances(sortedKeyed[i].address, [sortedKeyed[i+1].address]);
+        const leg = await getDistances(sorted[i].address, [sorted[i+1].address]);
         const el = leg.rows[0].elements[0];
-        if (el.status === 'OK') driveMap[`${i}_${i+1}`] = {minutes: Math.round(el.duration.value/60), text: el.duration.text, dist: el.distance.text};
+        if (el.status === 'OK') driveMap[`${sorted[i].id}_${sorted[i+1].id}`] = {minutes: Math.round(el.duration.value/60), text: el.duration.text, dist: el.distance.text};
       } catch(e) {}
     }
-
-    renderOptResult(sortedKeyed, driveMap, origin);
+    renderOptResult(sorted, driveMap, origin);
   } catch(e) { er.classList.add('show'); }
   finally { sp.classList.remove('show'); bt.textContent = t('optbtn'); document.getElementById('optimizeBtn').disabled = false; }
 }
 
 function renderOptResult(sorted, driveMap, origin) {
   const label = orderPref === 'closest' ? t('optimized_closest') : t('optimized_farthest');
-
-  // First leg: origin → stop 1
-  const originLeg = driveMap['origin_0'];
-  const originHTML = originLeg
-    ? `<div class="opt-origin-row"><span class="opt-origin-label">📍 ${origin}</span></div><div class="opt-drive"><span class="opt-drive-badge">🚗 ${originLeg.text}</span><span class="opt-drive-dist">${originLeg.dist} ${t('real_dist')}</span></div>`
-    : `<div class="opt-origin-row"><span class="opt-origin-label">📍 ${origin}</span></div>`;
-
-  // Stops with correct consecutive drive times
   const stopsHTML = sorted.map((p, i) => {
-    const legKey = `${i}_${i+1}`;
-    const di = i < sorted.length - 1 ? driveMap[legKey] : null;
-    return `<div class="opt-stop"><div class="opt-stop-num">${i+1}</div><div class="opt-stop-content"><div class="opt-stop-addr">${p.address}</div><div class="opt-stop-meta">${p.price ? `<span class="opt-stop-price">${p.price}</span> · ` : ''}📍 ${p.distText} ${t('real_dist')} from start</div></div></div>${di ? `<div class="opt-drive"><span class="opt-drive-badge">🚗 ${di.text}</span><span class="opt-drive-dist">${di.dist}</span></div>` : ''}`;
+    const nk = i < sorted.length-1 ? `${p.id}_${sorted[i+1].id}` : null;
+    const di = nk && driveMap[nk];
+    return `<div class="opt-stop"><div class="opt-stop-num">${i+1}</div><div class="opt-stop-content"><div class="opt-stop-addr">${p.address}</div><div class="opt-stop-meta">${p.price ? `<span class="opt-stop-price">${p.price}</span> · ` : ''}📍 ${p.distText} ${t('real_dist')}</div></div></div>${di ? `<div class="opt-drive"><span class="opt-drive-badge">🚗 ${di.text}</span><span class="opt-drive-dist">${di.dist}</span></div>` : ''}`;
   }).join('');
-
-  document.getElementById('planResult').innerHTML = `<div class="opt-result"><div class="opt-header"><div class="opt-label">${label}</div><div class="opt-title">${origin} → ${sorted.length} stops</div></div><div class="opt-body">${originHTML}${stopsHTML}<button class="use-order-btn" onclick='useThisOrder(${JSON.stringify(sorted)},${JSON.stringify(driveMap)})'>${t('use_order')}</button><button class="copy-order-btn" onclick='copyOrder(${JSON.stringify(sorted)})'>${t('copy_order')}</button><div id="orderCopiedMsg" style="display:none;text-align:center;font-size:12px;color:var(--green);font-weight:600;margin-top:8px;">${t('order_copied')}</div></div></div>`;
+  document.getElementById('planResult').innerHTML = `<div class="opt-result"><div class="opt-header"><div class="opt-label">${label}</div><div class="opt-title">${origin} → ${sorted.length} stops</div></div><div class="opt-body">${stopsHTML}<button class="use-order-btn" onclick='useThisOrder(${JSON.stringify(sorted)},${JSON.stringify(driveMap)})'>${t('use_order')}</button><button class="copy-order-btn" onclick='copyOrder(${JSON.stringify(sorted)})'>${t('copy_order')}</button><div id="orderCopiedMsg" style="display:none;text-align:center;font-size:12px;color:var(--green);font-weight:600;margin-top:8px;">${t('order_copied')}</div></div></div>`;
 }
 
 function useThisOrder(sorted, driveMap) {
   itinProps = []; itinId = 0;
-  sorted.forEach((p, i) => { itinId++; itinProps.push({id: itinId, address: p.address, price: p.price||'', sortIdx: i}); });
+  sorted.forEach(p => { itinId++; itinProps.push({id: itinId, address: p.address, price: p.price||'', origId: p.id}); });
   const start = document.getElementById('planStart').value;
   if (start) document.getElementById('itinStart').value = start;
-  // Build itinDriveMap using itinProp ids (1-based sequential)
-  const itinDriveMap = {};
-  sorted.forEach((p, i) => {
-    const leg = driveMap[`${i}_${i+1}`];
-    if (leg) itinDriveMap[`drv_${i+1}_${i+2}`] = leg;
-  });
-  if (driveMap['origin_0']) itinDriveMap['origin_first'] = driveMap['origin_0'];
-  window._tm = itinDriveMap; window._ts = sorted;
-  renderItinProps(); updateDriveList(itinDriveMap, sorted); checkGenerate(); switchTab('itinerary');
+  window._tm = driveMap; window._ts = sorted;
+  renderItinProps(); updateDriveList(driveMap, sorted); checkGenerate(); switchTab('itinerary');
 }
 
 function copyOrder(sorted) {
@@ -1096,35 +966,26 @@ function updateDriveList(dm, sorted) {
   document.querySelectorAll('.drive-min').forEach(el => { existing[el.id] = el.value; });
   list.innerHTML = '';
   const startAddr = document.getElementById('itinStart').value.trim();
-
-  // First leg: starting point → first property
   if (startAddr && filled.length >= 1) {
     const firstKey = 'drv_start_' + filled[0].id;
-    // Check if we got origin_first from useThisOrder
-    const autoInfo = (dm && dm['origin_first']) ? dm['origin_first'] : window._startDriveInfo;
-    const autoLabel = autoInfo ? `<span class="drive-auto">🟢 Google Maps: ${autoInfo.text}</span>` : '';
-    const val = existing[firstKey] || (autoInfo?.minutes || '');
+    const autoLabel = window._startDriveInfo ? `<span class="drive-auto">🟢 Google Maps: ${window._startDriveInfo.text}</span>` : '';
+    const val = existing[firstKey] || (window._startDriveInfo?.minutes || '');
     const d = document.createElement('div'); d.className = 'drive-item';
     d.innerHTML = `<div class="drive-arrow"><strong>${startAddr}</strong><span style="color:var(--gold);font-size:10px;font-weight:700;margin-left:4px">★ START</span><br>↓<br><strong>${filled[0].address||'...'}</strong>${autoLabel}</div><span style="font-size:17px">🚗</span><input class="drive-min" id="${firstKey}" type="number" min="1" max="180" value="${val}" placeholder="0"><span style="font-size:12px;color:var(--gray)">min</span>`;
     list.appendChild(d);
-    // Auto-fetch if not already available
-    if (!autoInfo && startAddr && filled[0].address) {
+    if (!window._startDriveInfo && startAddr && filled[0].address) {
       getDistances(startAddr, [filled[0].address]).then(data => {
         const el = data?.rows?.[0]?.elements?.[0];
         if (el?.status === 'OK') { window._startDriveInfo = {minutes: Math.round(el.duration.value/60), text: el.duration.text}; updateDriveList(dm, sorted); }
       }).catch(() => {});
     }
   }
-
-  // Legs between consecutive stops — use sequential itinProp ids
   for (let i = 0; i < filled.length - 1; i++) {
-    const from = filled[i], to = filled[i+1];
-    const key = `drv_${from.id}_${to.id}`;
+    const from = filled[i], to = filled[i+1], key = `drv_${from.id}_${to.id}`;
     let autoVal = '', autoLabel = '';
-    // New key format from optimizeRoute: drv_{fromId}_{toId}
-    if (dm) {
-      const newKey = `drv_${from.id}_${to.id}`;
-      if (dm[newKey]) { autoVal = dm[newKey].minutes; autoLabel = `<span class="drive-auto">🟢 Google Maps: ${dm[newKey].text}</span>`; }
+    if (dm && sorted) {
+      const of = sorted[i], ot = sorted[i+1];
+      if (of && ot) { const dk = `${of.id}_${ot.id}`; if (dm[dk]) { autoVal = dm[dk].minutes; autoLabel = `<span class="drive-auto">🟢 Google Maps: ${dm[dk].text}</span>`; } }
     }
     const val = existing[key] || autoVal;
     const d = document.createElement('div'); d.className = 'drive-item';
