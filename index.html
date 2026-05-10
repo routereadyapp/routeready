@@ -297,7 +297,7 @@ function removePlanProp(id){ planProps=planProps.filter(p=>p.id!==id); renderPla
 function renderPlanProps(){ const list=document.getElementById('planPropList'); list.innerHTML=''; planProps.forEach((p,idx)=>{ const div=document.createElement('div'); div.className='prop-item'; div.innerHTML=`<div class="prop-num">${idx+1}</div><input class="prop-input" placeholder="Address..." value="${p.address}" oninput="planProps[${idx}].address=this.value;checkOptimize();"><input class="prop-price" placeholder="Price" value="${p.price}" oninput="planProps[${idx}].price=this.value;"><button class="prop-remove" onclick="removePlanProp(${p.id})">×</button>`; list.appendChild(div); }); }
 function checkOptimize(){ document.getElementById('optimizeBtn').disabled=planProps.filter(p=>p.address.trim()).length<2; }
 
-async function getDistances(origin,destinations){ const dests=destinations.map(d=>encodeURIComponent(d)).join('|'); const url=`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(origin)}&destinations=${dests}&units=imperial&key=${API_KEY}`; const res=await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`); return res.json(); }
+async function getDistances(origin,destinations){ const dests=destinations.map(d=>encodeURIComponent(d)).join('|'); const url=`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(origin)}&destinations=${dests}&units=imperial&key=${API_KEY}`; const res=await fetch(const res=await fetch(`/.netlify/functions/maps?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destinations.join('|'))}`); return res.json(); }
 
 async function optimizeRoute(){
   const filled=planProps.filter(p=>p.address.trim()); if(filled.length<2) return;
