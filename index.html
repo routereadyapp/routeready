@@ -93,6 +93,255 @@
   .opt-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
   .opt-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--white); }
   .opt-body { border: 2px solid var(--gold); border-top: none; border-radius: 0 0 12px 12px; background: var(--white); padding: 20px; }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RouteReady</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burgundy: #6B1A2A;
+    --burgundy2: #8B2438;
+    --burgundy3: #4A1020;
+    --gold: #C9A84C;
+    --gold2: #E8C97A;
+    --gold3: #F5E0A0;
+    --cream: #FBF6F0;
+    --white: #FFFFFF;
+    --gray: #8A7A7A;
+    --lightgray: #EDE5E0;
+    --green: #1A6B3A;
+    --green2: #E8F5EE;
+    --red: #C0392B;
+    --red2: #FDECEA;
+    --shadow: 0 4px 24px rgba(107,26,42,0.12);
+    --shadow2: 0 2px 8px rgba(107,26,42,0.07);
+    --blue: #1A4A8B;
+    --blue2: #EEF3FC;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--burgundy3); min-height: 100vh; }
+
+  header { background: var(--burgundy); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 64px; border-bottom: 3px solid var(--gold); position: sticky; top: 0; z-index: 100; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 34px; height: 34px; background: var(--gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .logo-text { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--white); }
+  .logo-text span { color: var(--gold); }
+  .lang-toggle { display: flex; background: var(--burgundy3); border-radius: 20px; padding: 3px; gap: 2px; }
+  .lang-btn { padding: 5px 14px; border-radius: 16px; border: none; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--gold3); }
+  .lang-btn.active { background: var(--gold); color: var(--burgundy); }
+
+  .tabs { display: flex; background: var(--burgundy3); border-bottom: 3px solid var(--gold); }
+  .tab { flex: 1; padding: 14px 20px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--gold3); border: none; background: transparent; transition: all 0.2s; opacity: 0.7; }
+  .tab.active { color: var(--gold); background: var(--burgundy); border-bottom: 3px solid var(--gold); margin-bottom: -3px; opacity: 1; }
+  .tab:hover:not(.active) { opacity: 1; }
+  .tab-icon { font-size: 16px; display: block; margin-bottom: 2px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .app { max-width: 960px; margin: 0 auto; padding: 28px 20px 80px; }
+  .page-title { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--burgundy); margin-bottom: 4px; }
+  .page-sub { font-size: 13px; color: var(--gray); margin-bottom: 24px; line-height: 1.5; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+  .card { background: var(--white); border-radius: 16px; padding: 24px; box-shadow: var(--shadow2); border: 1px solid var(--lightgray); }
+  .card-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--lightgray); }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gray); margin-bottom: 6px; }
+  .field input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--lightgray); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--burgundy3); background: var(--white); outline: none; transition: border-color 0.2s; }
+  .field input:focus { border-color: var(--gold); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .prop-list { display: flex; flex-direction: column; gap: 8px; }
+  .prop-item { display: flex; align-items: center; gap: 8px; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+  .prop-num { width: 26px; height: 26px; border-radius: 50%; background: var(--burgundy); color: var(--white); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .prop-input { flex: 1; padding: 9px 12px; border: 1.5px solid var(--lightgray); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--burgundy3); outline: none; transition: border-color 0.2s; }
+  .prop-input:focus { border-color: var(--gold); }
+  .prop-price { width: 85px; padding: 9px 10px; border: 1.5px solid var(--lightgray); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--green); font-weight: 600; outline: none; }
+  .prop-price:focus { border-color: var(--gold); }
+  .prop-remove { width: 26px; height: 26px; border-radius: 50%; border: none; background: var(--lightgray); color: var(--gray); cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+  .prop-remove:hover { background: var(--red2); color: var(--red); }
+  .add-btn { width: 100%; padding: 10px; border: 2px dashed var(--lightgray); border-radius: 8px; background: transparent; color: var(--gray); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
+  .add-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  .order-toggle { display: flex; gap: 10px; margin-bottom: 16px; }
+  .order-opt { flex: 1; padding: 12px 10px; border-radius: 10px; border: 2px solid var(--lightgray); cursor: pointer; text-align: center; transition: all 0.2s; background: var(--white); }
+  .order-opt.selected { border-color: var(--gold); background: #FFF8EE; }
+  .order-opt-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+  .order-opt-label { font-size: 12px; font-weight: 700; color: var(--burgundy); }
+  .order-opt-sub { font-size: 10px; color: var(--gray); margin-top: 2px; }
+
+  .primary-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--burgundy), var(--burgundy2)); color: var(--gold2); border: none; border-radius: 12px; font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 18px; transition: all 0.2s; box-shadow: 0 4px 16px rgba(107,26,42,0.3); display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.3px; }
+  .primary-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(107,26,42,0.4); }
+  .primary-btn:disabled { background: var(--lightgray); color: var(--gray); cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .spinner { width: 18px; height: 18px; border: 2px solid rgba(201,168,76,0.3); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+  .spinner.show { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .api-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--green2); color: var(--green); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; margin-bottom: 14px; }
+
+  /* ===== SHOWINGTIME PARSER ===== */
+  .st-parser-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 22px 24px;
+    box-shadow: var(--shadow2);
+    border: 2px solid var(--blue);
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .st-parser-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--blue), #4A80D4, var(--blue));
+  }
+  .st-parser-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .st-logo-badge {
+    background: var(--blue2);
+    border: 1.5px solid var(--blue);
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .st-parser-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--burgundy3);
+  }
+  .st-parser-sub {
+    font-size: 11px;
+    color: var(--gray);
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+  .st-textarea {
+    width: 100%;
+    min-height: 110px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--lightgray);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--burgundy3);
+    background: var(--cream);
+    outline: none;
+    resize: vertical;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+  }
+  .st-textarea:focus { border-color: var(--blue); }
+  .st-textarea::placeholder { color: #bbb; font-style: italic; }
+  .st-parse-btn {
+    width: 100%;
+    padding: 11px;
+    background: var(--blue);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .st-parse-btn:hover { background: var(--blue2); color: var(--blue); border: 1.5px solid var(--blue); }
+  .st-parse-btn:disabled { background: var(--lightgray); color: var(--gray); cursor: not-allowed; }
+  .st-result-preview {
+    margin-top: 12px;
+    background: var(--blue2);
+    border: 1px solid var(--blue);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: var(--blue);
+    display: none;
+    animation: fadeIn 0.25s ease;
+  }
+  .st-result-preview.show { display: block; }
+  .st-result-preview strong { display: block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; color: var(--blue); }
+  .st-result-item { padding: 3px 0; border-bottom: 1px dashed rgba(26,74,139,0.2); }
+  .st-result-item:last-child { border-bottom: none; }
+  .st-result-addr { font-weight: 600; color: var(--burgundy3); }
+  .st-result-meta { color: var(--gray); font-size: 11px; }
+  .st-error {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: var(--red2);
+    color: var(--red);
+    border-radius: 8px;
+    font-size: 12px;
+    display: none;
+  }
+  .st-error.show { display: block; }
+  .st-send-btn {
+    width: 100%;
+    padding: 11px;
+    background: var(--green);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+    display: none;
+  }
+  .st-send-btn.show { display: block; }
+  .st-send-btn:hover { background: #147830; }
+  .st-toggle-hint {
+    font-size: 11px;
+    color: var(--blue);
+    cursor: pointer;
+    text-decoration: underline dotted;
+    display: inline-block;
+    margin-top: 6px;
+  }
+  .st-sample-box {
+    display: none;
+    margin-top: 8px;
+    background: var(--cream);
+    border: 1px dashed var(--lightgray);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 11px;
+    color: var(--gray);
+    font-family: monospace;
+    line-height: 1.8;
+    white-space: pre-wrap;
+  }
+  .st-sample-box.show { display: block; }
+
+  /* ===== FIN SHOWINGTIME PARSER ===== */
+
+  .opt-result { animation: fadeIn 0.3s ease; }
+  .opt-header { background: linear-gradient(135deg, var(--burgundy), var(--burgundy2)); border-radius: 12px 12px 0 0; padding: 16px 20px; }
+  .opt-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+  .opt-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--white); }
+  .opt-body { border: 2px solid var(--gold); border-top: none; border-radius: 0 0 12px 12px; background: var(--white); padding: 20px; }
   .opt-stop { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 4px; }
   .opt-stop-num { width: 30px; height: 30px; border-radius: 50%; background: var(--gold); color: var(--burgundy); font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Playfair Display', serif; }
   .opt-stop-content { flex: 1; }
@@ -103,6 +352,8 @@
   .opt-drive-badge { background: var(--burgundy); color: var(--gold2); padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
   .opt-drive-dist { font-size: 11px; color: var(--gray); }
 
+  .opt-origin-row { display: flex; align-items: center; gap: 8px; padding: 8px 0 4px 0; }
+  .opt-origin-label { font-size: 12px; font-weight: 700; color: var(--burgundy); background: var(--cream); padding: 4px 10px; border-radius: 8px; border: 1.5px solid var(--lightgray); }
   .use-order-btn { width: 100%; padding: 13px; background: var(--burgundy); color: var(--gold2); border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 16px; transition: all 0.2s; }
   .use-order-btn:hover { background: var(--burgundy2); }
   .copy-order-btn { width: 100%; padding: 11px; background: var(--cream); color: var(--burgundy); border: 1.5px solid var(--lightgray); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
@@ -188,11 +439,40 @@
   </button>
 </div>
 
+<!-- ============ TAB: PLAN MY ROUTE ============ -->
 <div class="panel active" id="panel-plan">
   <div class="app">
     <div class="page-title" id="txt-plan-title">Plan My Route</div>
     <div class="page-sub" id="txt-plan-sub">Add properties and RouteReady calculates real drive times using Google Maps.</div>
     <div class="api-badge">🟢 <span id="txt-api-badge">Google Maps API Connected</span></div>
+
+    <!-- SHOWINGTIME PARSER (Plan tab) -->
+    <div class="st-parser-card" id="stParserPlan">
+      <div class="st-parser-header">
+        <div class="st-logo-badge">ShowingTime</div>
+        <div class="st-parser-title" id="txt-st-title-plan">Quick Import</div>
+      </div>
+      <div class="st-parser-sub" id="txt-st-sub-plan">Paste your ShowingTime confirmation email or appointment list — RouteReady will extract the addresses automatically.</div>
+      <textarea class="st-textarea" id="stTextPlan" placeholder="Paste ShowingTime text here...&#10;&#10;Example:&#10;123 Main St, Springfield, NJ — $425,000&#10;456 Oak Ave, Westfield, NJ — $550,000&#10;789 Elm Rd, Cranford, NJ" oninput="checkStParsePlan()"></textarea>
+      <span class="st-toggle-hint" onclick="toggleSample('plan')" id="txt-st-sample-plan">📄 See accepted formats</span>
+      <div class="st-sample-box" id="stSamplePlan">ShowingTime formats RouteReady can read:
+
+• 123 Main St, Springfield, NJ — $425,000
+• 456 Oak Ave, Westfield, NJ | Listed at $550,000
+• 789 Elm Rd, Cranford, NJ 07016
+
+Also accepts raw address lists, one per line.
+Prices are optional — include them if you want them shown on the route.</div>
+      <div class="st-error" id="stErrorPlan"></div>
+      <div class="st-result-preview" id="stPreviewPlan"></div>
+      <button class="st-parse-btn" id="stParseBtnPlan" onclick="parseST('plan')" disabled>
+        <span>⚡</span> <span id="txt-st-parsebtn-plan">Extract Addresses</span>
+      </button>
+      <button class="st-send-btn" id="stSendBtnPlan" onclick="sendSTtoPlan()">
+        <span id="txt-st-sendbtn-plan">✓ Add to Route Planner</span>
+      </button>
+    </div>
+
     <div class="two-col">
       <div>
         <div class="card">
@@ -237,10 +517,46 @@
   </div>
 </div>
 
+<!-- ============ TAB: GENERATE ITINERARY ============ -->
 <div class="panel" id="panel-itinerary">
   <div class="app">
     <div class="page-title" id="txt-itin-title">Generate Itinerary</div>
     <div class="page-sub" id="txt-itin-sub">Enter confirmed appointment times to generate the client itinerary.</div>
+
+    <!-- SHOWINGTIME PARSER (Itinerary tab) -->
+    <div class="st-parser-card" id="stParserItin">
+      <div class="st-parser-header">
+        <div class="st-logo-badge">ShowingTime</div>
+        <div class="st-parser-title" id="txt-st-title-itin">Quick Import</div>
+      </div>
+      <div class="st-parser-sub" id="txt-st-sub-itin">Paste your ShowingTime confirmation — RouteReady extracts addresses, prices, client name, agent name, date and start time automatically.</div>
+      <textarea class="st-textarea" id="stTextItin" placeholder="Paste ShowingTime confirmation here...&#10;&#10;Example:&#10;Client: Maria Lopez | Agent: Dessire Vega | Date: June 14, 2025 | Start: 10:00 AM&#10;1. 123 Main St, Springfield, NJ — $425,000&#10;2. 456 Oak Ave, Westfield, NJ — $550,000" oninput="checkStParseItin()"></textarea>
+      <span class="st-toggle-hint" onclick="toggleSample('itin')" id="txt-st-sample-itin">📄 See accepted formats</span>
+      <div class="st-sample-box" id="stSampleItin">ShowingTime formats RouteReady can read:
+
+FULL FORMAT (extracts everything):
+  Client: Maria Lopez | Agent: Dessire Vega
+  Date: June 14, 2025 | Start: 10:00 AM
+  1. 123 Main St, Springfield, NJ — $425,000
+  2. 456 Oak Ave, Westfield, NJ — $550,000
+
+ADDRESS-ONLY (just addresses, one per line):
+  123 Main St, Springfield, NJ
+  456 Oak Ave, Westfield, NJ
+
+MIXED FORMAT:
+  456 Oak Ave, Westfield, NJ | Listed at $550,000
+  789 Elm Rd, Cranford, NJ 07016</div>
+      <div class="st-error" id="stErrorItin"></div>
+      <div class="st-result-preview" id="stPreviewItin"></div>
+      <button class="st-parse-btn" id="stParseBtnItin" onclick="parseST('itin')" disabled>
+        <span>⚡</span> <span id="txt-st-parsebtn-itin">Extract from ShowingTime</span>
+      </button>
+      <button class="st-send-btn" id="stSendBtnItin" onclick="sendSTtoItin()">
+        <span id="txt-st-sendbtn-itin">✓ Fill Itinerary Form</span>
+      </button>
+    </div>
+
     <div class="two-col">
       <div>
         <div class="card">
@@ -287,97 +603,626 @@
 
 <script>
 const API_KEY='AIzaSyDuYgGbbYy0U23ZJVdp4Q4BU-LHXDmyxNs';
-let lang='en',orderPref='closest',planProps=[],itinProps=[],planId=0,itinId=0;
+let lang='en', orderPref='closest', planProps=[], itinProps=[], planId=0, itinId=0;
+let stParsedPlan=null, stParsedItin=null;
 
-const T={en:{tab1:"Plan My Route",tab2:"Generate Itinerary",'plan-title':"Plan My Route",'plan-sub':"Add properties and RouteReady calculates real drive times using Google Maps.",'api-badge':"Google Maps API Connected",'plan-s1':"Starting Point",startfrom:"Starting From",'plan-s2':"Properties to Show",'plan-hint':"Add addresses in any order. RouteReady sorts them using real Google Maps distances.",'plan-s3':"Preferred Order",closest:"Closest First",'closest-sub':"Start near, end far",farthest:"Farthest First",'farthest-sub':"Start far, end near",'order-hint':"💡 Farthest First = you end closer to home on the way back.",optbtn:"✦ Optimize Route with Google Maps",'plan-result':"Optimized Order",'plan-empty':"Add your properties and tap Optimize Route to get real distances.",'itin-title':"Generate Itinerary",'itin-sub':"Enter confirmed appointment times to generate the client itinerary.",'itin-s1':"Appointment Info",clientlabel:"Client Name",agentelabel:"Agent Name",datelabel:"Date",startlabel:"Start Time",showtlabel:"Time per Home (min)",startaddrlabel:"Starting From",'itin-s2':"Properties (in showing order)",'itin-hint':"Use the order from Plan My Route, or enter manually.",'itin-s3':"Drive Times Between Stops",drivehint:"Enter minutes from Google Maps for each leg.",genbtn:"✦ Generate Itinerary",'itin-result':"Client Itinerary",'itin-empty':"Fill in the details and generate the itinerary to share with your client.",addprop:"+ Add Property",itin_label:"Showing Itinerary",arrival:"Arrival",departure:"Departure",drive:"min drive to next stop",sharelabel:"Share with Client:",copybtn:"📋 Copy",smsbtn:"💬 Text",emailbtn:"📧 Email",copied:"Copied!",total:"Total",homes:"Homes",returnlabel:"Est. Return",from:"Starting from",use_order:"✓ Use This Order → Go to Itinerary",copy_order:"📋 Copy Order for ShowingTime",order_copied:"Order copied!",optimizing:"Calculating real distances...",optimized_closest:"Optimized: Closest → Farthest",optimized_farthest:"Optimized: Farthest → Closest",real_dist:"by road"},es:{tab1:"Planificar Ruta",tab2:"Generar Itinerario",'plan-title':"Planificar Ruta",'plan-sub':"Agrega propiedades y RouteReady calcula los tiempos reales con Google Maps.",'api-badge':"Google Maps API Conectada",'plan-s1':"Punto de Salida",startfrom:"Saliendo Desde",'plan-s2':"Propiedades a Mostrar",'plan-hint':"Agrega en cualquier orden. RouteReady las ordena con distancias reales de Google Maps.",'plan-s3':"Orden Preferido",closest:"Más Cerca Primero",'closest-sub':"Empieza cerca, termina lejos",farthest:"Más Lejos Primero",'farthest-sub':"Empieza lejos, termina cerca",'order-hint':"💡 Más lejos primero = terminas más cerca de casa al regresar.",optbtn:"✦ Optimizar Ruta con Google Maps",'plan-result':"Orden Optimizado",'plan-empty':"Agrega propiedades y toca Optimizar para ver distancias reales.",'itin-title':"Generar Itinerario",'itin-sub':"Ingresa los horarios confirmados para generar el itinerario del cliente.",'itin-s1':"Info del Día",clientlabel:"Nombre del Cliente",agentelabel:"Nombre del Agente",datelabel:"Fecha",startlabel:"Hora de Inicio",showtlabel:"Tiempo por Casa (min)",startaddrlabel:"Saliendo Desde",'itin-s2':"Propiedades (en orden de showing)",'itin-hint':"Usa el orden de Planificar Ruta, o ingresa manualmente.",'itin-s3':"Tiempo de Manejo Entre Paradas",drivehint:"Ingresa los minutos de Google Maps para cada tramo.",genbtn:"✦ Generar Itinerario",'itin-result':"Itinerario del Cliente",'itin-empty':"Llena los datos y genera el itinerario para compartir con tu cliente.",addprop:"+ Agregar Propiedad",itin_label:"Itinerario de Showings",arrival:"Llegada",departure:"Salida",drive:"min de manejo a la próxima",sharelabel:"Compartir con Cliente:",copybtn:"📋 Copiar",smsbtn:"💬 Texto",emailbtn:"📧 Email",copied:"¡Copiado!",total:"Total",homes:"Casas",returnlabel:"Regreso Est.",from:"Saliendo de",use_order:"✓ Usar Este Orden → Ir a Itinerario",copy_order:"📋 Copiar Orden para ShowingTime",order_copied:"¡Orden copiada!",optimizing:"Calculando distancias reales...",optimized_closest:"Optimizado: Más Cerca → Más Lejos",optimized_farthest:"Optimizado: Más Lejos → Más Cerca",real_dist:"por carretera"}};
+// ===================== TRANSLATIONS =====================
+const T={
+  en:{
+    tab1:"Plan My Route",tab2:"Generate Itinerary",
+    'plan-title':"Plan My Route",'plan-sub':"Add properties and RouteReady calculates real drive times using Google Maps.",
+    'api-badge':"Google Maps API Connected",'plan-s1':"Starting Point",startfrom:"Starting From",
+    'plan-s2':"Properties to Show",'plan-hint':"Add addresses in any order. RouteReady sorts them using real Google Maps distances.",
+    'plan-s3':"Preferred Order",closest:"Closest First",'closest-sub':"Start near, end far",
+    farthest:"Farthest First",'farthest-sub':"Start far, end near",
+    'order-hint':"💡 Farthest First = you end closer to home on the way back.",
+    optbtn:"✦ Optimize Route with Google Maps",'plan-result':"Optimized Order",
+    'plan-empty':"Add your properties and tap Optimize Route to get real distances.",
+    'itin-title':"Generate Itinerary",'itin-sub':"Enter confirmed appointment times to generate the client itinerary.",
+    'itin-s1':"Appointment Info",clientlabel:"Client Name",agentelabel:"Agent Name",
+    datelabel:"Date",startlabel:"Start Time",showtlabel:"Time per Home (min)",startaddrlabel:"Starting From",
+    'itin-s2':"Properties (in showing order)",'itin-hint':"Use the order from Plan My Route, or enter manually.",
+    'itin-s3':"Drive Times Between Stops",drivehint:"Enter minutes from Google Maps for each leg.",
+    genbtn:"✦ Generate Itinerary",'itin-result':"Client Itinerary",
+    'itin-empty':"Fill in the details and generate the itinerary to share with your client.",
+    addprop:"+ Add Property",itin_label:"Showing Itinerary",
+    arrival:"Arrival",departure:"Departure",drive:"min drive to next stop",
+    sharelabel:"Share with Client:",copybtn:"📋 Copy",smsbtn:"💬 Text",emailbtn:"📧 Email",copied:"Copied!",
+    total:"Total",homes:"Homes",returnlabel:"Est. Return",from:"Starting from",
+    use_order:"✓ Use This Order → Go to Itinerary",copy_order:"📋 Copy Order for ShowingTime",
+    order_copied:"Order copied!",optimizing:"Calculating real distances...",
+    optimized_closest:"Optimized: Closest → Farthest",optimized_farthest:"Optimized: Farthest → Closest",real_dist:"by road",
+    // ShowingTime parser
+    'st-title-plan':"Quick Import",'st-sub-plan':"Paste your ShowingTime confirmation email or appointment list — RouteReady will extract the addresses automatically.",
+    'st-parsebtn-plan':"Extract Addresses",'st-sendbtn-plan':"✓ Add to Route Planner",
+    'st-title-itin':"Quick Import",'st-sub-itin':"Paste your ShowingTime confirmation — RouteReady extracts addresses, prices, client name, agent name, date and start time automatically.",
+    'st-parsebtn-itin':"Extract from ShowingTime",'st-sendbtn-itin':"✓ Fill Itinerary Form",
+    'st-sample-plan':"📄 See accepted formats",'st-sample-itin':"📄 See accepted formats",
+    'st-preview-found':"Found",'st-preview-props':"properties:",
+    'st-preview-meta':"Also detected:","st-error-empty":"Paste some text first.",
+    'st-error-none':"No addresses found. Make sure each address includes a street number, street name, and city."
+  },
+  es:{
+    tab1:"Planificar Ruta",tab2:"Generar Itinerario",
+    'plan-title':"Planificar Ruta",'plan-sub':"Agrega propiedades y RouteReady calcula los tiempos reales con Google Maps.",
+    'api-badge':"Google Maps API Conectada",'plan-s1':"Punto de Salida",startfrom:"Saliendo Desde",
+    'plan-s2':"Propiedades a Mostrar",'plan-hint':"Agrega en cualquier orden. RouteReady las ordena con distancias reales de Google Maps.",
+    'plan-s3':"Orden Preferido",closest:"Más Cerca Primero",'closest-sub':"Empieza cerca, termina lejos",
+    farthest:"Más Lejos Primero",'farthest-sub':"Empieza lejos, termina cerca",
+    'order-hint':"💡 Más lejos primero = terminas más cerca de casa al regresar.",
+    optbtn:"✦ Optimizar Ruta con Google Maps",'plan-result':"Orden Optimizado",
+    'plan-empty':"Agrega propiedades y toca Optimizar para ver distancias reales.",
+    'itin-title':"Generar Itinerario",'itin-sub':"Ingresa los horarios confirmados para generar el itinerario del cliente.",
+    'itin-s1':"Info del Día",clientlabel:"Nombre del Cliente",agentelabel:"Nombre del Agente",
+    datelabel:"Fecha",startlabel:"Hora de Inicio",showtlabel:"Tiempo por Casa (min)",startaddrlabel:"Saliendo Desde",
+    'itin-s2':"Propiedades (en orden de showing)",'itin-hint':"Usa el orden de Planificar Ruta, o ingresa manualmente.",
+    'itin-s3':"Tiempo de Manejo Entre Paradas",drivehint:"Ingresa los minutos de Google Maps para cada tramo.",
+    genbtn:"✦ Generar Itinerario",'itin-result':"Itinerario del Cliente",
+    'itin-empty':"Llena los datos y genera el itinerario para compartir con tu cliente.",
+    addprop:"+ Agregar Propiedad",itin_label:"Itinerario de Showings",
+    arrival:"Llegada",departure:"Salida",drive:"min de manejo a la próxima",
+    sharelabel:"Compartir con Cliente:",copybtn:"📋 Copiar",smsbtn:"💬 Texto",emailbtn:"📧 Email",copied:"¡Copiado!",
+    total:"Total",homes:"Casas",returnlabel:"Regreso Est.",from:"Saliendo de",
+    use_order:"✓ Usar Este Orden → Ir a Itinerario",copy_order:"📋 Copiar Orden para ShowingTime",
+    order_copied:"¡Orden copiada!",optimizing:"Calculando distancias reales...",
+    optimized_closest:"Optimizado: Más Cerca → Más Lejos",optimized_farthest:"Optimizado: Más Lejos → Más Cerca",real_dist:"por carretera",
+    // ShowingTime parser
+    'st-title-plan':"Importar Rápido",'st-sub-plan':"Pega tu confirmación de ShowingTime — RouteReady extrae las direcciones automáticamente.",
+    'st-parsebtn-plan':"Extraer Direcciones",'st-sendbtn-plan':"✓ Agregar a Planificador",
+    'st-title-itin':"Importar Rápido",'st-sub-itin':"Pega tu confirmación de ShowingTime — RouteReady extrae direcciones, precios, cliente, agente, fecha y hora automáticamente.",
+    'st-parsebtn-itin':"Extraer de ShowingTime",'st-sendbtn-itin':"✓ Llenar Formulario",
+    'st-sample-plan':"📄 Ver formatos aceptados",'st-sample-itin':"📄 Ver formatos aceptados",
+    'st-preview-found':"Se encontraron",'st-preview-props':"propiedades:",
+    'st-preview-meta':"También detectado:","st-error-empty":"Pega texto primero.",
+    'st-error-none':"No se encontraron direcciones. Asegúrate de incluir número, calle y ciudad."
+  }
+};
 
-function t(k){return T[lang][k]||k;}
-function setLang(l){lang=l;document.getElementById('btn-en').classList.toggle('active',l==='en');document.getElementById('btn-es').classList.toggle('active',l==='es');updateAllTexts();}
-function updateAllTexts(){['tab1','tab2','plan-title','plan-sub','api-badge','plan-s1','startfrom','plan-s2','plan-hint','plan-s3','closest','closest-sub','farthest','farthest-sub','order-hint','plan-result','plan-empty','itin-title','itin-sub','itin-s1','clientlabel','agentelabel','datelabel','startlabel','showtlabel','startaddrlabel','itin-s2','itin-hint','itin-s3','drivehint','genbtn','itin-result','itin-empty'].forEach(k=>{const el=document.getElementById('txt-'+k);if(el)el.textContent=t(k);});document.getElementById('planAddBtn').textContent=t('addprop');document.getElementById('itinAddBtn').textContent=t('addprop');document.getElementById('txt-optbtn').textContent=t('optbtn');}
-function switchTab(tab){['plan','itinerary'].forEach(t=>{document.getElementById('panel-'+t).classList.toggle('active',t===tab);document.getElementById('tab-'+t).classList.toggle('active',t===tab);});}
-function selectOrder(o){orderPref=o;document.getElementById('opt-closest').classList.toggle('selected',o==='closest');document.getElementById('opt-farthest').classList.toggle('selected',o==='farthest');}
+function t(k){ return T[lang][k]||k; }
 
-function addPlanProp(a='',p=''){const id=++planId;planProps.push({id,address:a,price:p});renderPlanProps();checkOptimize();}
-function removePlanProp(id){planProps=planProps.filter(p=>p.id!==id);renderPlanProps();checkOptimize();}
-function renderPlanProps(){const list=document.getElementById('planPropList');list.innerHTML='';planProps.forEach((p,i)=>{const d=document.createElement('div');d.className='prop-item';d.innerHTML=`<div class="prop-num">${i+1}</div><input class="prop-input" placeholder="Address..." value="${p.address}" oninput="planProps[${i}].address=this.value;checkOptimize();"><input class="prop-price" placeholder="Price" value="${p.price}" oninput="planProps[${i}].price=this.value;"><button class="prop-remove" onclick="removePlanProp(${p.id})">×</button>`;list.appendChild(d);});}
-function checkOptimize(){document.getElementById('optimizeBtn').disabled=planProps.filter(p=>p.address.trim()).length<2;}
+// ===================== SHOWINGTIME PARSER CORE =====================
 
-async function getDistances(origin,destinations){const res=await fetch(`/.netlify/functions/maps?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destinations.join('|'))}`);return res.json();}
+/**
+ * Main parser. Returns:
+ * {
+ *   props: [{address, price}],
+ *   client, agent, date (YYYY-MM-DD), startTime (HH:MM)
+ * }
+ */
+function parseShowingTime(raw) {
+  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  const result = { props: [], client: '', agent: '', date: '', startTime: '' };
 
-async function optimizeRoute(){
-  const filled=planProps.filter(p=>p.address.trim());if(filled.length<2)return;
-  const sp=document.getElementById('optimizeSpinner'),bt=document.getElementById('txt-optbtn'),er=document.getElementById('apiError');
-  sp.classList.add('show');bt.textContent=t('optimizing');document.getElementById('optimizeBtn').disabled=true;er.classList.remove('show');
-  try{
-    const origin=document.getElementById('planStart').value||'My Location';
-    const data=await getDistances(origin,filled.map(p=>p.address));
-    const withDist=filled.map((p,i)=>{const el=data.rows[0].elements[i];return{...p,distM:el.status==='OK'?el.distance.value:99999,distText:el.status==='OK'?el.distance.text:'?',durText:el.status==='OK'?el.duration.text:'?'};});
-    const sorted=[...withDist].sort((a,b)=>orderPref==='closest'?a.distM-b.distM:b.distM-a.distM);
-    const driveMap={};
-    for(let i=0;i<sorted.length-1;i++){try{const leg=await getDistances(sorted[i].address,[sorted[i+1].address]);const el=leg.rows[0].elements[0];if(el.status==='OK')driveMap[`${sorted[i].id}_${sorted[i+1].id}`]={minutes:Math.round(el.duration.value/60),text:el.duration.text,dist:el.distance.text};}catch(e){}}
-    renderOptResult(sorted,driveMap,origin);
-  }catch(e){er.classList.add('show');}
-  finally{sp.classList.remove('show');bt.textContent=t('optbtn');document.getElementById('optimizeBtn').disabled=false;}
-}
+  // --- Extract metadata: client, agent, date, time ---
+  for (const line of lines) {
+    // Client: Maria Lopez | Agent: Dessire Vega
+    const clientMatch = line.match(/client[:\s]+([^|\n,;]+)/i);
+    if (clientMatch && !result.client) result.client = clientMatch[1].trim();
 
-function renderOptResult(sorted,driveMap,origin){
-  const label=orderPref==='closest'?t('optimized_closest'):t('optimized_farthest');
-  const stopsHTML=sorted.map((p,i)=>{const nk=i<sorted.length-1?`${p.id}_${sorted[i+1].id}`:null;const di=nk&&driveMap[nk];return`<div class="opt-stop"><div class="opt-stop-num">${i+1}</div><div class="opt-stop-content"><div class="opt-stop-addr">${p.address}</div><div class="opt-stop-meta">${p.price?`<span class="opt-stop-price">${p.price}</span> · `:''}📍 ${p.distText} ${t('real_dist')}</div></div></div>${di?`<div class="opt-drive"><span class="opt-drive-badge">🚗 ${di.text}</span><span class="opt-drive-dist">${di.dist}</span></div>`:''}`;}).join('');
-  document.getElementById('planResult').innerHTML=`<div class="opt-result"><div class="opt-header"><div class="opt-label">${label}</div><div class="opt-title">${origin} → ${sorted.length} stops</div></div><div class="opt-body">${stopsHTML}<button class="use-order-btn" onclick='useThisOrder(${JSON.stringify(sorted)},${JSON.stringify(driveMap)})'>${t('use_order')}</button><button class="copy-order-btn" onclick='copyOrder(${JSON.stringify(sorted)})'>${t('copy_order')}</button><div id="orderCopiedMsg" style="display:none;text-align:center;font-size:12px;color:var(--green);font-weight:600;margin-top:8px;">${t('order_copied')}</div></div></div>`;
-}
+    const agentMatch = line.match(/agent[:\s]+([^|\n,;]+)/i);
+    if (agentMatch && !result.agent) result.agent = agentMatch[1].trim();
 
-function useThisOrder(sorted,driveMap){itinProps=[];itinId=0;sorted.forEach(p=>{itinId++;itinProps.push({id:itinId,address:p.address,price:p.price||'',origId:p.id});});const start=document.getElementById('planStart').value;if(start)document.getElementById('itinStart').value=start;window._tm=driveMap;window._ts=sorted;renderItinProps();updateDriveList(driveMap,sorted);checkGenerate();switchTab('itinerary');}
-function copyOrder(sorted){navigator.clipboard.writeText(sorted.map((p,i)=>`${i+1}. ${p.address}${p.price?' — '+p.price:''}`).join('\n')).then(()=>{const el=document.getElementById('orderCopiedMsg');if(el){el.style.display='block';setTimeout(()=>el.style.display='none',2000);}});}
+    // Date: June 14, 2025 or 06/14/2025 or 2025-06-14
+    if (!result.date) {
+      const dateISO = line.match(/\b(\d{4}-\d{2}-\d{2})\b/);
+      if (dateISO) { result.date = dateISO[1]; }
+      else {
+        const dateMDY = line.match(/\b(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})\b/);
+        if (dateMDY) {
+          const y = dateMDY[3].length===2 ? '20'+dateMDY[3] : dateMDY[3];
+          result.date = `${y}-${String(dateMDY[1]).padStart(2,'0')}-${String(dateMDY[2]).padStart(2,'0')}`;
+        } else {
+          const dateWords = line.match(/\b(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{1,2}),?\s+(\d{4})/i);
+          if (dateWords) {
+            const months = {january:1,february:2,march:3,april:4,may:5,june:6,july:7,august:8,september:9,october:10,november:11,december:12};
+            const m = months[dateWords[1].toLowerCase()];
+            result.date = `${dateWords[3]}-${String(m).padStart(2,'0')}-${String(parseInt(dateWords[2])).padStart(2,'0')}`;
+          }
+          // Spanish month names
+          if (!result.date) {
+            const dateES = line.match(/\b(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)\s+(\d{1,2}),?\s+(\d{4})/i);
+            if (dateES) {
+              const esMonths = {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,octubre:10,noviembre:11,diciembre:12};
+              const m = esMonths[dateES[1].toLowerCase()];
+              result.date = `${dateES[3]}-${String(m).padStart(2,'0')}-${String(parseInt(dateES[2])).padStart(2,'0')}`;
+            }
+          }
+        }
+      }
+    }
 
-function addItinProp(a='',p=''){const id=++itinId;itinProps.push({id,address:a,price:p});renderItinProps();updateDriveList();checkGenerate();}
-function removeItinProp(id){itinProps=itinProps.filter(p=>p.id!==id);renderItinProps();updateDriveList();checkGenerate();}
-function renderItinProps(){const list=document.getElementById('itinPropList');list.innerHTML='';itinProps.forEach((p,i)=>{const d=document.createElement('div');d.className='prop-item';d.innerHTML=`<div class="prop-num">${i+1}</div><input class="prop-input" placeholder="Address..." value="${p.address}" oninput="itinProps[${i}].address=this.value;updateDriveList();checkGenerate();"><input class="prop-price" placeholder="Price" value="${p.price}" oninput="itinProps[${i}].price=this.value;"><button class="prop-remove" onclick="removeItinProp(${p.id})">×</button>`;list.appendChild(d);});}
-
-function updateDriveList(dm,sorted){
-  const card=document.getElementById('driveCard'),list=document.getElementById('driveList'),filled=itinProps.filter(p=>p.address.trim());
-  if(filled.length<1){card.style.display='none';return;}
-  card.style.display='block';
-  const existing={};document.querySelectorAll('.drive-min').forEach(el=>{existing[el.id]=el.value;});
-  list.innerHTML='';
-  const startAddr=document.getElementById('itinStart').value.trim();
-  if(startAddr&&filled.length>=1){
-    const firstKey='drv_start_'+filled[0].id;
-    const autoLabel=window._startDriveInfo?`<span class="drive-auto">🟢 Google Maps: ${window._startDriveInfo.text}</span>`:'';
-    const val=existing[firstKey]||(window._startDriveInfo?.minutes||'');
-    const d=document.createElement('div');d.className='drive-item';
-    d.innerHTML=`<div class="drive-arrow"><strong>${startAddr}</strong><span style="color:var(--gold);font-size:10px;font-weight:700;margin-left:4px">★ START</span><br>↓<br><strong>${filled[0].address||'...'}</strong>${autoLabel}</div><span style="font-size:17px">🚗</span><input class="drive-min" id="${firstKey}" type="number" min="1" max="180" value="${val}" placeholder="0"><span style="font-size:12px;color:var(--gray)">min</span>`;
-    list.appendChild(d);
-    if(!window._startDriveInfo&&startAddr&&filled[0].address){
-      getDistances(startAddr,[filled[0].address]).then(data=>{const el=data?.rows?.[0]?.elements?.[0];if(el?.status==='OK'){window._startDriveInfo={minutes:Math.round(el.duration.value/60),text:el.duration.text};updateDriveList(dm,sorted);}}).catch(()=>{});
+    // Start time: 10:00 AM, 10:00, 10am
+    if (!result.startTime) {
+      const timeMatch = line.match(/\b(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)?\b/);
+      if (timeMatch) {
+        let h = parseInt(timeMatch[1]);
+        const m = timeMatch[2];
+        const ampm = timeMatch[3] ? timeMatch[3].toUpperCase() : null;
+        if (ampm === 'PM' && h < 12) h += 12;
+        if (ampm === 'AM' && h === 12) h = 0;
+        result.startTime = `${String(h).padStart(2,'0')}:${m}`;
+      } else {
+        const timeSimple = line.match(/\b(\d{1,2})(am|pm)\b/i);
+        if (timeSimple) {
+          let h = parseInt(timeSimple[1]);
+          const ap = timeSimple[2].toUpperCase();
+          if (ap === 'PM' && h < 12) h += 12;
+          if (ap === 'AM' && h === 12) h = 0;
+          result.startTime = `${String(h).padStart(2,'0')}:00`;
+        }
+      }
     }
   }
-  for(let i=0;i<filled.length-1;i++){const from=filled[i],to=filled[i+1],key=`drv_${from.id}_${to.id}`;let autoVal='',autoLabel='';if(dm&&sorted){const of=sorted[i],ot=sorted[i+1];if(of&&ot){const dk=`${of.id}_${ot.id}`;if(dm[dk]){autoVal=dm[dk].minutes;autoLabel=`<span class="drive-auto">🟢 Google Maps: ${dm[dk].text}</span>`;}}}const val=existing[key]||autoVal;const d=document.createElement('div');d.className='drive-item';d.innerHTML=`<div class="drive-arrow"><strong>${from.address||'...'}</strong>↓<strong>${to.address||'...'}</strong>${autoLabel}</div><span style="font-size:17px">🚗</span><input class="drive-min" id="${key}" type="number" min="1" max="180" value="${val}" placeholder="0"><span style="font-size:12px;color:var(--gray)">min</span>`;list.appendChild(d);}
+
+  // --- Extract addresses ---
+  // Address heuristics: line contains a street number + street name + city combo
+  // US address pattern: starts with digits, followed by street name keywords
+  const streetTypes = /\b(st|ave|rd|blvd|dr|ln|ct|pl|way|ter|terr|cir|circle|trail|trl|pkwy|hwy|highway|expressway|expy|route|rt|pike|turnpike|run|row|loop|grove|glen|ridge|view|hill|hills|park|place|court|lane|drive|street|avenue|road|boulevard|square|sq|commons|common)\b/i;
+  const skipKeywords = /\b(client|agent|date|start|time|showing|confirmation|total|duration|mls|listing|price|listed|beds|baths|sqft|garage|map|directions|notes|contact|phone|email|schedule|appointment|confirmed)\b/i;
+
+  for (const line of lines) {
+    // Skip lines that are clearly metadata
+    if (skipKeywords.test(line) && !/\d+\s+\w+\s+\w+/.test(line)) continue;
+
+    // Remove leading numbering like "1.", "1)", "•", "-"
+    let clean = line.replace(/^[\d]+[.):\-]\s*/, '').replace(/^[•\-\*]\s*/, '').trim();
+
+    // Extract price if present: $xxx,xxx or $x.xxM
+    let price = '';
+    const priceMatch = clean.match(/\$[\d,]+(?:\.\d+)?[MKmk]?|\$[\d.]+[Mm]/);
+    if (priceMatch) {
+      price = priceMatch[0];
+      clean = clean.replace(priceMatch[0], '').replace(/[|—\-–]+/g, ' ').trim();
+    }
+    // Also handle "Listed at $..." or "Listed: $..."
+    const listedMatch = clean.match(/listed\s+(?:at|:)?\s*(\$[\d,]+[MKmk]?)/i);
+    if (listedMatch) {
+      price = listedMatch[1];
+      clean = clean.replace(listedMatch[0], '').trim();
+    }
+
+    // Does this line look like an address?
+    const hasStreetNum = /^\d+\s+\w/.test(clean);
+    const hasStreetType = streetTypes.test(clean);
+    const hasCity = /,\s*\w/.test(clean);
+
+    if (hasStreetNum && (hasStreetType || hasCity)) {
+      // Clean up separators
+      let addr = clean.replace(/[|—–]+.*$/, '').trim();
+      addr = addr.replace(/\s{2,}/g, ' ').trim();
+      // Remove trailing punctuation
+      addr = addr.replace(/[,\s]+$/, '').trim();
+      if (addr.length > 5) {
+        result.props.push({ address: addr, price });
+      }
+    }
+  }
+
+  return result;
 }
-function checkGenerate(){const has=itinProps.filter(p=>p.address.trim()).length>=1,hasDate=document.getElementById('showingDate').value;document.getElementById('generateBtn').disabled=!(has&&hasDate);}
-function formatTime(m){const h=Math.floor(m/60),min=m%60,suf=h>=12?'PM':'AM',dh=h>12?h-12:h===0?12:h;return`${dh}:${String(min).padStart(2,'0')} ${suf}`;}
 
-function generate(){
-  const client=document.getElementById('clientName').value||'Client',agent=document.getElementById('agentName').value||'',dateVal=document.getElementById('showingDate').value,startTimeVal=document.getElementById('startTime').value,showMin=parseInt(document.getElementById('showTime').value)||20,startAddr=document.getElementById('itinStart').value,filled=itinProps.filter(p=>p.address.trim());
-  if(!filled.length||!dateVal)return;
-  const dateDisplay=new Date(dateVal+'T12:00:00').toLocaleDateString(lang==='es'?'es-US':'en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const[sh,sm]=startTimeVal.split(':').map(Number);let cursor=sh*60+sm,totalDrive=0;
-  // Add drive time from starting point to first property
-  const startKey='drv_start_'+filled[0].id;
-  const startDriveEl=document.getElementById(startKey);
-  const startDriveMin=startDriveEl?(parseInt(startDriveEl.value)||0):0;
-  cursor+=startDriveMin;totalDrive+=startDriveMin;
-  const stops=filled.map((p,i)=>{const arrival=cursor,departure=cursor+showMin;let driveMin=0;if(i<filled.length-1){const next=filled[i+1],key=`drv_${p.id}_${next.id}`,el=document.getElementById(key);driveMin=el?(parseInt(el.value)||0):0;totalDrive+=driveMin;}cursor=departure+driveMin;return{...p,arrival:formatTime(arrival),departure:formatTime(departure),driveAfter:i<filled.length-1?driveMin:null};});
-  const totalMin=(filled.length*showMin)+totalDrive,totalH=Math.floor(totalMin/60),totalM=totalMin%60,totalStr=totalH>0?`${totalH}h ${totalM}m`:`${totalM}m`,returnTime=formatTime(sh*60+sm+totalMin);
-  window._itinData={client,agent,dateDisplay,stops,totalStr,returnTime,showMin,startAddr,startDriveMin};
-  const stopsHTML=stops.map((s,i)=>`<div class="stop"><div class="stop-timeline"><div class="stop-dot">${i+1}</div>${s.driveAfter!==null?'<div class="stop-line"></div>':''}</div><div class="stop-content"><div class="stop-address">${s.address}</div><div class="stop-meta">${s.price?`<span class="stop-price">${s.price}</span>`:''}</div><div class="stop-times"><div class="time-chip"><span class="time-chip-label">${t('arrival')}</span><span class="time-chip-val arrival">${s.arrival}</span></div><div class="time-chip"><span class="time-chip-label">${t('departure')}</span><span class="time-chip-val departure">${s.departure}</span></div></div></div></div>${s.driveAfter!==null?`<div class="drive-connector"><span>🚗</span><span class="drive-connector-text">${s.driveAfter} ${t('drive')}</span></div>`:''}`).join('');
-  document.getElementById('itineraryOut').innerHTML=`<div class="itinerary"><div class="itin-header"><div class="itin-label">${t('itin_label')}</div><div class="itin-client">${client}</div><div class="itin-date">${dateDisplay}${agent?' · '+agent:''}</div><div class="itin-stats"><div class="stat"><div class="stat-val">${stops.length}</div><div class="stat-label">${t('homes')}</div></div><div class="stat"><div class="stat-val">${totalStr}</div><div class="stat-label">${t('total')}</div></div><div class="stat"><div class="stat-val">${returnTime}</div><div class="stat-label">${t('returnlabel')}</div></div></div></div><div class="itin-body">${startAddr?`<div style="font-size:12px;color:var(--gray);margin-bottom:8px;font-style:italic">📍 ${t('from')}: ${startAddr}</div>`:''}${startDriveMin>0?`<div class="drive-connector" style="margin-left:0;margin-bottom:12px"><span>🚗</span><span class="drive-connector-text">${startDriveMin} min ${lang==='es'?'de manejo al primer showing':'drive to first showing'}</span></div>`:''}${stopsHTML}<div class="summary-box"><strong>${showMin} min</strong> ${lang==='es'?'por casa':'per home'} · <strong>${t('returnlabel')}:</strong> ${returnTime}</div></div><div class="share-bar"><span class="share-label">${t('sharelabel')}</span><button class="share-btn copy" onclick="copyItinerary()">📋 ${t('copybtn')}</button><button class="share-btn sms" onclick="smsItinerary()">💬 ${t('smsbtn')}</button><button class="share-btn email" onclick="emailItinerary()">📧 ${t('emailbtn')}</button><span class="copied-msg" id="copiedMsg">${t('copied')}</span></div></div>`;
+// ===================== PARSER UI LOGIC =====================
+
+function checkStParsePlan() {
+  const v = document.getElementById('stTextPlan').value.trim();
+  document.getElementById('stParseBtnPlan').disabled = !v;
+  if (!v) {
+    document.getElementById('stPreviewPlan').classList.remove('show');
+    document.getElementById('stSendBtnPlan').classList.remove('show');
+    document.getElementById('stErrorPlan').classList.remove('show');
+    stParsedPlan = null;
+  }
 }
 
-function buildText(){const d=window._itinData;if(!d)return'';let txt=`📍 ${t('itin_label').toUpperCase()}\n👤 ${d.client}\n📅 ${d.dateDisplay}\n`;if(d.startAddr)txt+=`🚀 ${t('from')}: ${d.startAddr}\n`;txt+='\n';if(d.startDriveMin>0)txt+=`   🚗 ${d.startDriveMin} min ${lang==='es'?'de manejo al primer showing':'drive to first showing'}\n\n`;d.stops.forEach((s,i)=>{txt+=`${i+1}. ${s.address}\n`;if(s.price)txt+=`   💰 ${s.price}\n`;txt+=`   🟢 ${t('arrival')}: ${s.arrival}  🔴 ${t('departure')}: ${s.departure}\n`;if(s.driveAfter!==null)txt+=`   🚗 ${s.driveAfter} ${t('drive')}\n`;txt+='\n';});txt+=`⏱️ ${t('total')}: ${d.totalStr} · ${t('returnlabel')}: ${d.returnTime}\n`;if(d.agent)txt+=`\n— ${d.agent} · RouteReady`;return txt;}
-function copyItinerary(){navigator.clipboard.writeText(buildText()).then(()=>{const el=document.getElementById('copiedMsg');if(el){el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2000);}});}
-function smsItinerary(){window.open(`sms:?body=${encodeURIComponent(buildText())}`);}
-function emailItinerary(){const d=window._itinData;window.open(`mailto:?subject=${encodeURIComponent(t('itin_label')+' - '+(d?d.dateDisplay:''))}&body=${encodeURIComponent(buildText())}`);}
+function checkStParseItin() {
+  const v = document.getElementById('stTextItin').value.trim();
+  document.getElementById('stParseBtnItin').disabled = !v;
+  if (!v) {
+    document.getElementById('stPreviewItin').classList.remove('show');
+    document.getElementById('stSendBtnItin').classList.remove('show');
+    document.getElementById('stErrorItin').classList.remove('show');
+    stParsedItin = null;
+  }
+}
 
+function parseST(tab) {
+  const isPlan = tab === 'plan';
+  const textEl = document.getElementById(isPlan ? 'stTextPlan' : 'stTextItin');
+  const errEl = document.getElementById(isPlan ? 'stErrorPlan' : 'stErrorItin');
+  const previewEl = document.getElementById(isPlan ? 'stPreviewPlan' : 'stPreviewItin');
+  const sendBtn = document.getElementById(isPlan ? 'stSendBtnPlan' : 'stSendBtnItin');
+
+  errEl.classList.remove('show');
+  previewEl.classList.remove('show');
+  sendBtn.classList.remove('show');
+
+  const raw = textEl.value.trim();
+  if (!raw) { errEl.textContent = t('st-error-empty'); errEl.classList.add('show'); return; }
+
+  const parsed = parseShowingTime(raw);
+
+  if (parsed.props.length === 0) {
+    errEl.textContent = t('st-error-none');
+    errEl.classList.add('show');
+    return;
+  }
+
+  // Store parsed
+  if (isPlan) stParsedPlan = parsed;
+  else stParsedItin = parsed;
+
+  // Build preview HTML
+  let metaItems = [];
+  if (parsed.client) metaItems.push('👤 ' + parsed.client);
+  if (parsed.agent) metaItems.push('🏷️ ' + parsed.agent);
+  if (parsed.date) metaItems.push('📅 ' + parsed.date);
+  if (parsed.startTime) metaItems.push('⏰ ' + parsed.startTime);
+
+  let html = `<strong>${t('st-preview-found')} ${parsed.props.length} ${t('st-preview-props')}</strong>`;
+  parsed.props.forEach((p, i) => {
+    html += `<div class="st-result-item"><span class="st-result-addr">${i+1}. ${p.address}</span>${p.price ? `<span class="st-result-meta"> · ${p.price}</span>` : ''}</div>`;
+  });
+  if (metaItems.length) {
+    html += `<div style="margin-top:8px;font-size:10px;color:var(--blue);font-weight:700;letter-spacing:1px;text-transform:uppercase;">${t('st-preview-meta')}</div>`;
+    html += `<div style="font-size:11px;color:var(--gray);margin-top:2px;">${metaItems.join(' · ')}</div>`;
+  }
+
+  previewEl.innerHTML = html;
+  previewEl.classList.add('show');
+  sendBtn.classList.add('show');
+}
+
+function sendSTtoPlan() {
+  if (!stParsedPlan || !stParsedPlan.props.length) return;
+  // Clear existing and add parsed props
+  planProps = [];
+  planId = 0;
+  stParsedPlan.props.forEach(p => { addPlanProp(p.address, p.price); });
+  // Scroll to prop list
+  document.getElementById('planPropList').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function sendSTtoItin() {
+  if (!stParsedItin || !stParsedItin.props.length) return;
+  const p = stParsedItin;
+  // Fill metadata if available
+  if (p.client) document.getElementById('clientName').value = p.client;
+  if (p.agent) document.getElementById('agentName').value = p.agent;
+  if (p.date) document.getElementById('showingDate').value = p.date;
+  if (p.startTime) document.getElementById('startTime').value = p.startTime;
+  // Fill properties
+  itinProps = [];
+  itinId = 0;
+  p.props.forEach(prop => { addItinProp(prop.address, prop.price); });
+  checkGenerate();
+  document.getElementById('itinPropList').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function toggleSample(tab) {
+  const el = document.getElementById(tab === 'plan' ? 'stSamplePlan' : 'stSampleItin');
+  el.classList.toggle('show');
+}
+
+// ===================== EXISTING LOGIC (UNCHANGED) =====================
+
+function setLang(l) {
+  lang = l;
+  document.getElementById('btn-en').classList.toggle('active', l === 'en');
+  document.getElementById('btn-es').classList.toggle('active', l === 'es');
+  updateAllTexts();
+}
+
+function updateAllTexts() {
+  ['tab1','tab2','plan-title','plan-sub','api-badge','plan-s1','startfrom','plan-s2','plan-hint','plan-s3',
+   'closest','closest-sub','farthest','farthest-sub','order-hint','plan-result','plan-empty',
+   'itin-title','itin-sub','itin-s1','clientlabel','agentelabel','datelabel','startlabel','showtlabel',
+   'startaddrlabel','itin-s2','itin-hint','itin-s3','drivehint','genbtn','itin-result','itin-empty'
+  ].forEach(k => { const el = document.getElementById('txt-'+k); if(el) el.textContent = t(k); });
+
+  document.getElementById('planAddBtn').textContent = t('addprop');
+  document.getElementById('itinAddBtn').textContent = t('addprop');
+  document.getElementById('txt-optbtn').textContent = t('optbtn');
+
+  // ST parser texts
+  ['st-title-plan','st-sub-plan','st-parsebtn-plan','st-sendbtn-plan',
+   'st-title-itin','st-sub-itin','st-parsebtn-itin','st-sendbtn-itin',
+   'st-sample-plan','st-sample-itin'
+  ].forEach(k => {
+    const el = document.getElementById('txt-'+k);
+    if(el) el.textContent = t(k);
+  });
+}
+
+function switchTab(tab) {
+  ['plan','itinerary'].forEach(t => {
+    document.getElementById('panel-'+t).classList.toggle('active', t === tab);
+    document.getElementById('tab-'+t).classList.toggle('active', t === tab);
+  });
+}
+
+function selectOrder(o) {
+  orderPref = o;
+  document.getElementById('opt-closest').classList.toggle('selected', o === 'closest');
+  document.getElementById('opt-farthest').classList.toggle('selected', o === 'farthest');
+}
+
+function addPlanProp(a='', p='') {
+  const id = ++planId;
+  planProps.push({id, address:a, price:p});
+  renderPlanProps();
+  checkOptimize();
+}
+
+function removePlanProp(id) {
+  planProps = planProps.filter(p => p.id !== id);
+  renderPlanProps();
+  checkOptimize();
+}
+
+function renderPlanProps() {
+  const list = document.getElementById('planPropList');
+  list.innerHTML = '';
+  planProps.forEach((p, i) => {
+    const d = document.createElement('div');
+    d.className = 'prop-item';
+    d.innerHTML = `<div class="prop-num">${i+1}</div><input class="prop-input" placeholder="Address..." value="${escHtml(p.address)}" oninput="planProps[${i}].address=this.value;checkOptimize();"><input class="prop-price" placeholder="Price" value="${escHtml(p.price)}" oninput="planProps[${i}].price=this.value;"><button class="prop-remove" onclick="removePlanProp(${p.id})">×</button>`;
+    list.appendChild(d);
+  });
+}
+
+function checkOptimize() {
+  document.getElementById('optimizeBtn').disabled = planProps.filter(p => p.address.trim()).length < 2;
+}
+
+async function getDistances(origin, destinations) {
+  const res = await fetch(`/.netlify/functions/maps?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destinations.join('|'))}`);
+  return res.json();
+}
+
+async function optimizeRoute() {
+  const filled = planProps.filter(p => p.address.trim());
+  if (filled.length < 2) return;
+  const sp = document.getElementById('optimizeSpinner'), bt = document.getElementById('txt-optbtn'), er = document.getElementById('apiError');
+  sp.classList.add('show'); bt.textContent = t('optimizing');
+  document.getElementById('optimizeBtn').disabled = true; er.classList.remove('show');
+  try {
+    const origin = document.getElementById('planStart').value || 'My Location';
+
+    // Step 1: Distance from origin to each property (for sorting)
+    const data = await getDistances(origin, filled.map(p => p.address));
+    const withDist = filled.map((p, i) => {
+      const el = data.rows[0].elements[i];
+      return {...p, distM: el.status==='OK' ? el.distance.value : 99999, distText: el.status==='OK' ? el.distance.text : '?', durText: el.status==='OK' ? el.duration.text : '?'};
+    });
+
+    // Step 2: Sort by distance from origin
+    const sorted = [...withDist].sort((a, b) => orderPref === 'closest' ? a.distM - b.distM : b.distM - a.distM);
+
+    // Step 3: Re-index sorted array with sequential keys (0,1,2...) to avoid ID mismatch bug
+    const sortedKeyed = sorted.map((p, i) => ({...p, sortIdx: i}));
+
+    // Step 4: Drive time origin → first stop
+    const driveMap = {};
+    try {
+      const firstLeg = await getDistances(origin, [sortedKeyed[0].address]);
+      const fe = firstLeg.rows[0].elements[0];
+      if (fe.status === 'OK') driveMap['origin_0'] = {minutes: Math.round(fe.duration.value/60), text: fe.duration.text, dist: fe.distance.text};
+    } catch(e) {}
+
+    // Step 5: Drive times between consecutive stops using sortIdx keys
+    for (let i = 0; i < sortedKeyed.length - 1; i++) {
+      try {
+        const leg = await getDistances(sortedKeyed[i].address, [sortedKeyed[i+1].address]);
+        const el = leg.rows[0].elements[0];
+        if (el.status === 'OK') driveMap[`${i}_${i+1}`] = {minutes: Math.round(el.duration.value/60), text: el.duration.text, dist: el.distance.text};
+      } catch(e) {}
+    }
+
+    renderOptResult(sortedKeyed, driveMap, origin);
+  } catch(e) { er.classList.add('show'); }
+  finally { sp.classList.remove('show'); bt.textContent = t('optbtn'); document.getElementById('optimizeBtn').disabled = false; }
+}
+
+function renderOptResult(sorted, driveMap, origin) {
+  const label = orderPref === 'closest' ? t('optimized_closest') : t('optimized_farthest');
+
+  // First leg: origin → stop 1
+  const originLeg = driveMap['origin_0'];
+  const originHTML = originLeg
+    ? `<div class="opt-origin-row"><span class="opt-origin-label">📍 ${origin}</span></div><div class="opt-drive"><span class="opt-drive-badge">🚗 ${originLeg.text}</span><span class="opt-drive-dist">${originLeg.dist} ${t('real_dist')}</span></div>`
+    : `<div class="opt-origin-row"><span class="opt-origin-label">📍 ${origin}</span></div>`;
+
+  // Stops with correct consecutive drive times
+  const stopsHTML = sorted.map((p, i) => {
+    const legKey = `${i}_${i+1}`;
+    const di = i < sorted.length - 1 ? driveMap[legKey] : null;
+    return `<div class="opt-stop"><div class="opt-stop-num">${i+1}</div><div class="opt-stop-content"><div class="opt-stop-addr">${p.address}</div><div class="opt-stop-meta">${p.price ? `<span class="opt-stop-price">${p.price}</span> · ` : ''}📍 ${p.distText} ${t('real_dist')} from start</div></div></div>${di ? `<div class="opt-drive"><span class="opt-drive-badge">🚗 ${di.text}</span><span class="opt-drive-dist">${di.dist}</span></div>` : ''}`;
+  }).join('');
+
+  document.getElementById('planResult').innerHTML = `<div class="opt-result"><div class="opt-header"><div class="opt-label">${label}</div><div class="opt-title">${origin} → ${sorted.length} stops</div></div><div class="opt-body">${originHTML}${stopsHTML}<button class="use-order-btn" onclick='useThisOrder(${JSON.stringify(sorted)},${JSON.stringify(driveMap)})'>${t('use_order')}</button><button class="copy-order-btn" onclick='copyOrder(${JSON.stringify(sorted)})'>${t('copy_order')}</button><div id="orderCopiedMsg" style="display:none;text-align:center;font-size:12px;color:var(--green);font-weight:600;margin-top:8px;">${t('order_copied')}</div></div></div>`;
+}
+
+function useThisOrder(sorted, driveMap) {
+  itinProps = []; itinId = 0;
+  sorted.forEach((p, i) => { itinId++; itinProps.push({id: itinId, address: p.address, price: p.price||'', sortIdx: i}); });
+  const start = document.getElementById('planStart').value;
+  if (start) document.getElementById('itinStart').value = start;
+  // Build itinDriveMap using itinProp ids (1-based sequential)
+  const itinDriveMap = {};
+  sorted.forEach((p, i) => {
+    const leg = driveMap[`${i}_${i+1}`];
+    if (leg) itinDriveMap[`drv_${i+1}_${i+2}`] = leg;
+  });
+  if (driveMap['origin_0']) itinDriveMap['origin_first'] = driveMap['origin_0'];
+  window._tm = itinDriveMap; window._ts = sorted;
+  renderItinProps(); updateDriveList(itinDriveMap, sorted); checkGenerate(); switchTab('itinerary');
+}
+
+function copyOrder(sorted) {
+  navigator.clipboard.writeText(sorted.map((p, i) => `${i+1}. ${p.address}${p.price ? ' — '+p.price : ''}`).join('\n')).then(() => {
+    const el = document.getElementById('orderCopiedMsg');
+    if (el) { el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 2000); }
+  });
+}
+
+function addItinProp(a='', p='') {
+  const id = ++itinId;
+  itinProps.push({id, address:a, price:p});
+  renderItinProps(); updateDriveList(); checkGenerate();
+}
+
+function removeItinProp(id) {
+  itinProps = itinProps.filter(p => p.id !== id);
+  renderItinProps(); updateDriveList(); checkGenerate();
+}
+
+function renderItinProps() {
+  const list = document.getElementById('itinPropList');
+  list.innerHTML = '';
+  itinProps.forEach((p, i) => {
+    const d = document.createElement('div');
+    d.className = 'prop-item';
+    d.innerHTML = `<div class="prop-num">${i+1}</div><input class="prop-input" placeholder="Address..." value="${escHtml(p.address)}" oninput="itinProps[${i}].address=this.value;updateDriveList();checkGenerate();"><input class="prop-price" placeholder="Price" value="${escHtml(p.price)}" oninput="itinProps[${i}].price=this.value;"><button class="prop-remove" onclick="removeItinProp(${p.id})">×</button>`;
+    list.appendChild(d);
+  });
+}
+
+function updateDriveList(dm, sorted) {
+  const card = document.getElementById('driveCard'), list = document.getElementById('driveList');
+  const filled = itinProps.filter(p => p.address.trim());
+  if (filled.length < 1) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  const existing = {};
+  document.querySelectorAll('.drive-min').forEach(el => { existing[el.id] = el.value; });
+  list.innerHTML = '';
+  const startAddr = document.getElementById('itinStart').value.trim();
+
+  // First leg: starting point → first property
+  if (startAddr && filled.length >= 1) {
+    const firstKey = 'drv_start_' + filled[0].id;
+    // Check if we got origin_first from useThisOrder
+    const autoInfo = (dm && dm['origin_first']) ? dm['origin_first'] : window._startDriveInfo;
+    const autoLabel = autoInfo ? `<span class="drive-auto">🟢 Google Maps: ${autoInfo.text}</span>` : '';
+    const val = existing[firstKey] || (autoInfo?.minutes || '');
+    const d = document.createElement('div'); d.className = 'drive-item';
+    d.innerHTML = `<div class="drive-arrow"><strong>${startAddr}</strong><span style="color:var(--gold);font-size:10px;font-weight:700;margin-left:4px">★ START</span><br>↓<br><strong>${filled[0].address||'...'}</strong>${autoLabel}</div><span style="font-size:17px">🚗</span><input class="drive-min" id="${firstKey}" type="number" min="1" max="180" value="${val}" placeholder="0"><span style="font-size:12px;color:var(--gray)">min</span>`;
+    list.appendChild(d);
+    // Auto-fetch if not already available
+    if (!autoInfo && startAddr && filled[0].address) {
+      getDistances(startAddr, [filled[0].address]).then(data => {
+        const el = data?.rows?.[0]?.elements?.[0];
+        if (el?.status === 'OK') { window._startDriveInfo = {minutes: Math.round(el.duration.value/60), text: el.duration.text}; updateDriveList(dm, sorted); }
+      }).catch(() => {});
+    }
+  }
+
+  // Legs between consecutive stops — use sequential itinProp ids
+  for (let i = 0; i < filled.length - 1; i++) {
+    const from = filled[i], to = filled[i+1];
+    const key = `drv_${from.id}_${to.id}`;
+    let autoVal = '', autoLabel = '';
+    // New key format from optimizeRoute: drv_{fromId}_{toId}
+    if (dm) {
+      const newKey = `drv_${from.id}_${to.id}`;
+      if (dm[newKey]) { autoVal = dm[newKey].minutes; autoLabel = `<span class="drive-auto">🟢 Google Maps: ${dm[newKey].text}</span>`; }
+    }
+    const val = existing[key] || autoVal;
+    const d = document.createElement('div'); d.className = 'drive-item';
+    d.innerHTML = `<div class="drive-arrow"><strong>${from.address||'...'}</strong>↓<strong>${to.address||'...'}</strong>${autoLabel}</div><span style="font-size:17px">🚗</span><input class="drive-min" id="${key}" type="number" min="1" max="180" value="${val}" placeholder="0"><span style="font-size:12px;color:var(--gray)">min</span>`;
+    list.appendChild(d);
+  }
+}
+
+function checkGenerate() {
+  const has = itinProps.filter(p => p.address.trim()).length >= 1;
+  const hasDate = document.getElementById('showingDate').value;
+  document.getElementById('generateBtn').disabled = !(has && hasDate);
+}
+
+function formatTime(m) {
+  const h = Math.floor(m/60), min = m%60, suf = h >= 12 ? 'PM' : 'AM';
+  const dh = h > 12 ? h - 12 : h === 0 ? 12 : h;
+  return `${dh}:${String(min).padStart(2,'0')} ${suf}`;
+}
+
+function generate() {
+  const client = document.getElementById('clientName').value || 'Client';
+  const agent = document.getElementById('agentName').value || '';
+  const dateVal = document.getElementById('showingDate').value;
+  const startTimeVal = document.getElementById('startTime').value;
+  const showMin = parseInt(document.getElementById('showTime').value) || 20;
+  const startAddr = document.getElementById('itinStart').value;
+  const filled = itinProps.filter(p => p.address.trim());
+  if (!filled.length || !dateVal) return;
+
+  const dateDisplay = new Date(dateVal+'T12:00:00').toLocaleDateString(lang==='es'?'es-US':'en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const [sh, sm] = startTimeVal.split(':').map(Number);
+  let cursor = sh*60+sm, totalDrive = 0;
+
+  const startKey = 'drv_start_' + filled[0].id;
+  const startDriveEl = document.getElementById(startKey);
+  const startDriveMin = startDriveEl ? (parseInt(startDriveEl.value)||0) : 0;
+  cursor += startDriveMin; totalDrive += startDriveMin;
+
+  const stops = filled.map((p, i) => {
+    const arrival = cursor, departure = cursor + showMin;
+    let driveMin = 0;
+    if (i < filled.length - 1) {
+      const next = filled[i+1], key = `drv_${p.id}_${next.id}`, el = document.getElementById(key);
+      driveMin = el ? (parseInt(el.value)||0) : 0;
+      totalDrive += driveMin;
+    }
+    cursor = departure + driveMin;
+    return {...p, arrival: formatTime(arrival), departure: formatTime(departure), driveAfter: i < filled.length-1 ? driveMin : null};
+  });
+
+  const totalMin = (filled.length * showMin) + totalDrive;
+  const totalH = Math.floor(totalMin/60), totalM = totalMin%60;
+  const totalStr = totalH > 0 ? `${totalH}h ${totalM}m` : `${totalM}m`;
+  const returnTime = formatTime(sh*60+sm+totalMin);
+  window._itinData = {client, agent, dateDisplay, stops, totalStr, returnTime, showMin, startAddr, startDriveMin};
+
+  const stopsHTML = stops.map((s, i) => `<div class="stop"><div class="stop-timeline"><div class="stop-dot">${i+1}</div>${s.driveAfter!==null?'<div class="stop-line"></div>':''}</div><div class="stop-content"><div class="stop-address">${s.address}</div><div class="stop-meta">${s.price?`<span class="stop-price">${s.price}</span>`:''}</div><div class="stop-times"><div class="time-chip"><span class="time-chip-label">${t('arrival')}</span><span class="time-chip-val arrival">${s.arrival}</span></div><div class="time-chip"><span class="time-chip-label">${t('departure')}</span><span class="time-chip-val departure">${s.departure}</span></div></div></div></div>${s.driveAfter!==null?`<div class="drive-connector"><span>🚗</span><span class="drive-connector-text">${s.driveAfter} ${t('drive')}</span></div>`:''}`).join('');
+
+  document.getElementById('itineraryOut').innerHTML = `<div class="itinerary"><div class="itin-header"><div class="itin-label">${t('itin_label')}</div><div class="itin-client">${client}</div><div class="itin-date">${dateDisplay}${agent?' · '+agent:''}</div><div class="itin-stats"><div class="stat"><div class="stat-val">${stops.length}</div><div class="stat-label">${t('homes')}</div></div><div class="stat"><div class="stat-val">${totalStr}</div><div class="stat-label">${t('total')}</div></div><div class="stat"><div class="stat-val">${returnTime}</div><div class="stat-label">${t('returnlabel')}</div></div></div></div><div class="itin-body">${startAddr?`<div style="font-size:12px;color:var(--gray);margin-bottom:8px;font-style:italic">📍 ${t('from')}: ${startAddr}</div>`:''}${startDriveMin>0?`<div class="drive-connector" style="margin-left:0;margin-bottom:12px"><span>🚗</span><span class="drive-connector-text">${startDriveMin} min ${lang==='es'?'de manejo al primer showing':'drive to first showing'}</span></div>`:''}${stopsHTML}<div class="summary-box"><strong>${showMin} min</strong> ${lang==='es'?'por casa':'per home'} · <strong>${t('returnlabel')}:</strong> ${returnTime}</div></div><div class="share-bar"><span class="share-label">${t('sharelabel')}</span><button class="share-btn copy" onclick="copyItinerary()">📋 ${t('copybtn')}</button><button class="share-btn sms" onclick="smsItinerary()">💬 ${t('smsbtn')}</button><button class="share-btn email" onclick="emailItinerary()">📧 ${t('emailbtn')}</button><span class="copied-msg" id="copiedMsg">${t('copied')}</span></div></div>`;
+}
+
+function buildText() {
+  const d = window._itinData; if (!d) return '';
+  let txt = `📍 ${t('itin_label').toUpperCase()}\n👤 ${d.client}\n📅 ${d.dateDisplay}\n`;
+  if (d.startAddr) txt += `🚀 ${t('from')}: ${d.startAddr}\n`;
+  txt += '\n';
+  if (d.startDriveMin > 0) txt += `   🚗 ${d.startDriveMin} min ${lang==='es'?'de manejo al primer showing':'drive to first showing'}\n\n`;
+  d.stops.forEach((s, i) => {
+    txt += `${i+1}. ${s.address}\n`;
+    if (s.price) txt += `   💰 ${s.price}\n`;
+    txt += `   🟢 ${t('arrival')}: ${s.arrival}  🔴 ${t('departure')}: ${s.departure}\n`;
+    if (s.driveAfter !== null) txt += `   🚗 ${s.driveAfter} ${t('drive')}\n`;
+    txt += '\n';
+  });
+  txt += `⏱️ ${t('total')}: ${d.totalStr} · ${t('returnlabel')}: ${d.returnTime}\n`;
+  if (d.agent) txt += `\n— ${d.agent} · RouteReady`;
+  return txt;
+}
+
+function copyItinerary() {
+  navigator.clipboard.writeText(buildText()).then(() => {
+    const el = document.getElementById('copiedMsg');
+    if (el) { el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2000); }
+  });
+}
+function smsItinerary() { window.open(`sms:?body=${encodeURIComponent(buildText())}`); }
+function emailItinerary() {
+  const d = window._itinData;
+  window.open(`mailto:?subject=${encodeURIComponent(t('itin_label')+' - '+(d?d.dateDisplay:''))}&body=${encodeURIComponent(buildText())}`);
+}
+
+// Utility: escape HTML for safe attribute injection
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ===================== INIT =====================
 addPlanProp(); addPlanProp();
 updateAllTexts();
 </script>
