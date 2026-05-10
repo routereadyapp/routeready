@@ -202,21 +202,23 @@
   .st-error.show { display: block; }
   .st-send-btn {
     width: 100%;
-    padding: 11px;
+    padding: 15px;
     background: var(--green);
     color: var(--white);
     border: none;
     border-radius: 10px;
     font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 700;
     cursor: pointer;
-    margin-top: 8px;
+    margin-top: 12px;
     transition: all 0.2s;
     display: none;
+    box-shadow: 0 3px 12px rgba(26,107,58,0.35);
+    letter-spacing: 0.3px;
   }
-  .st-send-btn.show { display: block; }
-  .st-send-btn:hover { background: #147830; }
+  .st-send-btn.show { display: block; animation: fadeIn 0.3s ease; }
+  .st-send-btn:hover { background: #147830; transform: translateY(-1px); }
   .st-toggle-hint {
     font-size: 11px;
     color: var(--blue);
@@ -1111,7 +1113,7 @@ function generate() {
 
   const stopsHTML = stops.map((s, i) => `<div class="stop"><div class="stop-timeline"><div class="stop-dot">${i+1}</div>${s.driveAfter!==null?'<div class="stop-line"></div>':''}</div><div class="stop-content"><div class="stop-address">${s.address}</div><div class="stop-meta">${s.price?`<span class="stop-price">${s.price}</span>`:''}</div><div class="stop-times"><div class="time-chip"><span class="time-chip-label">${t('arrival')}</span><span class="time-chip-val arrival">${s.arrival}</span></div><div class="time-chip"><span class="time-chip-label">${t('departure')}</span><span class="time-chip-val departure">${s.departure}</span></div></div></div></div>${s.driveAfter!==null?`<div class="drive-connector"><span>🚗</span><span class="drive-connector-text">${s.driveAfter} ${t('drive')}</span></div>`:''}`).join('');
 
-  document.getElementById('itineraryOut').innerHTML = `<div class="itinerary"><div class="itin-header"><div class="itin-label">${t('itin_label')}</div><div class="itin-client">${client}</div><div class="itin-date">${dateDisplay}${agent?' · '+agent:''}</div><div class="itin-stats"><div class="stat"><div class="stat-val">${stops.length}</div><div class="stat-label">${t('homes')}</div></div><div class="stat"><div class="stat-val">${totalStr}</div><div class="stat-label">${t('total')}</div></div><div class="stat"><div class="stat-val">${returnTime}</div><div class="stat-label">${t('returnlabel')}</div></div></div></div><div class="itin-body">${startAddr?`<div style="font-size:12px;color:var(--gray);margin-bottom:8px;font-style:italic">📍 ${t('from')}: ${startAddr}</div>`:''}${startDriveMin>0?`<div class="drive-connector" style="margin-left:0;margin-bottom:12px"><span>🚗</span><span class="drive-connector-text">${startDriveMin} min ${lang==='es'?'de manejo al primer showing':'drive to first showing'}</span></div>`:''}${stopsHTML}<div class="summary-box"><strong>${showMin} min</strong> ${lang==='es'?'por casa':'per home'} · <strong>${t('returnlabel')}:</strong> ${returnTime}</div></div><div class="share-bar"><span class="share-label">${t('sharelabel')}</span><button class="share-btn copy" onclick="copyItinerary()">📋 ${t('copybtn')}</button><button class="share-btn sms" onclick="smsItinerary()">💬 ${t('smsbtn')}</button><button class="share-btn email" onclick="emailItinerary()">📧 ${t('emailbtn')}</button><span class="copied-msg" id="copiedMsg">${t('copied')}</span></div></div>`;
+  document.getElementById('itineraryOut').innerHTML = `<div class="itinerary"><div class="itin-header"><div class="itin-label">${t('itin_label')}</div><div class="itin-client">${client}</div><div class="itin-date">${dateDisplay}${agent?' · '+agent:''}</div><div class="itin-stats"><div class="stat"><div class="stat-val">${stops.length}</div><div class="stat-label">${t('homes')}</div></div><div class="stat"><div class="stat-val">${totalStr}</div><div class="stat-label">${t('total')}</div></div><div class="stat"><div class="stat-val">${returnTime}</div><div class="stat-label">${t('returnlabel')}</div></div></div></div><div class="itin-body">${startAddr?`<div style="font-size:12px;color:var(--gray);margin-bottom:8px;font-style:italic">📍 ${t('from')}: ${startAddr}</div>`:''}${startDriveMin>0?`<div class="drive-connector" style="margin-left:0;margin-bottom:12px"><span>🚗</span><span class="drive-connector-text">${startDriveMin} min ${lang==='es'?'de manejo al primer showing':'drive to first showing'}</span></div>`:''}${stopsHTML}<div class="summary-box"><strong>${showMin} min</strong> ${lang==='es'?'por casa':'per home'} · <strong>${t('returnlabel')}:</strong> ${returnTime}</div></div><div class="share-bar"><span class="share-label">${t('sharelabel')}</span><button class="share-btn copy" onclick="copyItinerary()">📋 ${t('copybtn')}</button><button class="share-btn sms" onclick="smsItinerary()">💬 ${t('smsbtn')}</button><button class="share-btn email" onclick="emailItinerary()">📧 ${t('emailbtn')}</button><button class="share-btn maps" onclick="openMapsRoute()" style="background:var(--green);color:var(--white);">🗺️ Maps</button><span class="copied-msg" id="copiedMsg">${t('copied')}</span></div></div>`;
 }
 
 function buildText() {
@@ -1138,15 +1140,39 @@ function copyItinerary() {
     if (el) { el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2000); }
   });
 }
-function smsItinerary() { window.open(`sms:?body=${encodeURIComponent(buildText())}`); }
+
+function smsItinerary() {
+  const txt = buildText();
+  const encoded = encodeURIComponent(txt);
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const url = isIOS ? 'sms:&body=' + encoded : 'sms:?body=' + encoded;
+  window.location.href = url;
+}
+
 function emailItinerary() {
   const d = window._itinData;
-  window.open(`mailto:?subject=${encodeURIComponent(t('itin_label')+' - '+(d?d.dateDisplay:''))}&body=${encodeURIComponent(buildText())}`);
+  const subject = encodeURIComponent(t('itin_label') + ' - ' + (d ? d.dateDisplay : ''));
+  const body = encodeURIComponent(buildText());
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+}
+
+function buildGoogleMapsLink() {
+  const d = window._itinData;
+  if (!d || !d.stops.length) return null;
+  const parts = [];
+  if (d.startAddr) parts.push(encodeURIComponent(d.startAddr));
+  d.stops.forEach(s => parts.push(encodeURIComponent(s.address)));
+  return 'https://www.google.com/maps/dir/' + parts.join('/');
 }
 
 // Utility: escape HTML for safe attribute injection
 function escHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function openMapsRoute() {
+  const link = buildGoogleMapsLink();
+  if (link) window.open(link, '_blank');
 }
 
 // ===================== INIT =====================
