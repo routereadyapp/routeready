@@ -2,16 +2,21 @@ const https = require('https');
 
 exports.handler = async function(event) {
   const params = event.queryStringParameters;
-  const { origins, destinations, mode } = params;
+  const { origin, destination, waypoints, mode } = params;
   const KEY = 'AIzaSyDuYgGbbYy0U23ZJVdp4Q4BU-LHXDmyxNs';
 
   let url;
-  if (mode === 'directions') {
-    // Single origin → single destination, real road route
-    url = `https://maps.googleapis.com/maps/api/directions/json?origin=${encodeURIComponent(origins)}&destination=${encodeURIComponent(destinations)}&units=imperial&key=${KEY}`;
+
+  if (mode === 'optimize') {
+    // Directions API con waypoint optimization — Google ordena las paradas
+    const waypointStr = waypoints.split('|').map(w => encodeURIComponent(w)).join('|');
+    url = `https://maps.googleapis.com/maps/api/directions/json?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&waypoints=optimize:true|${waypointStr}&units=imperial&key=${KEY}`;
+  } else if (mode === 'directions') {
+    // Directions API simple — un origen a un destino
+    url = `https://maps.googleapis.com/maps/api/directions/json?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&units=imperial&key=${KEY}`;
   } else {
-    // Distance Matrix: one origin → multiple destinations
-    url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(origins)}&destinations=${encodeURIComponent(destinations)}&units=imperial&key=${KEY}`;
+    // Distance Matrix — origen a múltiples destinos
+    url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(waypoints)}&units=imperial&key=${KEY}`;
   }
 
   return new Promise((resolve) => {
