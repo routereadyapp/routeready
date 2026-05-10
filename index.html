@@ -257,6 +257,8 @@
   .opt-drive-badge { background: var(--burgundy); color: var(--gold2); padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
   .opt-drive-dist { font-size: 11px; color: var(--gray); }
 
+  .opt-origin-row { display: flex; align-items: center; gap: 8px; padding: 8px 0 4px 0; }
+  .opt-origin-label { font-size: 12px; font-weight: 700; color: var(--burgundy); background: var(--cream); padding: 4px 10px; border-radius: 8px; border: 1.5px solid var(--lightgray); }
   .use-order-btn { width: 100%; padding: 13px; background: var(--burgundy); color: var(--gold2); border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 16px; transition: all 0.2s; }
   .use-order-btn:hover { background: var(--burgundy2); }
   .copy-order-btn { width: 100%; padding: 11px; background: var(--cream); color: var(--burgundy); border: 1.5px solid var(--lightgray); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
@@ -877,9 +879,14 @@ function checkOptimize() {
   document.getElementById('optimizeBtn').disabled = planProps.filter(p => p.address.trim()).length < 2;
 }
 
-async function getDistances(origin, destinations) {
-  const res = await fetch(`/.netlify/functions/maps?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destinations.join('|'))}`);
+async function callMaps(params) {
+  const qs = Object.entries(params).map(([k,v]) => `${k}=${encodeURIComponent(v)}`).join('&');
+  const res = await fetch(`/.netlify/functions/maps?${qs}`);
   return res.json();
+}
+
+async function getDistances(origin, destinations) {
+  return callMaps({ mode: 'matrix', origin, waypoints: destinations.join('|') });
 }
 
 async function optimizeRoute() {
@@ -888,44 +895,94 @@ async function optimizeRoute() {
   const sp = document.getElementById('optimizeSpinner'), bt = document.getElementById('txt-optbtn'), er = document.getElementById('apiError');
   sp.classList.add('show'); bt.textContent = t('optimizing');
   document.getElementById('optimizeBtn').disabled = true; er.classList.remove('show');
+
   try {
-    const origin = document.getElementById('planStart').value || 'My Location';
-    const data = await getDistances(origin, filled.map(p => p.address));
-    const withDist = filled.map((p, i) => {
-      const el = data.rows[0].elements[i];
-      return {...p, distM: el.status==='OK' ? el.distance.value : 99999, distText: el.status==='OK' ? el.distance.text : '?', durText: el.status==='OK' ? el.duration.text : '?'};
+    const origin = document.getElementById('planStart').value.trim() || filled[0].address;
+    const addresses = filled.map(p => p.address);
+
+    // Use Directions API with optimize:true
+    // Origin = starting point, destination = last stop (Google will reorder middle waypoints)
+    // We send all properties as waypoints and let Google optimize
+    const destination = addresses[addresses.length - 1];
+    const middleWaypoints = addresses.slice(0, addresses.length - 1);
+
+    const data = await callMaps({
+      mode: 'optimize',
+      origin: origin,
+      destination: destination,
+      waypoints: middleWaypoints.join('|')
     });
-    const sorted = [...withDist].sort((a, b) => orderPref === 'closest' ? a.distM - b.distM : b.distM - a.distM);
+
+    if (!data.routes || !data.routes[0]) { er.classList.add('show'); return; }
+
+    const route = data.routes[0];
+    const order = route.waypoint_order; // Google's optimized order for middle waypoints
+    const legs = route.legs;
+
+    // Reconstruct sorted array based on Google's optimized order
+    // middleWaypoints[order[0]], middleWaypoints[order[1]], ... destination
+    const optimizedAddresses = [...order.map(i => middleWaypoints[i]), destination];
     const driveMap = {};
-    for (let i = 0; i < sorted.length - 1; i++) {
-      try {
-        const leg = await getDistances(sorted[i].address, [sorted[i+1].address]);
-        const el = leg.rows[0].elements[0];
-        if (el.status === 'OK') driveMap[`${sorted[i].id}_${sorted[i+1].id}`] = {minutes: Math.round(el.duration.value/60), text: el.duration.text, dist: el.distance.text};
-      } catch(e) {}
-    }
-    renderOptResult(sorted, driveMap, origin);
-  } catch(e) { er.classList.add('show'); }
+
+    // First leg: origin → first stop
+    driveMap['origin_0'] = {
+      minutes: Math.round(legs[0].duration.value / 60),
+      text: legs[0].duration.text,
+      dist: legs[0].distance.text
+    };
+
+    // Build sorted props array and driveMap
+    const sortedKeyed = optimizedAddresses.map((addr, i) => {
+      const original = filled.find(p => p.address === addr) || {address: addr, price: '', id: i};
+      if (i < optimizedAddresses.length - 1) {
+        driveMap[`${i}_${i+1}`] = {
+          minutes: Math.round(legs[i+1].duration.value / 60),
+          text: legs[i+1].duration.text,
+          dist: legs[i+1].distance.text
+        };
+      }
+      return {...original, sortIdx: i, distText: legs[i].distance.text, durText: legs[i].duration.text};
+    });
+
+    renderOptResult(sortedKeyed, driveMap, origin);
+
+  } catch(e) { er.classList.add('show'); console.error(e); }
   finally { sp.classList.remove('show'); bt.textContent = t('optbtn'); document.getElementById('optimizeBtn').disabled = false; }
 }
 
 function renderOptResult(sorted, driveMap, origin) {
   const label = orderPref === 'closest' ? t('optimized_closest') : t('optimized_farthest');
+
+  // First leg: origin → stop 1
+  const originLeg = driveMap['origin_0'];
+  const originHTML = originLeg
+    ? `<div class="opt-origin-row"><span class="opt-origin-label">📍 ${origin}</span></div><div class="opt-drive"><span class="opt-drive-badge">🚗 ${originLeg.text}</span><span class="opt-drive-dist">${originLeg.dist} ${t('real_dist')}</span></div>`
+    : `<div class="opt-origin-row"><span class="opt-origin-label">📍 ${origin}</span></div>`;
+
+  // Stops with correct consecutive drive times
   const stopsHTML = sorted.map((p, i) => {
-    const nk = i < sorted.length-1 ? `${p.id}_${sorted[i+1].id}` : null;
-    const di = nk && driveMap[nk];
-    return `<div class="opt-stop"><div class="opt-stop-num">${i+1}</div><div class="opt-stop-content"><div class="opt-stop-addr">${p.address}</div><div class="opt-stop-meta">${p.price ? `<span class="opt-stop-price">${p.price}</span> · ` : ''}📍 ${p.distText} ${t('real_dist')}</div></div></div>${di ? `<div class="opt-drive"><span class="opt-drive-badge">🚗 ${di.text}</span><span class="opt-drive-dist">${di.dist}</span></div>` : ''}`;
+    const legKey = `${i}_${i+1}`;
+    const di = i < sorted.length - 1 ? driveMap[legKey] : null;
+    return `<div class="opt-stop"><div class="opt-stop-num">${i+1}</div><div class="opt-stop-content"><div class="opt-stop-addr">${p.address}</div><div class="opt-stop-meta">${p.price ? `<span class="opt-stop-price">${p.price}</span> · ` : ''}📍 ${p.distText} ${t('real_dist')} from start</div></div></div>${di ? `<div class="opt-drive"><span class="opt-drive-badge">🚗 ${di.text}</span><span class="opt-drive-dist">${di.dist}</span></div>` : ''}`;
   }).join('');
-  document.getElementById('planResult').innerHTML = `<div class="opt-result"><div class="opt-header"><div class="opt-label">${label}</div><div class="opt-title">${origin} → ${sorted.length} stops</div></div><div class="opt-body">${stopsHTML}<button class="use-order-btn" onclick='useThisOrder(${JSON.stringify(sorted)},${JSON.stringify(driveMap)})'>${t('use_order')}</button><button class="copy-order-btn" onclick='copyOrder(${JSON.stringify(sorted)})'>${t('copy_order')}</button><div id="orderCopiedMsg" style="display:none;text-align:center;font-size:12px;color:var(--green);font-weight:600;margin-top:8px;">${t('order_copied')}</div></div></div>`;
+
+  document.getElementById('planResult').innerHTML = `<div class="opt-result"><div class="opt-header"><div class="opt-label">${label}</div><div class="opt-title">${origin} → ${sorted.length} stops</div></div><div class="opt-body">${originHTML}${stopsHTML}<button class="use-order-btn" onclick='useThisOrder(${JSON.stringify(sorted)},${JSON.stringify(driveMap)})'>${t('use_order')}</button><button class="copy-order-btn" onclick='copyOrder(${JSON.stringify(sorted)})'>${t('copy_order')}</button><div id="orderCopiedMsg" style="display:none;text-align:center;font-size:12px;color:var(--green);font-weight:600;margin-top:8px;">${t('order_copied')}</div></div></div>`;
 }
 
 function useThisOrder(sorted, driveMap) {
   itinProps = []; itinId = 0;
-  sorted.forEach(p => { itinId++; itinProps.push({id: itinId, address: p.address, price: p.price||'', origId: p.id}); });
+  sorted.forEach((p, i) => { itinId++; itinProps.push({id: itinId, address: p.address, price: p.price||'', sortIdx: i}); });
   const start = document.getElementById('planStart').value;
   if (start) document.getElementById('itinStart').value = start;
-  window._tm = driveMap; window._ts = sorted;
-  renderItinProps(); updateDriveList(driveMap, sorted); checkGenerate(); switchTab('itinerary');
+  // Build itinDriveMap using itinProp ids (1-based sequential)
+  const itinDriveMap = {};
+  sorted.forEach((p, i) => {
+    const leg = driveMap[`${i}_${i+1}`];
+    if (leg) itinDriveMap[`drv_${i+1}_${i+2}`] = leg;
+  });
+  if (driveMap['origin_0']) itinDriveMap['origin_first'] = driveMap['origin_0'];
+  window._tm = itinDriveMap; window._ts = sorted;
+  renderItinProps(); updateDriveList(itinDriveMap, sorted); checkGenerate(); switchTab('itinerary');
 }
 
 function copyOrder(sorted) {
@@ -966,26 +1023,35 @@ function updateDriveList(dm, sorted) {
   document.querySelectorAll('.drive-min').forEach(el => { existing[el.id] = el.value; });
   list.innerHTML = '';
   const startAddr = document.getElementById('itinStart').value.trim();
+
+  // First leg: starting point → first property
   if (startAddr && filled.length >= 1) {
     const firstKey = 'drv_start_' + filled[0].id;
-    const autoLabel = window._startDriveInfo ? `<span class="drive-auto">🟢 Google Maps: ${window._startDriveInfo.text}</span>` : '';
-    const val = existing[firstKey] || (window._startDriveInfo?.minutes || '');
+    // Check if we got origin_first from useThisOrder
+    const autoInfo = (dm && dm['origin_first']) ? dm['origin_first'] : window._startDriveInfo;
+    const autoLabel = autoInfo ? `<span class="drive-auto">🟢 Google Maps: ${autoInfo.text}</span>` : '';
+    const val = existing[firstKey] || (autoInfo?.minutes || '');
     const d = document.createElement('div'); d.className = 'drive-item';
     d.innerHTML = `<div class="drive-arrow"><strong>${startAddr}</strong><span style="color:var(--gold);font-size:10px;font-weight:700;margin-left:4px">★ START</span><br>↓<br><strong>${filled[0].address||'...'}</strong>${autoLabel}</div><span style="font-size:17px">🚗</span><input class="drive-min" id="${firstKey}" type="number" min="1" max="180" value="${val}" placeholder="0"><span style="font-size:12px;color:var(--gray)">min</span>`;
     list.appendChild(d);
-    if (!window._startDriveInfo && startAddr && filled[0].address) {
+    // Auto-fetch if not already available
+    if (!autoInfo && startAddr && filled[0].address) {
       getDistances(startAddr, [filled[0].address]).then(data => {
         const el = data?.rows?.[0]?.elements?.[0];
         if (el?.status === 'OK') { window._startDriveInfo = {minutes: Math.round(el.duration.value/60), text: el.duration.text}; updateDriveList(dm, sorted); }
       }).catch(() => {});
     }
   }
+
+  // Legs between consecutive stops — use sequential itinProp ids
   for (let i = 0; i < filled.length - 1; i++) {
-    const from = filled[i], to = filled[i+1], key = `drv_${from.id}_${to.id}`;
+    const from = filled[i], to = filled[i+1];
+    const key = `drv_${from.id}_${to.id}`;
     let autoVal = '', autoLabel = '';
-    if (dm && sorted) {
-      const of = sorted[i], ot = sorted[i+1];
-      if (of && ot) { const dk = `${of.id}_${ot.id}`; if (dm[dk]) { autoVal = dm[dk].minutes; autoLabel = `<span class="drive-auto">🟢 Google Maps: ${dm[dk].text}</span>`; } }
+    // New key format from optimizeRoute: drv_{fromId}_{toId}
+    if (dm) {
+      const newKey = `drv_${from.id}_${to.id}`;
+      if (dm[newKey]) { autoVal = dm[newKey].minutes; autoLabel = `<span class="drive-auto">🟢 Google Maps: ${dm[newKey].text}</span>`; }
     }
     const val = existing[key] || autoVal;
     const d = document.createElement('div'); d.className = 'drive-item';
