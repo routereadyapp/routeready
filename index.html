@@ -7,32 +7,45 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --navy: #0B1F3A; --navy2: #142d52; --gold: #C9A84C; --gold2: #e8c97a;
-    --cream: #F7F3EC; --white: #FFFFFF; --gray: #8A8A8A; --lightgray: #E4DED4;
-    --green: #1A6B3A; --green2: #e8f5ee; --red: #C0392B; --red2: #fdecea;
-    --shadow: 0 4px 24px rgba(11,31,58,0.10); --shadow2: 0 2px 8px rgba(11,31,58,0.07);
+    --burgundy: #6B1A2A;
+    --burgundy2: #8B2438;
+    --burgundy3: #4A1020;
+    --gold: #C9A84C;
+    --gold2: #E8C97A;
+    --gold3: #F5E0A0;
+    --cream: #FBF6F0;
+    --white: #FFFFFF;
+    --gray: #8A7A7A;
+    --lightgray: #EDE5E0;
+    --green: #1A6B3A;
+    --green2: #E8F5EE;
+    --red: #C0392B;
+    --red2: #FDECEA;
+    --shadow: 0 4px 24px rgba(107,26,42,0.12);
+    --shadow2: 0 2px 8px rgba(107,26,42,0.07);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--navy); min-height: 100vh; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--burgundy3); min-height: 100vh; }
 
-  header { background: var(--navy); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 64px; border-bottom: 3px solid var(--gold); position: sticky; top: 0; z-index: 100; }
+  header { background: var(--burgundy); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 64px; border-bottom: 3px solid var(--gold); position: sticky; top: 0; z-index: 100; }
   .logo { display: flex; align-items: center; gap: 10px; }
   .logo-icon { width: 34px; height: 34px; background: var(--gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
   .logo-text { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--white); }
   .logo-text span { color: var(--gold); }
-  .lang-toggle { display: flex; background: var(--navy2); border-radius: 20px; padding: 3px; gap: 2px; }
-  .lang-btn { padding: 5px 14px; border-radius: 16px; border: none; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--gray); }
-  .lang-btn.active { background: var(--gold); color: var(--navy); }
+  .lang-toggle { display: flex; background: var(--burgundy3); border-radius: 20px; padding: 3px; gap: 2px; }
+  .lang-btn { padding: 5px 14px; border-radius: 16px; border: none; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--gold3); }
+  .lang-btn.active { background: var(--gold); color: var(--burgundy); }
 
-  .tabs { display: flex; background: var(--navy2); border-bottom: 3px solid var(--gold); }
-  .tab { flex: 1; padding: 14px 20px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--gray); border: none; background: transparent; transition: all 0.2s; }
-  .tab.active { color: var(--gold); background: var(--navy); border-bottom: 3px solid var(--gold); margin-bottom: -3px; }
+  .tabs { display: flex; background: var(--burgundy3); border-bottom: 3px solid var(--gold); }
+  .tab { flex: 1; padding: 14px 20px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--gold3); border: none; background: transparent; transition: all 0.2s; opacity: 0.7; }
+  .tab.active { color: var(--gold); background: var(--burgundy); border-bottom: 3px solid var(--gold); margin-bottom: -3px; opacity: 1; }
+  .tab:hover:not(.active) { opacity: 1; }
   .tab-icon { font-size: 16px; display: block; margin-bottom: 2px; }
   .panel { display: none; }
   .panel.active { display: block; }
 
   .app { max-width: 960px; margin: 0 auto; padding: 28px 20px 80px; }
-  .page-title { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--navy); margin-bottom: 4px; }
+  .page-title { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--burgundy); margin-bottom: 4px; }
   .page-sub { font-size: 13px; color: var(--gray); margin-bottom: 24px; line-height: 1.5; }
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
@@ -41,17 +54,18 @@
   .card-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--lightgray); }
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gray); margin-bottom: 6px; }
-  .field input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--lightgray); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--navy); background: var(--white); outline: none; transition: border-color 0.2s; }
+  .field input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--lightgray); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--burgundy3); background: var(--white); outline: none; transition: border-color 0.2s; }
   .field input:focus { border-color: var(--gold); }
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
   .prop-list { display: flex; flex-direction: column; gap: 8px; }
   .prop-item { display: flex; align-items: center; gap: 8px; animation: fadeIn 0.25s ease; }
   @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
-  .prop-num { width: 26px; height: 26px; border-radius: 50%; background: var(--navy); color: var(--white); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .prop-input { flex: 1; padding: 9px 12px; border: 1.5px solid var(--lightgray); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--navy); outline: none; transition: border-color 0.2s; }
+  .prop-num { width: 26px; height: 26px; border-radius: 50%; background: var(--burgundy); color: var(--white); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .prop-input { flex: 1; padding: 9px 12px; border: 1.5px solid var(--lightgray); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--burgundy3); outline: none; transition: border-color 0.2s; }
   .prop-input:focus { border-color: var(--gold); }
   .prop-price { width: 85px; padding: 9px 10px; border: 1.5px solid var(--lightgray); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--green); font-weight: 600; outline: none; }
+  .prop-price:focus { border-color: var(--gold); }
   .prop-remove { width: 26px; height: 26px; border-radius: 50%; border: none; background: var(--lightgray); color: var(--gray); cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
   .prop-remove:hover { background: var(--red2); color: var(--red); }
   .add-btn { width: 100%; padding: 10px; border: 2px dashed var(--lightgray); border-radius: 8px; background: transparent; color: var(--gray); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
@@ -59,64 +73,66 @@
 
   .order-toggle { display: flex; gap: 10px; margin-bottom: 16px; }
   .order-opt { flex: 1; padding: 12px 10px; border-radius: 10px; border: 2px solid var(--lightgray); cursor: pointer; text-align: center; transition: all 0.2s; background: var(--white); }
-  .order-opt.selected { border-color: var(--gold); background: #FFF9EE; }
+  .order-opt.selected { border-color: var(--gold); background: #FFF8EE; }
   .order-opt-icon { font-size: 22px; display: block; margin-bottom: 4px; }
-  .order-opt-label { font-size: 12px; font-weight: 700; color: var(--navy); }
+  .order-opt-label { font-size: 12px; font-weight: 700; color: var(--burgundy); }
   .order-opt-sub { font-size: 10px; color: var(--gray); margin-top: 2px; }
 
-  .primary-btn { width: 100%; padding: 15px; background: var(--gold); color: var(--navy); border: none; border-radius: 12px; font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 18px; transition: all 0.2s; box-shadow: 0 4px 16px rgba(201,168,76,0.3); display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .primary-btn:hover { background: var(--gold2); transform: translateY(-1px); }
+  .primary-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--burgundy), var(--burgundy2)); color: var(--gold2); border: none; border-radius: 12px; font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 18px; transition: all 0.2s; box-shadow: 0 4px 16px rgba(107,26,42,0.3); display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.3px; }
+  .primary-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(107,26,42,0.4); }
   .primary-btn:disabled { background: var(--lightgray); color: var(--gray); cursor: not-allowed; transform: none; box-shadow: none; }
 
-  .spinner { width: 18px; height: 18px; border: 2px solid rgba(11,31,58,0.3); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+  .spinner { width: 18px; height: 18px; border: 2px solid rgba(201,168,76,0.3); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
   .spinner.show { display: block; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  .api-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--green2); color: var(--green); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; margin-bottom: 14px; }
+
   .opt-result { animation: fadeIn 0.3s ease; }
-  .opt-header { background: var(--navy); border-radius: 12px 12px 0 0; padding: 16px 20px; }
+  .opt-header { background: linear-gradient(135deg, var(--burgundy), var(--burgundy2)); border-radius: 12px 12px 0 0; padding: 16px 20px; }
   .opt-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
   .opt-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--white); }
   .opt-body { border: 2px solid var(--gold); border-top: none; border-radius: 0 0 12px 12px; background: var(--white); padding: 20px; }
   .opt-stop { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 4px; }
-  .opt-stop-num { width: 30px; height: 30px; border-radius: 50%; background: var(--gold); color: var(--navy); font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Playfair Display', serif; }
+  .opt-stop-num { width: 30px; height: 30px; border-radius: 50%; background: var(--gold); color: var(--burgundy); font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Playfair Display', serif; }
   .opt-stop-content { flex: 1; }
-  .opt-stop-addr { font-weight: 600; font-size: 14px; color: var(--navy); }
+  .opt-stop-addr { font-weight: 600; font-size: 14px; color: var(--burgundy3); }
   .opt-stop-meta { font-size: 11px; color: var(--gray); margin-top: 2px; }
   .opt-stop-price { color: var(--green); font-weight: 600; }
   .opt-drive { display: flex; align-items: center; gap: 8px; margin: 6px 0 6px 42px; }
-  .opt-drive-badge { background: var(--navy2); color: var(--white); padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .opt-drive-badge { background: var(--burgundy); color: var(--gold2); padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
   .opt-drive-dist { font-size: 11px; color: var(--gray); }
 
-  .use-order-btn { width: 100%; padding: 13px; background: var(--navy); color: var(--white); border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 16px; transition: all 0.2s; }
-  .use-order-btn:hover { background: var(--navy2); }
-  .copy-order-btn { width: 100%; padding: 11px; background: var(--cream); color: var(--navy); border: 1.5px solid var(--lightgray); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
+  .use-order-btn { width: 100%; padding: 13px; background: var(--burgundy); color: var(--gold2); border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 16px; transition: all 0.2s; }
+  .use-order-btn:hover { background: var(--burgundy2); }
+  .copy-order-btn { width: 100%; padding: 11px; background: var(--cream); color: var(--burgundy); border: 1.5px solid var(--lightgray); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
   .copy-order-btn:hover { border-color: var(--gold); }
+
   .hint { font-size: 11px; color: var(--gray); font-style: italic; margin-bottom: 10px; }
-  .api-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--green2); color: var(--green); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; margin-bottom: 14px; }
 
   .drive-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--cream); border-radius: 8px; margin-bottom: 8px; }
   .drive-arrow { font-size: 12px; color: var(--gray); flex: 1; line-height: 1.4; }
-  .drive-arrow strong { display: block; color: var(--navy); font-size: 12px; }
-  .drive-min { width: 58px; padding: 7px 8px; border: 1.5px solid var(--lightgray); border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy); text-align: center; outline: none; transition: border-color 0.2s; flex-shrink: 0; }
+  .drive-arrow strong { display: block; color: var(--burgundy3); font-size: 12px; }
+  .drive-min { width: 58px; padding: 7px 8px; border: 1.5px solid var(--lightgray); border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; color: var(--burgundy3); text-align: center; outline: none; transition: border-color 0.2s; flex-shrink: 0; }
   .drive-min:focus { border-color: var(--gold); }
   .drive-auto { font-size: 10px; color: var(--green); font-weight: 600; }
 
   .itinerary { background: var(--white); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); border: 2px solid var(--gold); animation: fadeIn 0.4s ease; }
-  .itin-header { background: var(--navy); padding: 20px 24px; }
+  .itin-header { background: linear-gradient(135deg, var(--burgundy), var(--burgundy2)); padding: 20px 24px; }
   .itin-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
   .itin-client { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--white); }
-  .itin-date { font-size: 13px; color: var(--gray); margin-top: 3px; text-transform: capitalize; }
+  .itin-date { font-size: 13px; color: var(--gold3); margin-top: 3px; text-transform: capitalize; }
   .itin-stats { display: flex; gap: 20px; margin-top: 14px; flex-wrap: wrap; }
   .stat { text-align: left; }
   .stat-val { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--gold); font-weight: 700; }
-  .stat-label { font-size: 10px; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; }
+  .stat-label { font-size: 10px; color: var(--gold3); text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
   .itin-body { padding: 20px; }
   .stop { display: flex; gap: 14px; align-items: flex-start; }
   .stop-timeline { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
-  .stop-dot { width: 34px; height: 34px; border-radius: 50%; background: var(--gold); color: var(--navy); font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; }
+  .stop-dot { width: 34px; height: 34px; border-radius: 50%; background: var(--gold); color: var(--burgundy); font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; }
   .stop-line { width: 2px; flex: 1; min-height: 28px; background: var(--lightgray); margin: 4px 0; }
   .stop-content { flex: 1; padding-bottom: 4px; }
-  .stop-address { font-weight: 600; font-size: 14px; color: var(--navy); }
+  .stop-address { font-weight: 600; font-size: 14px; color: var(--burgundy3); }
   .stop-meta { font-size: 12px; color: var(--gray); margin-top: 2px; }
   .stop-price { color: var(--green); font-weight: 600; }
   .stop-times { display: flex; gap: 18px; margin-top: 8px; margin-bottom: 6px; }
@@ -124,19 +140,22 @@
   .time-chip-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray); font-weight: 600; }
   .time-chip-val { font-size: 15px; font-weight: 700; font-family: 'Playfair Display', serif; }
   .time-chip-val.arrival { color: var(--green); }
-  .time-chip-val.departure { color: var(--red); }
+  .time-chip-val.departure { color: var(--burgundy); }
   .drive-connector { display: flex; align-items: center; gap: 8px; padding: 6px 0; margin-left: 48px; }
   .drive-connector-text { font-size: 11px; color: var(--gray); font-style: italic; }
-  .summary-box { background: var(--cream); border-radius: 10px; padding: 12px 16px; margin-top: 8px; font-size: 13px; color: var(--gray); line-height: 1.9; }
-  .summary-box strong { color: var(--navy); }
+  .summary-box { background: var(--cream); border-radius: 10px; padding: 12px 16px; margin-top: 8px; font-size: 13px; color: var(--gray); line-height: 1.9; border-left: 3px solid var(--gold); }
+  .summary-box strong { color: var(--burgundy); }
   .share-bar { border-top: 1px solid var(--lightgray); padding: 14px 20px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; background: var(--cream); }
   .share-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray); flex-shrink: 0; }
   .share-btn { padding: 8px 14px; border-radius: 8px; border: none; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.18s; }
-  .share-btn.copy { background: var(--navy); color: var(--white); }
+  .share-btn.copy { background: var(--burgundy); color: var(--gold2); }
+  .share-btn.copy:hover { background: var(--burgundy2); }
   .share-btn.sms { background: var(--green); color: var(--white); }
-  .share-btn.email { background: var(--gold); color: var(--navy); }
+  .share-btn.email { background: var(--gold); color: var(--burgundy); }
+  .share-btn.email:hover { background: var(--gold2); }
   .copied-msg { font-size: 12px; color: var(--green); font-weight: 600; display: none; }
   .copied-msg.show { display: block; }
+
   .empty-state { text-align: center; padding: 40px 20px; color: var(--gray); }
   .empty-icon { font-size: 36px; margin-bottom: 10px; }
   .empty-text { font-size: 13px; line-height: 1.7; }
@@ -178,10 +197,7 @@
       <div>
         <div class="card">
           <div class="card-title" id="txt-plan-s1">Starting Point</div>
-          <div class="field">
-            <label id="txt-startfrom">Starting From</label>
-            <input type="text" id="planStart" placeholder="e.g. Cranford, NJ">
-          </div>
+          <div class="field"><label id="txt-startfrom">Starting From</label><input type="text" id="planStart" placeholder="e.g. Cranford, NJ"></div>
         </div>
         <div class="card section-gap">
           <div class="card-title" id="txt-plan-s2">Properties to Show</div>
@@ -214,10 +230,7 @@
       <div id="planResult">
         <div class="card" style="min-height:300px;">
           <div class="card-title" id="txt-plan-result">Optimized Order</div>
-          <div class="empty-state">
-            <div class="empty-icon">🧭</div>
-            <div class="empty-text" id="txt-plan-empty">Add your properties and tap Optimize Route to get real distances from Google Maps.</div>
-          </div>
+          <div class="empty-state"><div class="empty-icon">🧭</div><div class="empty-text" id="txt-plan-empty">Add your properties and tap Optimize Route to get real distances from Google Maps.</div></div>
         </div>
       </div>
     </div>
@@ -253,7 +266,7 @@
         </div>
         <div class="card section-gap" id="driveCard" style="display:none">
           <div class="card-title" id="txt-itin-s3">Drive Times Between Stops</div>
-          <div class="hint" id="txt-drivehint">Auto-filled from Google Maps. You can edit if needed.</div>
+          <div class="hint" id="txt-drivehint">Enter minutes from Google Maps for each leg.</div>
           <div id="driveList"></div>
         </div>
         <button class="primary-btn" onclick="generate()" id="generateBtn" disabled>
@@ -264,10 +277,7 @@
         <div id="itineraryOut">
           <div class="card" style="min-height:300px;">
             <div class="card-title" id="txt-itin-result">Client Itinerary</div>
-            <div class="empty-state">
-              <div class="empty-icon">📋</div>
-              <div class="empty-text" id="txt-itin-empty">Fill in the details and generate the itinerary to share with your client.</div>
-            </div>
+            <div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text" id="txt-itin-empty">Fill in the details and generate the itinerary to share with your client.</div></div>
           </div>
         </div>
       </div>
@@ -276,78 +286,73 @@
 </div>
 
 <script>
-const API_KEY = 'AIzaSyDuYgGbbYy0U23ZJVdp4Q4BU-LHXDmyxNs';
-let lang='en', orderPref='closest';
-let planProps=[], itinProps=[];
-let planId=0, itinId=0;
+const API_KEY='AIzaSyDuYgGbbYy0U23ZJVdp4Q4BU-LHXDmyxNs';
+let lang='en',orderPref='closest',planProps=[],itinProps=[],planId=0,itinId=0;
 
-const T = {
-  en: { tab1:"Plan My Route", tab2:"Generate Itinerary", 'plan-title':"Plan My Route", 'plan-sub':"Add properties and RouteReady calculates real drive times using Google Maps.", 'api-badge':"Google Maps API Connected", 'plan-s1':"Starting Point", startfrom:"Starting From", 'plan-s2':"Properties to Show", 'plan-hint':"Add addresses in any order. RouteReady sorts them using real Google Maps distances.", 'plan-s3':"Preferred Order", closest:"Closest First", 'closest-sub':"Start near, end far", farthest:"Farthest First", 'farthest-sub':"Start far, end near", 'order-hint':"💡 Farthest First = you end closer to home on the way back.", optbtn:"✦ Optimize Route with Google Maps", 'plan-result':"Optimized Order", 'plan-empty':"Add your properties and tap Optimize Route to get real distances.", 'itin-title':"Generate Itinerary", 'itin-sub':"Enter confirmed appointment times to generate the client itinerary.", 'itin-s1':"Appointment Info", clientlabel:"Client Name", agentelabel:"Agent Name", datelabel:"Date", startlabel:"Start Time", showtlabel:"Time per Home (min)", startaddrlabel:"Starting From", 'itin-s2':"Properties (in showing order)", 'itin-hint':"Use the order from Plan My Route, or enter manually.", 'itin-s3':"Drive Times Between Stops", drivehint:"Auto-filled from Google Maps. You can edit if needed.", genbtn:"✦ Generate Itinerary", 'itin-result':"Client Itinerary", 'itin-empty':"Fill in the details and generate the itinerary to share with your client.", addprop:"+ Add Property", itin_label:"Showing Itinerary", arrival:"Arrival", departure:"Departure", drive:"min drive to next stop", sharelabel:"Share with Client:", copybtn:"📋 Copy", smsbtn:"💬 Text", emailbtn:"📧 Email", copied:"Copied!", total:"Total", homes:"Homes", returnlabel:"Est. Return", from:"Starting from", use_order:"✓ Use This Order → Go to Itinerary", copy_order:"📋 Copy Order for ShowingTime", order_copied:"Order copied!", optimizing:"Calculating real distances...", optimized_closest:"Optimized: Closest → Farthest", optimized_farthest:"Optimized: Farthest → Closest", real_dist:"by road" },
-  es: { tab1:"Planificar Ruta", tab2:"Generar Itinerario", 'plan-title':"Planificar Ruta", 'plan-sub':"Agrega propiedades y RouteReady calcula los tiempos reales con Google Maps.", 'api-badge':"Google Maps API Conectada", 'plan-s1':"Punto de Salida", startfrom:"Saliendo Desde", 'plan-s2':"Propiedades a Mostrar", 'plan-hint':"Agrega en cualquier orden. RouteReady las ordena con distancias reales de Google Maps.", 'plan-s3':"Orden Preferido", closest:"Más Cerca Primero", 'closest-sub':"Empieza cerca, termina lejos", farthest:"Más Lejos Primero", 'farthest-sub':"Empieza lejos, termina cerca", 'order-hint':"💡 Más lejos primero = terminas más cerca de casa al regresar.", optbtn:"✦ Optimizar Ruta con Google Maps", 'plan-result':"Orden Optimizado", 'plan-empty':"Agrega propiedades y toca Optimizar Ruta para ver distancias reales.", 'itin-title':"Generar Itinerario", 'itin-sub':"Ingresa los horarios confirmados para generar el itinerario del cliente.", 'itin-s1':"Info del Día", clientlabel:"Nombre del Cliente", agentelabel:"Nombre del Agente", datelabel:"Fecha", startlabel:"Hora de Inicio", showtlabel:"Tiempo por Casa (min)", startaddrlabel:"Saliendo Desde", 'itin-s2':"Propiedades (en orden de showing)", 'itin-hint':"Usa el orden de Planificar Ruta, o ingresa manualmente.", 'itin-s3':"Tiempo de Manejo Entre Paradas", drivehint:"Auto-completado con Google Maps. Puedes editar si es necesario.", genbtn:"✦ Generar Itinerario", 'itin-result':"Itinerario del Cliente", 'itin-empty':"Llena los datos y genera el itinerario para compartir con tu cliente.", addprop:"+ Agregar Propiedad", itin_label:"Itinerario de Showings", arrival:"Llegada", departure:"Salida", drive:"min de manejo a la próxima", sharelabel:"Compartir con Cliente:", copybtn:"📋 Copiar", smsbtn:"💬 Texto", emailbtn:"📧 Email", copied:"¡Copiado!", total:"Total", homes:"Casas", returnlabel:"Regreso Est.", from:"Saliendo de", use_order:"✓ Usar Este Orden → Ir a Itinerario", copy_order:"📋 Copiar Orden para ShowingTime", order_copied:"¡Orden copiada!", optimizing:"Calculando distancias reales...", optimized_closest:"Optimizado: Más Cerca → Más Lejos", optimized_farthest:"Optimizado: Más Lejos → Más Cerca", real_dist:"por carretera" }
-};
+const T={en:{tab1:"Plan My Route",tab2:"Generate Itinerary",'plan-title':"Plan My Route",'plan-sub':"Add properties and RouteReady calculates real drive times using Google Maps.",'api-badge':"Google Maps API Connected",'plan-s1':"Starting Point",startfrom:"Starting From",'plan-s2':"Properties to Show",'plan-hint':"Add addresses in any order. RouteReady sorts them using real Google Maps distances.",'plan-s3':"Preferred Order",closest:"Closest First",'closest-sub':"Start near, end far",farthest:"Farthest First",'farthest-sub':"Start far, end near",'order-hint':"💡 Farthest First = you end closer to home on the way back.",optbtn:"✦ Optimize Route with Google Maps",'plan-result':"Optimized Order",'plan-empty':"Add your properties and tap Optimize Route to get real distances.",'itin-title':"Generate Itinerary",'itin-sub':"Enter confirmed appointment times to generate the client itinerary.",'itin-s1':"Appointment Info",clientlabel:"Client Name",agentelabel:"Agent Name",datelabel:"Date",startlabel:"Start Time",showtlabel:"Time per Home (min)",startaddrlabel:"Starting From",'itin-s2':"Properties (in showing order)",'itin-hint':"Use the order from Plan My Route, or enter manually.",'itin-s3':"Drive Times Between Stops",drivehint:"Enter minutes from Google Maps for each leg.",genbtn:"✦ Generate Itinerary",'itin-result':"Client Itinerary",'itin-empty':"Fill in the details and generate the itinerary to share with your client.",addprop:"+ Add Property",itin_label:"Showing Itinerary",arrival:"Arrival",departure:"Departure",drive:"min drive to next stop",sharelabel:"Share with Client:",copybtn:"📋 Copy",smsbtn:"💬 Text",emailbtn:"📧 Email",copied:"Copied!",total:"Total",homes:"Homes",returnlabel:"Est. Return",from:"Starting from",use_order:"✓ Use This Order → Go to Itinerary",copy_order:"📋 Copy Order for ShowingTime",order_copied:"Order copied!",optimizing:"Calculating real distances...",optimized_closest:"Optimized: Closest → Farthest",optimized_farthest:"Optimized: Farthest → Closest",real_dist:"by road"},es:{tab1:"Planificar Ruta",tab2:"Generar Itinerario",'plan-title':"Planificar Ruta",'plan-sub':"Agrega propiedades y RouteReady calcula los tiempos reales con Google Maps.",'api-badge':"Google Maps API Conectada",'plan-s1':"Punto de Salida",startfrom:"Saliendo Desde",'plan-s2':"Propiedades a Mostrar",'plan-hint':"Agrega en cualquier orden. RouteReady las ordena con distancias reales de Google Maps.",'plan-s3':"Orden Preferido",closest:"Más Cerca Primero",'closest-sub':"Empieza cerca, termina lejos",farthest:"Más Lejos Primero",'farthest-sub':"Empieza lejos, termina cerca",'order-hint':"💡 Más lejos primero = terminas más cerca de casa al regresar.",optbtn:"✦ Optimizar Ruta con Google Maps",'plan-result':"Orden Optimizado",'plan-empty':"Agrega propiedades y toca Optimizar para ver distancias reales.",'itin-title':"Generar Itinerario",'itin-sub':"Ingresa los horarios confirmados para generar el itinerario del cliente.",'itin-s1':"Info del Día",clientlabel:"Nombre del Cliente",agentelabel:"Nombre del Agente",datelabel:"Fecha",startlabel:"Hora de Inicio",showtlabel:"Tiempo por Casa (min)",startaddrlabel:"Saliendo Desde",'itin-s2':"Propiedades (en orden de showing)",'itin-hint':"Usa el orden de Planificar Ruta, o ingresa manualmente.",'itin-s3':"Tiempo de Manejo Entre Paradas",drivehint:"Ingresa los minutos de Google Maps para cada tramo.",genbtn:"✦ Generar Itinerario",'itin-result':"Itinerario del Cliente",'itin-empty':"Llena los datos y genera el itinerario para compartir con tu cliente.",addprop:"+ Agregar Propiedad",itin_label:"Itinerario de Showings",arrival:"Llegada",departure:"Salida",drive:"min de manejo a la próxima",sharelabel:"Compartir con Cliente:",copybtn:"📋 Copiar",smsbtn:"💬 Texto",emailbtn:"📧 Email",copied:"¡Copiado!",total:"Total",homes:"Casas",returnlabel:"Regreso Est.",from:"Saliendo de",use_order:"✓ Usar Este Orden → Ir a Itinerario",copy_order:"📋 Copiar Orden para ShowingTime",order_copied:"¡Orden copiada!",optimizing:"Calculando distancias reales...",optimized_closest:"Optimizado: Más Cerca → Más Lejos",optimized_farthest:"Optimizado: Más Lejos → Más Cerca",real_dist:"por carretera"}};
 
-function t(k){ return T[lang][k]||k; }
-function setLang(l){ lang=l; document.getElementById('btn-en').classList.toggle('active',l==='en'); document.getElementById('btn-es').classList.toggle('active',l==='es'); updateAllTexts(); }
-function updateAllTexts(){ ['tab1','tab2','plan-title','plan-sub','api-badge','plan-s1','startfrom','plan-s2','plan-hint','plan-s3','closest','closest-sub','farthest','farthest-sub','order-hint','plan-result','plan-empty','itin-title','itin-sub','itin-s1','clientlabel','agentelabel','datelabel','startlabel','showtlabel','startaddrlabel','itin-s2','itin-hint','itin-s3','drivehint','genbtn','itin-result','itin-empty'].forEach(k=>{ const el=document.getElementById('txt-'+k); if(el) el.textContent=t(k); }); document.getElementById('planAddBtn').textContent=t('addprop'); document.getElementById('itinAddBtn').textContent=t('addprop'); document.getElementById('txt-optbtn').textContent=t('optbtn'); }
-function switchTab(tab){ ['plan','itinerary'].forEach(t=>{ document.getElementById('panel-'+t).classList.toggle('active',t===tab); document.getElementById('tab-'+t).classList.toggle('active',t===tab); }); }
-function selectOrder(o){ orderPref=o; document.getElementById('opt-closest').classList.toggle('selected',o==='closest'); document.getElementById('opt-farthest').classList.toggle('selected',o==='farthest'); }
+function t(k){return T[lang][k]||k;}
+function setLang(l){lang=l;document.getElementById('btn-en').classList.toggle('active',l==='en');document.getElementById('btn-es').classList.toggle('active',l==='es');updateAllTexts();}
+function updateAllTexts(){['tab1','tab2','plan-title','plan-sub','api-badge','plan-s1','startfrom','plan-s2','plan-hint','plan-s3','closest','closest-sub','farthest','farthest-sub','order-hint','plan-result','plan-empty','itin-title','itin-sub','itin-s1','clientlabel','agentelabel','datelabel','startlabel','showtlabel','startaddrlabel','itin-s2','itin-hint','itin-s3','drivehint','genbtn','itin-result','itin-empty'].forEach(k=>{const el=document.getElementById('txt-'+k);if(el)el.textContent=t(k);});document.getElementById('planAddBtn').textContent=t('addprop');document.getElementById('itinAddBtn').textContent=t('addprop');document.getElementById('txt-optbtn').textContent=t('optbtn');}
+function switchTab(tab){['plan','itinerary'].forEach(t=>{document.getElementById('panel-'+t).classList.toggle('active',t===tab);document.getElementById('tab-'+t).classList.toggle('active',t===tab);});}
+function selectOrder(o){orderPref=o;document.getElementById('opt-closest').classList.toggle('selected',o==='closest');document.getElementById('opt-farthest').classList.toggle('selected',o==='farthest');}
 
-function addPlanProp(addr='',price=''){ const id=++planId; planProps.push({id,address:addr,price}); renderPlanProps(); checkOptimize(); }
-function removePlanProp(id){ planProps=planProps.filter(p=>p.id!==id); renderPlanProps(); checkOptimize(); }
-function renderPlanProps(){ const list=document.getElementById('planPropList'); list.innerHTML=''; planProps.forEach((p,idx)=>{ const div=document.createElement('div'); div.className='prop-item'; div.innerHTML=`<div class="prop-num">${idx+1}</div><input class="prop-input" placeholder="Address..." value="${p.address}" oninput="planProps[${idx}].address=this.value;checkOptimize();"><input class="prop-price" placeholder="Price" value="${p.price}" oninput="planProps[${idx}].price=this.value;"><button class="prop-remove" onclick="removePlanProp(${p.id})">×</button>`; list.appendChild(div); }); }
-function checkOptimize(){ document.getElementById('optimizeBtn').disabled=planProps.filter(p=>p.address.trim()).length<2; }
+function addPlanProp(a='',p=''){const id=++planId;planProps.push({id,address:a,price:p});renderPlanProps();checkOptimize();}
+function removePlanProp(id){planProps=planProps.filter(p=>p.id!==id);renderPlanProps();checkOptimize();}
+function renderPlanProps(){const list=document.getElementById('planPropList');list.innerHTML='';planProps.forEach((p,i)=>{const d=document.createElement('div');d.className='prop-item';d.innerHTML=`<div class="prop-num">${i+1}</div><input class="prop-input" placeholder="Address..." value="${p.address}" oninput="planProps[${i}].address=this.value;checkOptimize();"><input class="prop-price" placeholder="Price" value="${p.price}" oninput="planProps[${i}].price=this.value;"><button class="prop-remove" onclick="removePlanProp(${p.id})">×</button>`;list.appendChild(d);});}
+function checkOptimize(){document.getElementById('optimizeBtn').disabled=planProps.filter(p=>p.address.trim()).length<2;}
 
-async function getDistances(origin,destinations){ const dests=destinations.map(d=>encodeURIComponent(d)).join('|'); const url=`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(origin)}&destinations=${dests}&units=imperial&key=${API_KEY}`; const res=await fetch(const res=await fetch(`/.netlify/functions/maps?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destinations.join('|'))}`); return res.json(); }
+async function getDistances(origin,destinations){const res=await fetch(`/.netlify/functions/maps?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destinations.join('|'))}`);return res.json();}
 
 async function optimizeRoute(){
-  const filled=planProps.filter(p=>p.address.trim()); if(filled.length<2) return;
-  const spinner=document.getElementById('optimizeSpinner'), btnText=document.getElementById('txt-optbtn'), errEl=document.getElementById('apiError');
-  spinner.classList.add('show'); btnText.textContent=t('optimizing'); document.getElementById('optimizeBtn').disabled=true; errEl.classList.remove('show');
-  try {
+  const filled=planProps.filter(p=>p.address.trim());if(filled.length<2)return;
+  const sp=document.getElementById('optimizeSpinner'),bt=document.getElementById('txt-optbtn'),er=document.getElementById('apiError');
+  sp.classList.add('show');bt.textContent=t('optimizing');document.getElementById('optimizeBtn').disabled=true;er.classList.remove('show');
+  try{
     const origin=document.getElementById('planStart').value||'My Location';
     const data=await getDistances(origin,filled.map(p=>p.address));
-    let withDist=filled.map((p,i)=>{ const el=data.rows[0].elements[i]; return {...p, distM:el.status==='OK'?el.distance.value:99999, distText:el.status==='OK'?el.distance.text:'?', durText:el.status==='OK'?el.duration.text:'?'}; });
+    const withDist=filled.map((p,i)=>{const el=data.rows[0].elements[i];return{...p,distM:el.status==='OK'?el.distance.value:99999,distText:el.status==='OK'?el.distance.text:'?',durText:el.status==='OK'?el.duration.text:'?'};});
     const sorted=[...withDist].sort((a,b)=>orderPref==='closest'?a.distM-b.distM:b.distM-a.distM);
     const driveMap={};
-    for(let i=0;i<sorted.length-1;i++){ try{ const leg=await getDistances(sorted[i].address,[sorted[i+1].address]); const el=leg.rows[0].elements[0]; if(el.status==='OK') driveMap[`${sorted[i].id}_${sorted[i+1].id}`]={minutes:Math.round(el.duration.value/60),text:el.duration.text,dist:el.distance.text}; }catch(e){} }
+    for(let i=0;i<sorted.length-1;i++){try{const leg=await getDistances(sorted[i].address,[sorted[i+1].address]);const el=leg.rows[0].elements[0];if(el.status==='OK')driveMap[`${sorted[i].id}_${sorted[i+1].id}`]={minutes:Math.round(el.duration.value/60),text:el.duration.text,dist:el.distance.text};}catch(e){}}
     renderOptResult(sorted,driveMap,origin);
-  } catch(e){ errEl.classList.add('show'); }
-  finally{ spinner.classList.remove('show'); btnText.textContent=t('optbtn'); document.getElementById('optimizeBtn').disabled=false; }
+  }catch(e){er.classList.add('show');}
+  finally{sp.classList.remove('show');bt.textContent=t('optbtn');document.getElementById('optimizeBtn').disabled=false;}
 }
 
 function renderOptResult(sorted,driveMap,origin){
   const label=orderPref==='closest'?t('optimized_closest'):t('optimized_farthest');
-  const stopsHTML=sorted.map((p,i)=>{ const nk=i<sorted.length-1?`${p.id}_${sorted[i+1].id}`:null; const di=nk&&driveMap[nk]; return `<div class="opt-stop"><div class="opt-stop-num">${i+1}</div><div class="opt-stop-content"><div class="opt-stop-addr">${p.address}</div><div class="opt-stop-meta">${p.price?`<span class="opt-stop-price">${p.price}</span> · `:''} 📍 ${p.distText} ${t('real_dist')}</div></div></div>${di?`<div class="opt-drive"><span class="opt-drive-badge">🚗 ${di.text}</span><span class="opt-drive-dist">${di.dist}</span></div>`:''}`; }).join('');
+  const stopsHTML=sorted.map((p,i)=>{const nk=i<sorted.length-1?`${p.id}_${sorted[i+1].id}`:null;const di=nk&&driveMap[nk];return`<div class="opt-stop"><div class="opt-stop-num">${i+1}</div><div class="opt-stop-content"><div class="opt-stop-addr">${p.address}</div><div class="opt-stop-meta">${p.price?`<span class="opt-stop-price">${p.price}</span> · `:''}📍 ${p.distText} ${t('real_dist')}</div></div></div>${di?`<div class="opt-drive"><span class="opt-drive-badge">🚗 ${di.text}</span><span class="opt-drive-dist">${di.dist}</span></div>`:''}`;}).join('');
   document.getElementById('planResult').innerHTML=`<div class="opt-result"><div class="opt-header"><div class="opt-label">${label}</div><div class="opt-title">${origin} → ${sorted.length} stops</div></div><div class="opt-body">${stopsHTML}<button class="use-order-btn" onclick='useThisOrder(${JSON.stringify(sorted)},${JSON.stringify(driveMap)})'>${t('use_order')}</button><button class="copy-order-btn" onclick='copyOrder(${JSON.stringify(sorted)})'>${t('copy_order')}</button><div id="orderCopiedMsg" style="display:none;text-align:center;font-size:12px;color:var(--green);font-weight:600;margin-top:8px;">${t('order_copied')}</div></div></div>`;
 }
 
-function useThisOrder(sorted,driveMap){ itinProps=[]; itinId=0; sorted.forEach(p=>{ itinId++; itinProps.push({id:itinId,address:p.address,price:p.price||'',origId:p.id}); }); const start=document.getElementById('planStart').value; if(start) document.getElementById('itinStart').value=start; window._transferDriveTimes=driveMap; window._transferSorted=sorted; renderItinProps(); updateDriveList(driveMap,sorted); checkGenerate(); switchTab('itinerary'); }
-function copyOrder(sorted){ navigator.clipboard.writeText(sorted.map((p,i)=>`${i+1}. ${p.address}${p.price?' — '+p.price:''}`).join('\n')).then(()=>{ const el=document.getElementById('orderCopiedMsg'); if(el){el.style.display='block';setTimeout(()=>el.style.display='none',2000);} }); }
+function useThisOrder(sorted,driveMap){itinProps=[];itinId=0;sorted.forEach(p=>{itinId++;itinProps.push({id:itinId,address:p.address,price:p.price||'',origId:p.id});});const start=document.getElementById('planStart').value;if(start)document.getElementById('itinStart').value=start;window._tm=driveMap;window._ts=sorted;renderItinProps();updateDriveList(driveMap,sorted);checkGenerate();switchTab('itinerary');}
+function copyOrder(sorted){navigator.clipboard.writeText(sorted.map((p,i)=>`${i+1}. ${p.address}${p.price?' — '+p.price:''}`).join('\n')).then(()=>{const el=document.getElementById('orderCopiedMsg');if(el){el.style.display='block';setTimeout(()=>el.style.display='none',2000);}});}
 
-function addItinProp(addr='',price=''){ const id=++itinId; itinProps.push({id,address:addr,price}); renderItinProps(); updateDriveList(); checkGenerate(); }
-function removeItinProp(id){ itinProps=itinProps.filter(p=>p.id!==id); renderItinProps(); updateDriveList(); checkGenerate(); }
-function renderItinProps(){ const list=document.getElementById('itinPropList'); list.innerHTML=''; itinProps.forEach((p,idx)=>{ const div=document.createElement('div'); div.className='prop-item'; div.innerHTML=`<div class="prop-num">${idx+1}</div><input class="prop-input" placeholder="Address..." value="${p.address}" oninput="itinProps[${idx}].address=this.value;updateDriveList();checkGenerate();"><input class="prop-price" placeholder="Price" value="${p.price}" oninput="itinProps[${idx}].price=this.value;"><button class="prop-remove" onclick="removeItinProp(${p.id})">×</button>`; list.appendChild(div); }); }
+function addItinProp(a='',p=''){const id=++itinId;itinProps.push({id,address:a,price:p});renderItinProps();updateDriveList();checkGenerate();}
+function removeItinProp(id){itinProps=itinProps.filter(p=>p.id!==id);renderItinProps();updateDriveList();checkGenerate();}
+function renderItinProps(){const list=document.getElementById('itinPropList');list.innerHTML='';itinProps.forEach((p,i)=>{const d=document.createElement('div');d.className='prop-item';d.innerHTML=`<div class="prop-num">${i+1}</div><input class="prop-input" placeholder="Address..." value="${p.address}" oninput="itinProps[${i}].address=this.value;updateDriveList();checkGenerate();"><input class="prop-price" placeholder="Price" value="${p.price}" oninput="itinProps[${i}].price=this.value;"><button class="prop-remove" onclick="removeItinProp(${p.id})">×</button>`;list.appendChild(d);});}
 
-function updateDriveList(driveMap,sorted){ const card=document.getElementById('driveCard'),list=document.getElementById('driveList'),filled=itinProps.filter(p=>p.address.trim()); if(filled.length<2){card.style.display='none';return;} card.style.display='block'; const existing={}; document.querySelectorAll('.drive-min').forEach(el=>{existing[el.id]=el.value;}); list.innerHTML=''; for(let i=0;i<filled.length-1;i++){ const from=filled[i],to=filled[i+1],key=`drv_${from.id}_${to.id}`; let autoVal='',autoLabel=''; if(driveMap&&sorted){ const of=sorted[i],ot=sorted[i+1]; if(of&&ot){const dk=`${of.id}_${ot.id}`;if(driveMap[dk]){autoVal=driveMap[dk].minutes;autoLabel=`<span class="drive-auto">🟢 Google Maps: ${driveMap[dk].text}</span>`;}} } const val=existing[key]||autoVal; const div=document.createElement('div'); div.className='drive-item'; div.innerHTML=`<div class="drive-arrow"><strong>${from.address||'...'}</strong>↓<strong>${to.address||'...'}</strong>${autoLabel}</div><span style="font-size:17px">🚗</span><input class="drive-min" id="${key}" type="number" min="1" max="180" value="${val}" placeholder="0"><span style="font-size:12px;color:var(--gray)">min</span>`; list.appendChild(div); } }
-function checkGenerate(){ const has=itinProps.filter(p=>p.address.trim()).length>=1,hasDate=document.getElementById('showingDate').value; document.getElementById('generateBtn').disabled=!(has&&hasDate); }
-function formatTime(m){ const h=Math.floor(m/60),min=m%60,suf=h>=12?'PM':'AM',dh=h>12?h-12:h===0?12:h; return `${dh}:${String(min).padStart(2,'0')} ${suf}`; }
+function updateDriveList(dm,sorted){const card=document.getElementById('driveCard'),list=document.getElementById('driveList'),filled=itinProps.filter(p=>p.address.trim());if(filled.length<2){card.style.display='none';return;}card.style.display='block';const existing={};document.querySelectorAll('.drive-min').forEach(el=>{existing[el.id]=el.value;});list.innerHTML='';for(let i=0;i<filled.length-1;i++){const from=filled[i],to=filled[i+1],key=`drv_${from.id}_${to.id}`;let autoVal='',autoLabel='';if(dm&&sorted){const of=sorted[i],ot=sorted[i+1];if(of&&ot){const dk=`${of.id}_${ot.id}`;if(dm[dk]){autoVal=dm[dk].minutes;autoLabel=`<span class="drive-auto">🟢 Google Maps: ${dm[dk].text}</span>`;}}}const val=existing[key]||autoVal;const d=document.createElement('div');d.className='drive-item';d.innerHTML=`<div class="drive-arrow"><strong>${from.address||'...'}</strong>↓<strong>${to.address||'...'}</strong>${autoLabel}</div><span style="font-size:17px">🚗</span><input class="drive-min" id="${key}" type="number" min="1" max="180" value="${val}" placeholder="0"><span style="font-size:12px;color:var(--gray)">min</span>`;list.appendChild(d);}}
+function checkGenerate(){const has=itinProps.filter(p=>p.address.trim()).length>=1,hasDate=document.getElementById('showingDate').value;document.getElementById('generateBtn').disabled=!(has&&hasDate);}
+function formatTime(m){const h=Math.floor(m/60),min=m%60,suf=h>=12?'PM':'AM',dh=h>12?h-12:h===0?12:h;return`${dh}:${String(min).padStart(2,'0')} ${suf}`;}
 
 function generate(){
   const client=document.getElementById('clientName').value||'Client',agent=document.getElementById('agentName').value||'',dateVal=document.getElementById('showingDate').value,startTimeVal=document.getElementById('startTime').value,showMin=parseInt(document.getElementById('showTime').value)||20,startAddr=document.getElementById('itinStart').value,filled=itinProps.filter(p=>p.address.trim());
-  if(!filled.length||!dateVal) return;
+  if(!filled.length||!dateVal)return;
   const dateDisplay=new Date(dateVal+'T12:00:00').toLocaleDateString(lang==='es'?'es-US':'en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const [sh,sm]=startTimeVal.split(':').map(Number); let cursor=sh*60+sm,totalDrive=0;
-  const stops=filled.map((p,i)=>{ const arrival=cursor,departure=cursor+showMin; let driveMin=0; if(i<filled.length-1){const next=filled[i+1],key=`drv_${p.id}_${next.id}`,el=document.getElementById(key);driveMin=el?(parseInt(el.value)||0):0;totalDrive+=driveMin;} cursor=departure+driveMin; return {...p,arrival:formatTime(arrival),departure:formatTime(departure),driveAfter:i<filled.length-1?driveMin:null}; });
+  const[sh,sm]=startTimeVal.split(':').map(Number);let cursor=sh*60+sm,totalDrive=0;
+  const stops=filled.map((p,i)=>{const arrival=cursor,departure=cursor+showMin;let driveMin=0;if(i<filled.length-1){const next=filled[i+1],key=`drv_${p.id}_${next.id}`,el=document.getElementById(key);driveMin=el?(parseInt(el.value)||0):0;totalDrive+=driveMin;}cursor=departure+driveMin;return{...p,arrival:formatTime(arrival),departure:formatTime(departure),driveAfter:i<filled.length-1?driveMin:null};});
   const totalMin=(filled.length*showMin)+totalDrive,totalH=Math.floor(totalMin/60),totalM=totalMin%60,totalStr=totalH>0?`${totalH}h ${totalM}m`:`${totalM}m`,returnTime=formatTime(sh*60+sm+totalMin);
   window._itinData={client,agent,dateDisplay,stops,totalStr,returnTime,showMin,startAddr};
   const stopsHTML=stops.map((s,i)=>`<div class="stop"><div class="stop-timeline"><div class="stop-dot">${i+1}</div>${s.driveAfter!==null?'<div class="stop-line"></div>':''}</div><div class="stop-content"><div class="stop-address">${s.address}</div><div class="stop-meta">${s.price?`<span class="stop-price">${s.price}</span>`:''}</div><div class="stop-times"><div class="time-chip"><span class="time-chip-label">${t('arrival')}</span><span class="time-chip-val arrival">${s.arrival}</span></div><div class="time-chip"><span class="time-chip-label">${t('departure')}</span><span class="time-chip-val departure">${s.departure}</span></div></div></div></div>${s.driveAfter!==null?`<div class="drive-connector"><span>🚗</span><span class="drive-connector-text">${s.driveAfter} ${t('drive')}</span></div>`:''}`).join('');
-  document.getElementById('itineraryOut').innerHTML=`<div class="itinerary"><div class="itin-header"><div class="itin-label">${t('itin_label')}</div><div class="itin-client">${client}</div><div class="itin-date">${dateDisplay}${agent?' · '+agent:''}</div><div class="itin-stats"><div class="stat"><div class="stat-val">${stops.length}</div><div class="stat-label">${t('homes')}</div></div><div class="stat"><div class="stat-val">${totalStr}</div><div class="stat-label">${t('total')}</div></div><div class="stat"><div class="stat-val">${returnTime}</div><div class="stat-label">${t('returnlabel')}</div></div></div></div><div class="itin-body">${startAddr?`<div style="font-size:12px;color:var(--gray);margin-bottom:14px;font-style:italic">📍 ${t('from')}: ${startAddr}</div>`:''} ${stopsHTML}<div class="summary-box"><strong>${showMin} min</strong> ${lang==='es'?'por casa':'per home'} · <strong>${t('returnlabel')}:</strong> ${returnTime}</div></div><div class="share-bar"><span class="share-label">${t('sharelabel')}</span><button class="share-btn copy" onclick="copyItinerary()">📋 ${t('copybtn')}</button><button class="share-btn sms" onclick="smsItinerary()">💬 ${t('smsbtn')}</button><button class="share-btn email" onclick="emailItinerary()">📧 ${t('emailbtn')}</button><span class="copied-msg" id="copiedMsg">${t('copied')}</span></div></div>`;
+  document.getElementById('itineraryOut').innerHTML=`<div class="itinerary"><div class="itin-header"><div class="itin-label">${t('itin_label')}</div><div class="itin-client">${client}</div><div class="itin-date">${dateDisplay}${agent?' · '+agent:''}</div><div class="itin-stats"><div class="stat"><div class="stat-val">${stops.length}</div><div class="stat-label">${t('homes')}</div></div><div class="stat"><div class="stat-val">${totalStr}</div><div class="stat-label">${t('total')}</div></div><div class="stat"><div class="stat-val">${returnTime}</div><div class="stat-label">${t('returnlabel')}</div></div></div></div><div class="itin-body">${startAddr?`<div style="font-size:12px;color:var(--gray);margin-bottom:14px;font-style:italic">📍 ${t('from')}: ${startAddr}</div>`:''}${stopsHTML}<div class="summary-box"><strong>${showMin} min</strong> ${lang==='es'?'por casa':'per home'} · <strong>${t('returnlabel')}:</strong> ${returnTime}</div></div><div class="share-bar"><span class="share-label">${t('sharelabel')}</span><button class="share-btn copy" onclick="copyItinerary()">📋 ${t('copybtn')}</button><button class="share-btn sms" onclick="smsItinerary()">💬 ${t('smsbtn')}</button><button class="share-btn email" onclick="emailItinerary()">📧 ${t('emailbtn')}</button><span class="copied-msg" id="copiedMsg">${t('copied')}</span></div></div>`;
 }
 
-function buildText(){ const d=window._itinData; if(!d) return ''; let txt=`📍 ${t('itin_label').toUpperCase()}\n👤 ${d.client}\n📅 ${d.dateDisplay}\n`; if(d.startAddr) txt+=`🚀 ${t('from')}: ${d.startAddr}\n`; txt+='\n'; d.stops.forEach((s,i)=>{ txt+=`${i+1}. ${s.address}\n`; if(s.price) txt+=`   💰 ${s.price}\n`; txt+=`   🟢 ${t('arrival')}: ${s.arrival}  🔴 ${t('departure')}: ${s.departure}\n`; if(s.driveAfter!==null) txt+=`   🚗 ${s.driveAfter} ${t('drive')}\n`; txt+='\n'; }); txt+=`⏱️ ${t('total')}: ${d.totalStr} · ${t('returnlabel')}: ${d.returnTime}\n`; if(d.agent) txt+=`\n— ${d.agent} · RouteReady`; return txt; }
-function copyItinerary(){ navigator.clipboard.writeText(buildText()).then(()=>{ const el=document.getElementById('copiedMsg'); if(el){el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2000);} }); }
-function smsItinerary(){ window.open(`sms:?body=${encodeURIComponent(buildText())}`); }
-function emailItinerary(){ const d=window._itinData; window.open(`mailto:?subject=${encodeURIComponent(t('itin_label')+' - '+(d?d.dateDisplay:''))}&body=${encodeURIComponent(buildText())}`); }
+function buildText(){const d=window._itinData;if(!d)return'';let txt=`📍 ${t('itin_label').toUpperCase()}\n👤 ${d.client}\n📅 ${d.dateDisplay}\n`;if(d.startAddr)txt+=`🚀 ${t('from')}: ${d.startAddr}\n`;txt+='\n';d.stops.forEach((s,i)=>{txt+=`${i+1}. ${s.address}\n`;if(s.price)txt+=`   💰 ${s.price}\n`;txt+=`   🟢 ${t('arrival')}: ${s.arrival}  🔴 ${t('departure')}: ${s.departure}\n`;if(s.driveAfter!==null)txt+=`   🚗 ${s.driveAfter} ${t('drive')}\n`;txt+='\n';});txt+=`⏱️ ${t('total')}: ${d.totalStr} · ${t('returnlabel')}: ${d.returnTime}\n`;if(d.agent)txt+=`\n— ${d.agent} · RouteReady`;return txt;}
+function copyItinerary(){navigator.clipboard.writeText(buildText()).then(()=>{const el=document.getElementById('copiedMsg');if(el){el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2000);}});}
+function smsItinerary(){window.open(`sms:?body=${encodeURIComponent(buildText())}`);}
+function emailItinerary(){const d=window._itinData;window.open(`mailto:?subject=${encodeURIComponent(t('itin_label')+' - '+(d?d.dateDisplay:''))}&body=${encodeURIComponent(buildText())}`);}
 
 addPlanProp(); addPlanProp();
 updateAllTexts();
