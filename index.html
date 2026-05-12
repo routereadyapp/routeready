@@ -598,7 +598,7 @@ function renderPlanProps(){
   const list=document.getElementById('planPropList');list.innerHTML='';
   planProps.forEach((p,i)=>{
     const d=document.createElement('div');d.className='prop-item';
-    d.innerHTML=`<div class="prop-num">${i+1}</div><input class="prop-input" placeholder="Address..." value="${p.address}" oninput="planProps[${i}].address=this.value;checkOptimize()"><button class="prop-remove" onclick="removePlanProp(${p.id})">×</button>`;
+    d.innerHTML=`<div class="prop-num">${i+1}</div><input class="prop-input" placeholder="Address..." value="${p.address}" oninput="planProps[${i}].address=this.value;checkOptimize()"><input class="prop-time" placeholder="min" value="${p.price||''}" oninput="planProps[${i}].price=this.value" title="Time at stop (min)"><button class="prop-remove" onclick="removePlanProp(${p.id})">×</button>`;
     list.appendChild(d);
   });
 }
@@ -614,9 +614,8 @@ async function getDistances(origin,destinations){
 }
 
 async function getWaypointOrder(origin,waypoints){
-  const dest=waypoints[waypoints.length-1];
-  const middle=waypoints.slice(0,-1);
-  const res=await fetch(`/.netlify/functions/maps?mode=optimize&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(dest)}&waypoints=${encodeURIComponent(middle.join('|'))}`);
+  // Use origin as destination too so ALL waypoints get optimized
+  const res=await fetch(`/.netlify/functions/maps?mode=optimize&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(origin)}&waypoints=${encodeURIComponent(waypoints.join('|'))}`);
   return res.json();
 }
 
@@ -637,12 +636,14 @@ async function optimizeRoute(){
         const route=wayptData.routes[0];
         const order=route.waypoint_order||filled.map((_,i)=>i);
         sorted=order.map(i=>filled[i]);
-        // Extract leg distances and times
+        // Extract leg distances and times + validated addresses from Google
         route.legs.forEach((leg,i)=>{
           if(i<sorted.length){
             sorted[i].distText=leg.distance?.text||'';
             sorted[i].durText=leg.duration?.text||'';
             sorted[i].distM=leg.distance?.value||0;
+            // Use Google validated address
+            if(leg.end_address) sorted[i].validatedAddress=leg.end_address;
             totalDistMi+=leg.distance?.value||0;
           }
           if(i>0&&i<=sorted.length){
@@ -684,9 +685,9 @@ function renderOptResult(sorted,driveMap,origin){
   const stopsHTML=sorted.map((p,i)=>{
     const nk=i<sorted.length-1?`${p.id}_${sorted[i+1].id}`:null;
     const di=nk&&driveMap[nk];
-    return`<div class="opt-stop"><div class="opt-stop-num">${i+1}</div><div class="opt-stop-content"><div class="opt-stop-addr">${p.address}</div><div class="opt-stop-meta">${p.distText?`📍 ${p.distText} ${t('real_dist')}`:''}</div></div></div>${di?`<div class="opt-drive"><span class="opt-drive-badge">🚗 ${di.text}</span><span class="opt-drive-dist">${di.dist}</span></div>`:''}`;
+    return`<div class="opt-stop"><div class="opt-stop-num">${i+1}</div><div class="opt-stop-content"><div class="opt-stop-addr">${p.validatedAddress||p.address}</div><div class="opt-stop-meta">${p.distText?`📍 ${p.distText} ${t('real_dist')}`:''}</div></div></div>${di?`<div class="opt-drive"><span class="opt-drive-badge">🚗 ${di.text}</span><span class="opt-drive-dist">${di.dist}</span></div>`:''}`;
   }).join('');
-  const milesInfo=_totalMiles>0?`<div style="background:var(--green2);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--green);font-weight:600;margin-top:12px;">🛣️ ~${_totalMiles} mi total · ${Math.round(totalDriveMin/60*10)/10}h drive time</div>`:'';
+  const milesInfo=_totalMiles>0?`<div style="background:var(--green2);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--green);font-weight:600;margin-top:12px;">🛣️ ~${_totalMiles} mi total · ${totalDriveMin>=60?Math.floor(totalDriveMin/60)+'h '+( totalDriveMin%60>0?totalDriveMin%60+'min':''):totalDriveMin+' min'} drive time</div>`:'';
   document.getElementById('planResult').innerHTML=`<div class="opt-result">
     <div class="opt-header"><div class="opt-label">${t('optimized')}</div><div class="opt-title">${origin} → ${sorted.length} stops</div></div>
     <div class="opt-body">${stopsHTML}${milesInfo}
