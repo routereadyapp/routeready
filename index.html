@@ -23,8 +23,6 @@
     --red2: #FDECEA;
     --shadow: 0 4px 24px rgba(107,26,42,0.12);
     --shadow2: 0 2px 8px rgba(107,26,42,0.07);
-    --blue: #1A4A8B;
-    --blue2: #EEF3FC;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--burgundy3); min-height: 100vh; }
@@ -37,12 +35,14 @@
   .lang-toggle { display: flex; background: var(--burgundy3); border-radius: 20px; padding: 3px; gap: 2px; }
   .lang-btn { padding: 5px 14px; border-radius: 16px; border: none; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--gold3); }
   .lang-btn.active { background: var(--gold); color: var(--burgundy); }
+  .logo-horiz { display: block; }
+  @media (max-width: 400px) { .logo-horiz { display: none; } }
 
-  .tabs { display: flex; background: var(--burgundy3); border-bottom: 3px solid var(--gold); }
-  .tab { flex: 1; padding: 14px 20px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--gold3); border: none; background: transparent; transition: all 0.2s; opacity: 0.7; }
+  .tabs { display: flex; background: var(--burgundy3); border-bottom: 3px solid var(--gold); overflow-x: auto; }
+  .tab { flex: 1; min-width: 80px; padding: 12px 10px; text-align: center; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--gold3); border: none; background: transparent; transition: all 0.2s; opacity: 0.7; white-space: nowrap; }
   .tab.active { color: var(--gold); background: var(--burgundy); border-bottom: 3px solid var(--gold); margin-bottom: -3px; opacity: 1; }
   .tab:hover:not(.active) { opacity: 1; }
-  .tab-icon { font-size: 16px; display: block; margin-bottom: 2px; }
+  .tab-icon { font-size: 15px; display: block; margin-bottom: 2px; }
   .panel { display: none; }
   .panel.active { display: block; }
 
@@ -90,160 +90,6 @@
 
   .api-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--green2); color: var(--green); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; margin-bottom: 14px; }
 
-  /* ===== SHOWINGTIME PARSER ===== */
-  .st-parser-card {
-    background: var(--white);
-    border-radius: 16px;
-    padding: 22px 24px;
-    box-shadow: var(--shadow2);
-    border: 2px solid var(--blue);
-    margin-bottom: 20px;
-    position: relative;
-    overflow: hidden;
-  }
-  .st-parser-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--blue), #4A80D4, var(--blue));
-  }
-  .st-parser-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 4px;
-  }
-  .st-logo-badge {
-    background: var(--blue2);
-    border: 1.5px solid var(--blue);
-    border-radius: 8px;
-    padding: 4px 10px;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--blue);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-  .st-parser-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--burgundy3);
-  }
-  .st-parser-sub {
-    font-size: 11px;
-    color: var(--gray);
-    margin-bottom: 12px;
-    line-height: 1.6;
-  }
-  .st-textarea {
-    width: 100%;
-    min-height: 110px;
-    padding: 12px 14px;
-    border: 1.5px solid var(--lightgray);
-    border-radius: 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    color: var(--burgundy3);
-    background: var(--cream);
-    outline: none;
-    resize: vertical;
-    transition: border-color 0.2s;
-    line-height: 1.6;
-  }
-  .st-textarea:focus { border-color: var(--blue); }
-  .st-textarea::placeholder { color: #bbb; font-style: italic; }
-  .st-parse-btn {
-    width: 100%;
-    padding: 11px;
-    background: var(--blue);
-    color: var(--white);
-    border: none;
-    border-radius: 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-  .st-parse-btn:hover { background: var(--blue2); color: var(--blue); border: 1.5px solid var(--blue); }
-  .st-parse-btn:disabled { background: var(--lightgray); color: var(--gray); cursor: not-allowed; }
-  .st-result-preview {
-    margin-top: 12px;
-    background: var(--blue2);
-    border: 1px solid var(--blue);
-    border-radius: 10px;
-    padding: 12px 14px;
-    font-size: 12px;
-    color: var(--blue);
-    display: none;
-    animation: fadeIn 0.25s ease;
-  }
-  .st-result-preview.show { display: block; }
-  .st-result-preview strong { display: block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; color: var(--blue); }
-  .st-result-item { padding: 3px 0; border-bottom: 1px dashed rgba(26,74,139,0.2); }
-  .st-result-item:last-child { border-bottom: none; }
-  .st-result-addr { font-weight: 600; color: var(--burgundy3); }
-  .st-result-meta { color: var(--gray); font-size: 11px; }
-  .st-error {
-    margin-top: 8px;
-    padding: 8px 12px;
-    background: var(--red2);
-    color: var(--red);
-    border-radius: 8px;
-    font-size: 12px;
-    display: none;
-  }
-  .st-error.show { display: block; }
-  .st-send-btn {
-    width: 100%;
-    padding: 15px;
-    background: var(--green);
-    color: var(--white);
-    border: none;
-    border-radius: 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 12px;
-    transition: all 0.2s;
-    display: none;
-    box-shadow: 0 3px 12px rgba(26,107,58,0.35);
-    letter-spacing: 0.3px;
-  }
-  .st-send-btn.show { display: block; animation: fadeIn 0.3s ease; }
-  .st-send-btn:hover { background: #147830; transform: translateY(-1px); }
-  .st-toggle-hint {
-    font-size: 11px;
-    color: var(--blue);
-    cursor: pointer;
-    text-decoration: underline dotted;
-    display: inline-block;
-    margin-top: 6px;
-  }
-  .st-sample-box {
-    display: none;
-    margin-top: 8px;
-    background: var(--cream);
-    border: 1px dashed var(--lightgray);
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 11px;
-    color: var(--gray);
-    font-family: monospace;
-    line-height: 1.8;
-    white-space: pre-wrap;
-  }
-  .st-sample-box.show { display: block; }
-
-  /* ===== FIN SHOWINGTIME PARSER ===== */
-
   .opt-result { animation: fadeIn 0.3s ease; }
   .opt-header { background: linear-gradient(135deg, var(--burgundy), var(--burgundy2)); border-radius: 12px 12px 0 0; padding: 16px 20px; }
   .opt-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
@@ -259,8 +105,6 @@
   .opt-drive-badge { background: var(--burgundy); color: var(--gold2); padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
   .opt-drive-dist { font-size: 11px; color: var(--gray); }
 
-  .opt-origin-row { display: flex; align-items: center; gap: 8px; padding: 8px 0 4px 0; }
-  .opt-origin-label { font-size: 12px; font-weight: 700; color: var(--burgundy); background: var(--cream); padding: 4px 10px; border-radius: 8px; border: 1.5px solid var(--lightgray); }
   .use-order-btn { width: 100%; padding: 13px; background: var(--burgundy); color: var(--gold2); border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 16px; transition: all 0.2s; }
   .use-order-btn:hover { background: var(--burgundy2); }
   .copy-order-btn { width: 100%; padding: 11px; background: var(--cream); color: var(--burgundy); border: 1.5px solid var(--lightgray); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
@@ -274,6 +118,9 @@
   .drive-min { width: 58px; padding: 7px 8px; border: 1.5px solid var(--lightgray); border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; color: var(--burgundy3); text-align: center; outline: none; transition: border-color 0.2s; flex-shrink: 0; }
   .drive-min:focus { border-color: var(--gold); }
   .drive-auto { font-size: 10px; color: var(--green); font-weight: 600; }
+  .calc-drive-btn { width:100%; padding:11px; background:linear-gradient(135deg,var(--burgundy),var(--burgundy2)); color:var(--gold2); border:none; border-radius:10px; font-family:"DM Sans",sans-serif; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:4px; transition:all 0.2s; }
+  .calc-drive-btn:hover { transform:translateY(-1px); }
+  .calc-drive-btn:disabled { background:var(--lightgray); color:var(--gray); cursor:not-allowed; transform:none; }
 
   .itinerary { background: var(--white); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); border: 2px solid var(--gold); animation: fadeIn 0.4s ease; }
   .itin-header { background: linear-gradient(135deg, var(--burgundy), var(--burgundy2)); padding: 20px 24px; }
@@ -320,6 +167,36 @@
   .section-gap { margin-top: 20px; }
   .error-msg { background: var(--red2); color: var(--red); padding: 10px 14px; border-radius: 8px; font-size: 12px; margin-top: 10px; display: none; }
   .error-msg.show { display: block; }
+
+  /* ── ShowingTime Parser styles ── */
+  .st-paste-area { width: 100%; min-height: 160px; padding: 14px; border: 2px dashed var(--lightgray); border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--burgundy3); background: var(--cream); outline: none; resize: vertical; transition: border-color 0.2s; line-height: 1.6; }
+  .st-paste-area:focus { border-color: var(--gold); background: var(--white); }
+  .st-parse-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--burgundy), var(--burgundy2)); color: var(--gold2); border: none; border-radius: 12px; font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 12px; transition: all 0.2s; box-shadow: 0 4px 16px rgba(107,26,42,0.25); }
+  .st-parse-btn:hover { transform: translateY(-1px); }
+  .st-parse-btn:disabled { background: var(--lightgray); color: var(--gray); cursor: not-allowed; transform: none; box-shadow: none; }
+  .st-results { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .st-card { border-radius: 12px; overflow: hidden; border: 2px solid var(--lightgray); animation: fadeIn 0.3s ease; }
+  .st-card.confirmed { border-color: var(--green); }
+  .st-card.declined { border-color: var(--red); opacity: 0.6; }
+  .st-card-header { padding: 10px 16px; display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .st-card.confirmed .st-card-header { background: var(--green2); color: var(--green); }
+  .st-card.declined .st-card-header { background: var(--red2); color: var(--red); }
+  .st-card-body { padding: 14px 16px; background: var(--white); }
+  .st-address { font-weight: 700; font-size: 15px; color: var(--burgundy3); margin-bottom: 4px; }
+  .st-meta { font-size: 12px; color: var(--gray); display: flex; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
+  .st-meta span { display: flex; align-items: center; gap: 4px; }
+  .st-add-btn { margin-top: 10px; padding: 8px 14px; background: var(--burgundy); color: var(--gold2); border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .st-add-btn:hover { background: var(--burgundy2); }
+  .st-add-btn.added { background: var(--green); cursor: default; }
+  .st-summary { background: var(--cream); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--gray); border-left: 3px solid var(--gold); margin-bottom: 16px; }
+  .st-summary strong { color: var(--burgundy); }
+  .st-send-btn { width: 100%; padding: 13px; background: var(--burgundy); color: var(--gold2); border: none; border-radius: 10px; font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 10px rgba(107,26,42,0.2); }
+  .st-send-btn:hover { background: var(--burgundy2); transform: translateY(-1px); }
+  .st-steps { display: flex; flex-direction: column; gap: 14px; }
+  .st-step { display: flex; gap: 12px; align-items: flex-start; }
+  .st-step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--gold); color: var(--burgundy); font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Playfair Display', serif; }
+  .st-step-text { font-size: 13px; color: var(--burgundy3); line-height: 1.5; padding-top: 4px; }
+  .st-step-text strong { color: var(--burgundy); }
 </style>
 </head>
 <body>
@@ -336,50 +213,85 @@
 </header>
 
 <div class="tabs">
+  <button class="tab" onclick="switchTab('import')" id="tab-import">
+    <span class="tab-icon">📨</span>
+    <span id="txt-tab0">Import ST</span>
+  </button>
   <button class="tab active" onclick="switchTab('plan')" id="tab-plan">
     <span class="tab-icon">🧭</span>
-    <span id="txt-tab1">Plan My Route</span>
+    <span id="txt-tab1">Plan Route</span>
   </button>
   <button class="tab" onclick="switchTab('itinerary')" id="tab-itinerary">
     <span class="tab-icon">📋</span>
-    <span id="txt-tab2">Generate Itinerary</span>
+    <span id="txt-tab2">Itinerary</span>
   </button>
 </div>
 
-<!-- ============ TAB: PLAN MY ROUTE ============ -->
+<!-- ══════════════════════════════════════════════
+     TAB 1 — IMPORT SHOWINGTIME
+══════════════════════════════════════════════ -->
+<div class="panel" id="panel-import">
+  <div class="app">
+    <div class="page-title" id="txt-import-title">Import from ShowingTime</div>
+    <div class="page-sub" id="txt-import-sub">Copy and paste the text from one or more ShowingTime confirmation emails. RouteReady extracts the address, date and time automatically — and ignores declined showings.</div>
+
+    <div class="two-col">
+      <div>
+        <!-- How to use -->
+        <div class="card">
+          <div class="card-title" id="txt-how-title">How to use</div>
+          <div class="st-steps">
+            <div class="st-step">
+              <div class="st-step-num">1</div>
+              <div class="st-step-text" id="txt-step1">Open your ShowingTime confirmation email and <strong>select all the text</strong> (press & hold → Select All).</div>
+            </div>
+            <div class="st-step">
+              <div class="st-step-num">2</div>
+              <div class="st-step-text" id="txt-step2"><strong>Copy</strong> the text and <strong>paste it below</strong>. You can paste multiple emails at once.</div>
+            </div>
+            <div class="st-step">
+              <div class="st-step-num">3</div>
+              <div class="st-step-text" id="txt-step3">Tap <strong>Extract Showings</strong>. Confirmed showings are loaded automatically. Declined ones are ignored.</div>
+            </div>
+            <div class="st-step">
+              <div class="st-step-num">4</div>
+              <div class="st-step-text" id="txt-step4">Tap <strong>Send to Plan My Route</strong> to optimize the order with Google Maps.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paste area -->
+        <div class="card section-gap">
+          <div class="card-title" id="txt-paste-title">Paste ShowingTime Email(s)</div>
+          <div class="hint" id="txt-paste-hint">You can paste multiple emails together — RouteReady separates them automatically.</div>
+          <textarea class="st-paste-area" id="stPasteArea" placeholder="Paste ShowingTime email text here..." oninput="checkParse()"></textarea>
+          <button class="st-parse-btn" id="stParseBtn" onclick="parseShowingTime()" disabled id="txt-parsebtn">✦ Extract Showings</button>
+          <div class="error-msg" id="stError"></div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div>
+        <div class="card" style="min-height: 300px;" id="stResultsCard">
+          <div class="card-title" id="txt-st-result">Extracted Showings</div>
+          <div class="empty-state">
+            <div class="empty-icon">📨</div>
+            <div class="empty-text" id="txt-st-empty">Paste your ShowingTime emails and tap Extract Showings.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TAB 2 — PLAN MY ROUTE
+══════════════════════════════════════════════ -->
 <div class="panel active" id="panel-plan">
   <div class="app">
     <div class="page-title" id="txt-plan-title">Plan My Route</div>
     <div class="page-sub" id="txt-plan-sub">Add properties and RouteReady calculates real drive times using Google Maps.</div>
     <div class="api-badge">🟢 <span id="txt-api-badge">Google Maps API Connected</span></div>
-
-    <!-- SHOWINGTIME PARSER (Plan tab) -->
-    <div class="st-parser-card" id="stParserPlan">
-      <div class="st-parser-header">
-        <div class="st-logo-badge">ShowingTime</div>
-        <div class="st-parser-title" id="txt-st-title-plan">Quick Import</div>
-      </div>
-      <div class="st-parser-sub" id="txt-st-sub-plan">Paste your ShowingTime confirmation email or appointment list — RouteReady will extract the addresses automatically.</div>
-      <textarea class="st-textarea" id="stTextPlan" placeholder="Paste ShowingTime text here...&#10;&#10;Example:&#10;123 Main St, Springfield, NJ — $425,000&#10;456 Oak Ave, Westfield, NJ — $550,000&#10;789 Elm Rd, Cranford, NJ" oninput="checkStParsePlan()"></textarea>
-      <span class="st-toggle-hint" onclick="toggleSample('plan')" id="txt-st-sample-plan">📄 See accepted formats</span>
-      <div class="st-sample-box" id="stSamplePlan">ShowingTime formats RouteReady can read:
-
-• 123 Main St, Springfield, NJ — $425,000
-• 456 Oak Ave, Westfield, NJ | Listed at $550,000
-• 789 Elm Rd, Cranford, NJ 07016
-
-Also accepts raw address lists, one per line.
-Prices are optional — include them if you want them shown on the route.</div>
-      <div class="st-error" id="stErrorPlan"></div>
-      <div class="st-result-preview" id="stPreviewPlan"></div>
-      <button class="st-parse-btn" id="stParseBtnPlan" onclick="parseST('plan')" disabled>
-        <span>⚡</span> <span id="txt-st-parsebtn-plan">Extract Addresses</span>
-      </button>
-      <button class="st-send-btn" id="stSendBtnPlan" onclick="sendSTtoPlan()">
-        <span id="txt-st-sendbtn-plan">✓ Add to Route Planner</span>
-      </button>
-    </div>
-
     <div class="two-col">
       <div>
         <div class="card">
@@ -424,46 +336,13 @@ Prices are optional — include them if you want them shown on the route.</div>
   </div>
 </div>
 
-<!-- ============ TAB: GENERATE ITINERARY ============ -->
+<!-- ══════════════════════════════════════════════
+     TAB 3 — GENERATE ITINERARY
+══════════════════════════════════════════════ -->
 <div class="panel" id="panel-itinerary">
   <div class="app">
     <div class="page-title" id="txt-itin-title">Generate Itinerary</div>
     <div class="page-sub" id="txt-itin-sub">Enter confirmed appointment times to generate the client itinerary.</div>
-
-    <!-- SHOWINGTIME PARSER (Itinerary tab) -->
-    <div class="st-parser-card" id="stParserItin">
-      <div class="st-parser-header">
-        <div class="st-logo-badge">ShowingTime</div>
-        <div class="st-parser-title" id="txt-st-title-itin">Quick Import</div>
-      </div>
-      <div class="st-parser-sub" id="txt-st-sub-itin">Paste your ShowingTime confirmation — RouteReady extracts addresses, prices, client name, agent name, date and start time automatically.</div>
-      <textarea class="st-textarea" id="stTextItin" placeholder="Paste ShowingTime confirmation here...&#10;&#10;Example:&#10;Client: Maria Lopez | Agent: Dessire Vega | Date: June 14, 2025 | Start: 10:00 AM&#10;1. 123 Main St, Springfield, NJ — $425,000&#10;2. 456 Oak Ave, Westfield, NJ — $550,000" oninput="checkStParseItin()"></textarea>
-      <span class="st-toggle-hint" onclick="toggleSample('itin')" id="txt-st-sample-itin">📄 See accepted formats</span>
-      <div class="st-sample-box" id="stSampleItin">ShowingTime formats RouteReady can read:
-
-FULL FORMAT (extracts everything):
-  Client: Maria Lopez | Agent: Dessire Vega
-  Date: June 14, 2025 | Start: 10:00 AM
-  1. 123 Main St, Springfield, NJ — $425,000
-  2. 456 Oak Ave, Westfield, NJ — $550,000
-
-ADDRESS-ONLY (just addresses, one per line):
-  123 Main St, Springfield, NJ
-  456 Oak Ave, Westfield, NJ
-
-MIXED FORMAT:
-  456 Oak Ave, Westfield, NJ | Listed at $550,000
-  789 Elm Rd, Cranford, NJ 07016</div>
-      <div class="st-error" id="stErrorItin"></div>
-      <div class="st-result-preview" id="stPreviewItin"></div>
-      <button class="st-parse-btn" id="stParseBtnItin" onclick="parseST('itin')" disabled>
-        <span>⚡</span> <span id="txt-st-parsebtn-itin">Extract from ShowingTime</span>
-      </button>
-      <button class="st-send-btn" id="stSendBtnItin" onclick="sendSTtoItin()">
-        <span id="txt-st-sendbtn-itin">✓ Fill Itinerary Form</span>
-      </button>
-    </div>
-
     <div class="two-col">
       <div>
         <div class="card">
@@ -489,7 +368,11 @@ MIXED FORMAT:
         </div>
         <div class="card section-gap" id="driveCard" style="display:none">
           <div class="card-title" id="txt-itin-s3">Drive Times Between Stops</div>
-          <div class="hint" id="txt-drivehint">Enter minutes from Google Maps for each leg.</div>
+          <button class="calc-drive-btn" id="calcDriveBtn" onclick="calcAllDriveTimes()">
+            <span id="calcDriveSpinner" class="spinner"></span>
+            <span id="calcDriveTxt">🗺️ Calculate with Google Maps</span>
+          </button>
+          <div class="hint" id="txt-drivehint" style="margin-top:8px;">RouteReady calculates real drive times automatically.</div>
           <div id="driveList"></div>
         </div>
         <button class="primary-btn" onclick="generate()" id="generateBtn" disabled>
@@ -509,14 +392,29 @@ MIXED FORMAT:
 </div>
 
 <script>
-// API key stored securely in Netlify environment variables
-let lang='en', orderPref='closest', planProps=[], itinProps=[], planId=0, itinId=0;
-let stParsedPlan=null, stParsedItin=null;
+const API_KEY='AIzaSyDuYgGbbYy0U23ZJVdp4Q4BU-LHXDmyxNs';
+let lang='en',orderPref='closest',planProps=[],itinProps=[],planId=0,itinId=0;
+let stParsed=[]; // showingtime parsed results
 
-// ===================== TRANSLATIONS =====================
+// ─── TRANSLATIONS ────────────────────────────────────────────
 const T={
   en:{
-    tab1:"Plan My Route",tab2:"Generate Itinerary",
+    tab0:"Import ST",tab1:"Plan Route",tab2:"Itinerary",
+    'import-title':"Import from ShowingTime",
+    'import-sub':"Paste one or more ShowingTime emails. RouteReady extracts address, date and time — and ignores declined showings.",
+    'how-title':"How to use",
+    step1:"Open your ShowingTime email and <strong>select all the text</strong> (press & hold → Select All).",
+    step2:"<strong>Copy</strong> the text and <strong>paste it below</strong>. You can paste multiple emails at once.",
+    step3:"Tap <strong>Extract Showings</strong>. Confirmed showings load automatically. Declined are ignored.",
+    step4:"Tap <strong>Send to Plan My Route</strong> to optimize the order with Google Maps.",
+    'paste-title':"Paste ShowingTime Email(s)",
+    'paste-hint':"You can paste multiple emails together — RouteReady separates them automatically.",
+    parsebtn:"✦ Extract Showings",
+    'st-result':"Extracted Showings",
+    'st-empty':"Paste your ShowingTime emails and tap Extract Showings.",
+    confirmed:"✅ Confirmed",declined:"❌ Declined",
+    send_to_plan:"🗺️ Send All to Plan My Route",
+    add_to_plan:"+ Add to Route",added:"✓ Added",
     'plan-title':"Plan My Route",'plan-sub':"Add properties and RouteReady calculates real drive times using Google Maps.",
     'api-badge':"Google Maps API Connected",'plan-s1':"Starting Point",startfrom:"Starting From",
     'plan-s2':"Properties to Show",'plan-hint':"Add addresses in any order. RouteReady sorts them using real Google Maps distances.",
@@ -532,25 +430,33 @@ const T={
     'itin-s3':"Drive Times Between Stops",drivehint:"Enter minutes from Google Maps for each leg.",
     genbtn:"✦ Generate Itinerary",'itin-result':"Client Itinerary",
     'itin-empty':"Fill in the details and generate the itinerary to share with your client.",
-    addprop:"+ Add Property",itin_label:"Showing Itinerary",
-    arrival:"Arrival",departure:"Departure",drive:"min drive to next stop",
-    sharelabel:"Share with Client:",copybtn:"📋 Copy",smsbtn:"💬 Text",emailbtn:"📧 Email",copied:"Copied!",
-    total:"Total",homes:"Homes",returnlabel:"Est. Return",from:"Starting from",
+    addprop:"+ Add Property",itin_label:"Showing Itinerary",arrival:"ETA",departure:"Departure",
+    drive:"min drive to next stop",sharelabel:"Share with Client:",copybtn:"📋 Copy",
+    smsbtn:"💬 Text",emailbtn:"📧 Email",copied:"Copied!",total:"Total",homes:"Homes",
+    returnlabel:"Est. Return",from:"Starting from",
     use_order:"✓ Use This Order → Go to Itinerary",copy_order:"📋 Copy Order for ShowingTime",
     order_copied:"Order copied!",optimizing:"Calculating real distances...",
-    optimized_closest:"Optimized: Closest → Farthest",optimized_farthest:"Optimized: Farthest → Closest",real_dist:"by road",
-    // ShowingTime parser
-    'st-title-plan':"Quick Import",'st-sub-plan':"Paste your ShowingTime confirmation email or appointment list — RouteReady will extract the addresses automatically.",
-    'st-parsebtn-plan':"Extract Addresses",'st-sendbtn-plan':"✓ Add to Route Planner",
-    'st-title-itin':"Quick Import",'st-sub-itin':"Paste your ShowingTime confirmation — RouteReady extracts addresses, prices, client name, agent name, date and start time automatically.",
-    'st-parsebtn-itin':"Extract from ShowingTime",'st-sendbtn-itin':"✓ Fill Itinerary Form",
-    'st-sample-plan':"📄 See accepted formats",'st-sample-itin':"📄 See accepted formats",
-    'st-preview-found':"Found",'st-preview-props':"properties:",
-    'st-preview-meta':"Also detected:","st-error-empty":"Paste some text first.",
-    'st-error-none':"No addresses found. Make sure each address includes a street number, street name, and city."
+    optimized_closest:"Optimized: Closest → Farthest",optimized_farthest:"Optimized: Farthest → Closest",
+    real_dist:"by road",no_confirmed:"No confirmed showings found. Make sure to paste the full email text.",
+    parse_error:"Could not read the emails. Try pasting more text from the email."
   },
   es:{
-    tab1:"Planificar Ruta",tab2:"Generar Itinerario",
+    tab0:"Importar ST",tab1:"Planificar",tab2:"Itinerario",
+    'import-title':"Importar de ShowingTime",
+    'import-sub':"Pega uno o más emails de ShowingTime. RouteReady extrae dirección, fecha y hora — e ignora los showings declinados.",
+    'how-title':"Cómo usar",
+    step1:"Abre tu email de ShowingTime y <strong>selecciona todo el texto</strong> (mantén presionado → Seleccionar todo).",
+    step2:"<strong>Copia</strong> el texto y <strong>pégalo abajo</strong>. Puedes pegar varios emails a la vez.",
+    step3:"Toca <strong>Extraer Showings</strong>. Los confirmados se cargan solos. Los declinados se ignoran.",
+    step4:"Toca <strong>Enviar a Planificar Ruta</strong> para optimizar el orden con Google Maps.",
+    'paste-title':"Pega Email(s) de ShowingTime",
+    'paste-hint':"Puedes pegar varios emails juntos — RouteReady los separa automáticamente.",
+    parsebtn:"✦ Extraer Showings",
+    'st-result':"Showings Extraídos",
+    'st-empty':"Pega tus emails de ShowingTime y toca Extraer Showings.",
+    confirmed:"✅ Confirmado",declined:"❌ Declinado",
+    send_to_plan:"🗺️ Enviar Todo a Planificar Ruta",
+    add_to_plan:"+ Agregar a Ruta",added:"✓ Agregado",
     'plan-title':"Planificar Ruta",'plan-sub':"Agrega propiedades y RouteReady calcula los tiempos reales con Google Maps.",
     'api-badge':"Google Maps API Conectada",'plan-s1':"Punto de Salida",startfrom:"Saliendo Desde",
     'plan-s2':"Propiedades a Mostrar",'plan-hint':"Agrega en cualquier orden. RouteReady las ordena con distancias reales de Google Maps.",
@@ -566,617 +472,588 @@ const T={
     'itin-s3':"Tiempo de Manejo Entre Paradas",drivehint:"Ingresa los minutos de Google Maps para cada tramo.",
     genbtn:"✦ Generar Itinerario",'itin-result':"Itinerario del Cliente",
     'itin-empty':"Llena los datos y genera el itinerario para compartir con tu cliente.",
-    addprop:"+ Agregar Propiedad",itin_label:"Itinerario de Showings",
-    arrival:"Llegada",departure:"Salida",drive:"min de manejo a la próxima",
-    sharelabel:"Compartir con Cliente:",copybtn:"📋 Copiar",smsbtn:"💬 Texto",emailbtn:"📧 Email",copied:"¡Copiado!",
-    total:"Total",homes:"Casas",returnlabel:"Regreso Est.",from:"Saliendo de",
+    addprop:"+ Agregar Propiedad",itin_label:"Itinerario de Showings",arrival:"ETA",departure:"Salida",
+    drive:"min de manejo a la próxima",sharelabel:"Compartir con Cliente:",copybtn:"📋 Copiar",
+    smsbtn:"💬 Texto",emailbtn:"📧 Email",copied:"¡Copiado!",total:"Total",homes:"Casas",
+    returnlabel:"Regreso Est.",from:"Saliendo de",
     use_order:"✓ Usar Este Orden → Ir a Itinerario",copy_order:"📋 Copiar Orden para ShowingTime",
     order_copied:"¡Orden copiada!",optimizing:"Calculando distancias reales...",
-    optimized_closest:"Optimizado: Más Cerca → Más Lejos",optimized_farthest:"Optimizado: Más Lejos → Más Cerca",real_dist:"por carretera",
-    // ShowingTime parser
-    'st-title-plan':"Importar Rápido",'st-sub-plan':"Pega tu confirmación de ShowingTime — RouteReady extrae las direcciones automáticamente.",
-    'st-parsebtn-plan':"Extraer Direcciones",'st-sendbtn-plan':"✓ Agregar a Planificador",
-    'st-title-itin':"Importar Rápido",'st-sub-itin':"Pega tu confirmación de ShowingTime — RouteReady extrae direcciones, precios, cliente, agente, fecha y hora automáticamente.",
-    'st-parsebtn-itin':"Extraer de ShowingTime",'st-sendbtn-itin':"✓ Llenar Formulario",
-    'st-sample-plan':"📄 Ver formatos aceptados",'st-sample-itin':"📄 Ver formatos aceptados",
-    'st-preview-found':"Se encontraron",'st-preview-props':"propiedades:",
-    'st-preview-meta':"También detectado:","st-error-empty":"Pega texto primero.",
-    'st-error-none':"No se encontraron direcciones. Asegúrate de incluir número, calle y ciudad."
+    optimized_closest:"Optimizado: Más Cerca → Más Lejos",optimized_farthest:"Optimizado: Más Lejos → Más Cerca",
+    real_dist:"por carretera",no_confirmed:"No se encontraron showings confirmados. Asegúrate de pegar el texto completo del email.",
+    parse_error:"No se pudo leer los emails. Intenta pegar más texto del email."
   }
 };
 
-function t(k){ return T[lang][k]||k; }
-
-// ===================== SHOWINGTIME PARSER CORE =====================
-
-/**
- * Main parser. Returns:
- * {
- *   props: [{address, price}],
- *   client, agent, date (YYYY-MM-DD), startTime (HH:MM)
- * }
- */
-function parseShowingTime(raw) {
-  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
-  const result = { props: [], client: '', agent: '', date: '', startTime: '' };
-
-  // --- Extract metadata: client, agent, date, time ---
-  for (const line of lines) {
-    // Client: Maria Lopez | Agent: Dessire Vega
-    const clientMatch = line.match(/client[:\s]+([^|\n,;]+)/i);
-    if (clientMatch && !result.client) result.client = clientMatch[1].trim();
-
-    const agentMatch = line.match(/agent[:\s]+([^|\n,;]+)/i);
-    if (agentMatch && !result.agent) result.agent = agentMatch[1].trim();
-
-    // Date: June 14, 2025 or 06/14/2025 or 2025-06-14
-    if (!result.date) {
-      const dateISO = line.match(/\b(\d{4}-\d{2}-\d{2})\b/);
-      if (dateISO) { result.date = dateISO[1]; }
-      else {
-        const dateMDY = line.match(/\b(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})\b/);
-        if (dateMDY) {
-          const y = dateMDY[3].length===2 ? '20'+dateMDY[3] : dateMDY[3];
-          result.date = `${y}-${String(dateMDY[1]).padStart(2,'0')}-${String(dateMDY[2]).padStart(2,'0')}`;
-        } else {
-          const dateWords = line.match(/\b(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{1,2}),?\s+(\d{4})/i);
-          if (dateWords) {
-            const months = {january:1,february:2,march:3,april:4,may:5,june:6,july:7,august:8,september:9,october:10,november:11,december:12};
-            const m = months[dateWords[1].toLowerCase()];
-            result.date = `${dateWords[3]}-${String(m).padStart(2,'0')}-${String(parseInt(dateWords[2])).padStart(2,'0')}`;
-          }
-          // Spanish month names
-          if (!result.date) {
-            const dateES = line.match(/\b(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)\s+(\d{1,2}),?\s+(\d{4})/i);
-            if (dateES) {
-              const esMonths = {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,octubre:10,noviembre:11,diciembre:12};
-              const m = esMonths[dateES[1].toLowerCase()];
-              result.date = `${dateES[3]}-${String(m).padStart(2,'0')}-${String(parseInt(dateES[2])).padStart(2,'0')}`;
-            }
-          }
-        }
-      }
-    }
-
-    // Start time: 10:00 AM, 10:00, 10am
-    if (!result.startTime) {
-      const timeMatch = line.match(/\b(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)?\b/);
-      if (timeMatch) {
-        let h = parseInt(timeMatch[1]);
-        const m = timeMatch[2];
-        const ampm = timeMatch[3] ? timeMatch[3].toUpperCase() : null;
-        if (ampm === 'PM' && h < 12) h += 12;
-        if (ampm === 'AM' && h === 12) h = 0;
-        result.startTime = `${String(h).padStart(2,'0')}:${m}`;
-      } else {
-        const timeSimple = line.match(/\b(\d{1,2})(am|pm)\b/i);
-        if (timeSimple) {
-          let h = parseInt(timeSimple[1]);
-          const ap = timeSimple[2].toUpperCase();
-          if (ap === 'PM' && h < 12) h += 12;
-          if (ap === 'AM' && h === 12) h = 0;
-          result.startTime = `${String(h).padStart(2,'0')}:00`;
-        }
-      }
-    }
-  }
-
-  // --- Extract addresses ---
-  // Address heuristics: line contains a street number + street name + city combo
-  // US address pattern: starts with digits, followed by street name keywords
-  const streetTypes = /\b(st|ave|rd|blvd|dr|ln|ct|pl|way|ter|terr|cir|circle|trail|trl|pkwy|hwy|highway|expressway|expy|route|rt|pike|turnpike|run|row|loop|grove|glen|ridge|view|hill|hills|park|place|court|lane|drive|street|avenue|road|boulevard|square|sq|commons|common)\b/i;
-  const skipKeywords = /\b(client|agent|date|start|time|showing|confirmation|total|duration|mls|listing|price|listed|beds|baths|sqft|garage|map|directions|notes|contact|phone|email|schedule|appointment|confirmed)\b/i;
-
-  for (const line of lines) {
-    // Skip lines that are clearly metadata
-    if (skipKeywords.test(line) && !/\d+\s+\w+\s+\w+/.test(line)) continue;
-
-    // Remove leading numbering like "1.", "1)", "•", "-"
-    let clean = line.replace(/^[\d]+[.):\-]\s*/, '').replace(/^[•\-\*]\s*/, '').trim();
-
-    // Extract price if present: $xxx,xxx or $x.xxM
-    let price = '';
-    const priceMatch = clean.match(/\$[\d,]+(?:\.\d+)?[MKmk]?|\$[\d.]+[Mm]/);
-    if (priceMatch) {
-      price = priceMatch[0];
-      clean = clean.replace(priceMatch[0], '').replace(/[|—\-–]+/g, ' ').trim();
-    }
-    // Also handle "Listed at $..." or "Listed: $..."
-    const listedMatch = clean.match(/listed\s+(?:at|:)?\s*(\$[\d,]+[MKmk]?)/i);
-    if (listedMatch) {
-      price = listedMatch[1];
-      clean = clean.replace(listedMatch[0], '').trim();
-    }
-
-    // Does this line look like an address?
-    const hasStreetNum = /^\d+\s+\w/.test(clean);
-    const hasStreetType = streetTypes.test(clean);
-    const hasCity = /,\s*\w/.test(clean);
-
-    if (hasStreetNum && (hasStreetType || hasCity)) {
-      // Clean up separators
-      let addr = clean.replace(/[|—–]+.*$/, '').trim();
-      addr = addr.replace(/\s{2,}/g, ' ').trim();
-      // Remove trailing punctuation
-      addr = addr.replace(/[,\s]+$/, '').trim();
-      if (addr.length > 5) {
-        result.props.push({ address: addr, price });
-      }
-    }
-  }
-
-  return result;
+function t(k){return T[lang][k]||k;}
+function setLang(l){
+  lang=l;
+  document.getElementById('btn-en').classList.toggle('active',l==='en');
+  document.getElementById('btn-es').classList.toggle('active',l==='es');
+  updateAllTexts();
 }
 
-// ===================== PARSER UI LOGIC =====================
-
-function checkStParsePlan() {
-  const v = document.getElementById('stTextPlan').value.trim();
-  document.getElementById('stParseBtnPlan').disabled = !v;
-  if (!v) {
-    document.getElementById('stPreviewPlan').classList.remove('show');
-    document.getElementById('stSendBtnPlan').classList.remove('show');
-    document.getElementById('stErrorPlan').classList.remove('show');
-    stParsedPlan = null;
-  }
+function updateAllTexts(){
+  const keys=['tab0','tab1','tab2','import-title','import-sub','how-title','paste-title','paste-hint',
+    'st-result','st-empty','plan-title','plan-sub','api-badge','plan-s1','startfrom','plan-s2','plan-hint',
+    'plan-s3','closest','closest-sub','farthest','farthest-sub','order-hint','plan-result','plan-empty',
+    'itin-title','itin-sub','itin-s1','clientlabel','agentelabel','datelabel','startlabel','showtlabel',
+    'startaddrlabel','itin-s2','itin-hint','itin-s3','drivehint','genbtn','itin-result','itin-empty'];
+  keys.forEach(k=>{const el=document.getElementById('txt-'+k);if(el)el.innerHTML=t(k);});
+  ['step1','step2','step3','step4'].forEach((k,i)=>{const el=document.getElementById('txt-'+k);if(el)el.innerHTML=t(k);});
+  document.getElementById('planAddBtn').textContent=t('addprop');
+  document.getElementById('itinAddBtn').textContent=t('addprop');
+  document.getElementById('txt-optbtn').textContent=t('optbtn');
+  document.getElementById('txt-parsebtn') && (document.getElementById('txt-parsebtn').textContent=t('parsebtn'));
+  document.getElementById('stParseBtn').textContent=t('parsebtn');
 }
 
-function checkStParseItin() {
-  const v = document.getElementById('stTextItin').value.trim();
-  document.getElementById('stParseBtnItin').disabled = !v;
-  if (!v) {
-    document.getElementById('stPreviewItin').classList.remove('show');
-    document.getElementById('stSendBtnItin').classList.remove('show');
-    document.getElementById('stErrorItin').classList.remove('show');
-    stParsedItin = null;
-  }
+function switchTab(tab){
+  ['import','plan','itinerary'].forEach(t=>{
+    document.getElementById('panel-'+t).classList.toggle('active',t===tab);
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+  });
 }
 
-function parseST(tab) {
-  const isPlan = tab === 'plan';
-  const textEl = document.getElementById(isPlan ? 'stTextPlan' : 'stTextItin');
-  const errEl = document.getElementById(isPlan ? 'stErrorPlan' : 'stErrorItin');
-  const previewEl = document.getElementById(isPlan ? 'stPreviewPlan' : 'stPreviewItin');
-  const sendBtn = document.getElementById(isPlan ? 'stSendBtnPlan' : 'stSendBtnItin');
+function selectOrder(o){
+  orderPref=o;
+  document.getElementById('opt-closest').classList.toggle('selected',o==='closest');
+  document.getElementById('opt-farthest').classList.toggle('selected',o==='farthest');
+}
 
+// ─── SHOWINGTIME PARSER ───────────────────────────────────────
+
+function checkParse(){
+  const txt=document.getElementById('stPasteArea').value.trim();
+  document.getElementById('stParseBtn').disabled=txt.length<20;
+}
+
+function parseShowingTime(){
+  const raw=document.getElementById('stPasteArea').value;
+  const errEl=document.getElementById('stError');
   errEl.classList.remove('show');
-  previewEl.classList.remove('show');
-  sendBtn.classList.remove('show');
+  stParsed=[];
 
-  const raw = textEl.value.trim();
-  if (!raw) { errEl.textContent = t('st-error-empty'); errEl.classList.add('show'); return; }
+  // Split into individual email blocks
+  // ShowingTime emails typically contain "Showing Confirmed" or "Showing Declined"
+  const blocks=splitIntoBlocks(raw);
 
-  const parsed = parseShowingTime(raw);
-
-  if (parsed.props.length === 0) {
-    errEl.textContent = t('st-error-none');
+  if(blocks.length===0){
+    errEl.textContent=t('parse_error');
     errEl.classList.add('show');
     return;
   }
 
-  // Store parsed
-  if (isPlan) stParsedPlan = parsed;
-  else stParsedItin = parsed;
-
-  // Build preview HTML
-  let metaItems = [];
-  if (parsed.client) metaItems.push('👤 ' + parsed.client);
-  if (parsed.agent) metaItems.push('🏷️ ' + parsed.agent);
-  if (parsed.date) metaItems.push('📅 ' + parsed.date);
-  if (parsed.startTime) metaItems.push('⏰ ' + parsed.startTime);
-
-  let html = `<strong>${t('st-preview-found')} ${parsed.props.length} ${t('st-preview-props')}</strong>`;
-  parsed.props.forEach((p, i) => {
-    html += `<div class="st-result-item"><span class="st-result-addr">${i+1}. ${p.address}</span>${p.price ? `<span class="st-result-meta"> · ${p.price}</span>` : ''}</div>`;
+  blocks.forEach(block=>{
+    const result=parseBlock(block);
+    if(result) stParsed.push(result);
   });
-  if (metaItems.length) {
-    html += `<div style="margin-top:8px;font-size:10px;color:var(--blue);font-weight:700;letter-spacing:1px;text-transform:uppercase;">${t('st-preview-meta')}</div>`;
-    html += `<div style="font-size:11px;color:var(--gray);margin-top:2px;">${metaItems.join(' · ')}</div>`;
+
+  if(stParsed.length===0){
+    errEl.textContent=t('parse_error');
+    errEl.classList.add('show');
+    return;
   }
 
-  previewEl.innerHTML = html;
-  previewEl.classList.add('show');
-  sendBtn.classList.add('show');
+  renderSTResults();
 }
 
-function sendSTtoPlan() {
-  if (!stParsedPlan || !stParsedPlan.props.length) return;
-  // Clear existing and add parsed props
-  planProps = [];
-  planId = 0;
-  stParsedPlan.props.forEach(p => { addPlanProp(p.address, p.price); });
-  // Scroll to prop list
-  document.getElementById('planPropList').scrollIntoView({ behavior: 'smooth', block: 'center' });
+function splitIntoBlocks(raw){
+  // Split on common ShowingTime separators
+  // Each block starts with "Showing Confirmed" or "Showing Declined" or contains an address pattern
+  const separators=[
+    /(?=Showing Confirmed)/gi,
+    /(?=Showing Declined)/gi,
+    /(?=YOUR SHOWING)/gi
+  ];
+  
+  // Try splitting by "Showing Confirmed/Declined" header
+  let blocks=[];
+  const splitPattern=/(?=Showing\s+(?:Confirmed|Declined))|(?=YOUR SHOWING)/gi;
+  const parts=raw.split(splitPattern).filter(p=>p.trim().length>30);
+  
+  if(parts.length>0) return parts;
+  
+  // Fallback: treat whole text as one block
+  return [raw];
 }
 
-function sendSTtoItin() {
-  if (!stParsedItin || !stParsedItin.props.length) return;
-  const p = stParsedItin;
-  // Fill metadata if available
-  if (p.client) document.getElementById('clientName').value = p.client;
-  if (p.agent) document.getElementById('agentName').value = p.agent;
-  if (p.date) document.getElementById('showingDate').value = p.date;
-  if (p.startTime) document.getElementById('startTime').value = p.startTime;
-  // Fill properties
-  itinProps = [];
-  itinId = 0;
-  p.props.forEach(prop => { addItinProp(prop.address, prop.price); });
-  checkGenerate();
-  document.getElementById('itinPropList').scrollIntoView({ behavior: 'smooth', block: 'center' });
+function parseBlock(block){
+  const text=block.trim();
+  if(!text) return null;
+
+  // ── STATUS ──
+  // Look for "Showing Confirmed" or "Showing Declined" 
+  let status='unknown';
+  if(/showing\s+confirmed/i.test(text)) status='confirmed';
+  else if(/showing\s+declined/i.test(text)) status='declined';
+  // Also check email subject line patterns
+  else if(/YOUR SHOWING CONFIRMED/i.test(text)) status='confirmed';
+  else if(/YOUR SHOWING DECLINED/i.test(text)||/declined/i.test(text)) status='declined';
+  
+  if(status==='unknown') return null;
+
+  // ── ADDRESS ──
+  // ShowingTime format: street address on one line, then "City, State ZIP" on next
+  // e.g. "1 Baltusrol Ct. Unit 2 Unit# 2\nVernon Twp., 07462"
+  let address='';
+  
+  // Pattern 1: Look for street address followed by city/zip
+  const addrPattern=/(\d+\s+[A-Za-z0-9\s\.\#\,\-]+(?:St|Ave|Rd|Dr|Blvd|Ct|Ln|Way|Pl|Circle|Cir|Ter|Terr|Trail|Trl|Unit|Apt|#)[^\n]*)\n([^\n]+(?:\d{5}))/i;
+  const addrMatch=text.match(addrPattern);
+  if(addrMatch){
+    address=addrMatch[1].trim()+', '+addrMatch[2].trim();
+  }
+  
+  // Pattern 2: Look for lines starting with a number (street address)
+  if(!address){
+    const lines=text.split('\n').map(l=>l.trim()).filter(l=>l);
+    for(let i=0;i<lines.length;i++){
+      // Street address: starts with number, has letters
+      if(/^\d+\s+[A-Za-z]/.test(lines[i]) && lines[i].length>5 && lines[i].length<100){
+        // Next line might be city/state/zip
+        const nextLine=lines[i+1]||'';
+        if(/\d{5}/.test(nextLine)||/Twp|Township|City|NJ|NY|CT|PA/.test(nextLine)){
+          address=lines[i]+', '+nextLine.replace(/\|.*$/,'').trim();
+        } else {
+          address=lines[i];
+        }
+        break;
+      }
+    }
+  }
+
+  if(!address) return null;
+
+  // Clean address — remove price/status info that might have been picked up
+  address=address.replace(/\$[\d,]+.*$/,'').replace(/\|.*$/,'').trim();
+  // Remove trailing comma
+  address=address.replace(/,\s*$/, '').trim();
+
+  // ── DATE ──
+  let date='';
+  // "Tuesday, May 12, 2026" or "Tuesday, May 12, 2026"
+  const datePattern=/(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),?\s+(\w+\s+\d{1,2},?\s+\d{4})/i;
+  const dateMatch=text.match(datePattern);
+  if(dateMatch) date=dateMatch[0].trim();
+
+  // ── TIME ──
+  let time='';
+  // "3:25 PM - 3:50 PM" or "2:00 PM - 2:25 PM"
+  const timePattern=/(\d{1,2}:\d{2}\s*(?:AM|PM))\s*[-–]\s*(\d{1,2}:\d{2}\s*(?:AM|PM))/i;
+  const timeMatch=text.match(timePattern);
+  if(timeMatch) time=timeMatch[0].trim();
+
+  // Extract start time for itinerary
+  let startTime='';
+  if(timeMatch){
+    const st=timeMatch[1].trim();
+    // Convert "3:25 PM" to 24h for input
+    const [timePart, period]=st.split(/\s+/);
+    const [h,m]=timePart.split(':').map(Number);
+    let h24=h;
+    if(period==='PM'&&h!==12) h24=h+12;
+    if(period==='AM'&&h===12) h24=0;
+    startTime=`${String(h24).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+  }
+
+  // Extract ISO date for date input
+  let isoDate='';
+  if(dateMatch){
+    try{
+      const d=new Date(dateMatch[0]+' 12:00:00');
+      if(!isNaN(d)){
+        isoDate=d.toISOString().split('T')[0];
+      }
+    }catch(e){}
+  }
+
+  return {status, address, date, time, startTime, isoDate, added:false};
 }
 
-function toggleSample(tab) {
-  const el = document.getElementById(tab === 'plan' ? 'stSamplePlan' : 'stSampleItin');
-  el.classList.toggle('show');
-}
+function renderSTResults(){
+  const card=document.getElementById('stResultsCard');
+  const confirmed=stParsed.filter(s=>s.status==='confirmed');
+  const declined=stParsed.filter(s=>s.status==='declined');
 
-// ===================== EXISTING LOGIC (UNCHANGED) =====================
+  let html=`<div class="card-title">${t('st-result')}</div>`;
 
-function setLang(l) {
-  lang = l;
-  document.getElementById('btn-en').classList.toggle('active', l === 'en');
-  document.getElementById('btn-es').classList.toggle('active', l === 'es');
-  updateAllTexts();
-}
+  // Summary
+  html+=`<div class="st-summary">
+    <strong>${confirmed.length}</strong> ${t('confirmed').replace('✅ ','')} · 
+    <strong>${declined.length}</strong> ${t('declined').replace('❌ ','')}
+  </div>`;
 
-function updateAllTexts() {
-  ['tab1','tab2','plan-title','plan-sub','api-badge','plan-s1','startfrom','plan-s2','plan-hint','plan-s3',
-   'closest','closest-sub','farthest','farthest-sub','order-hint','plan-result','plan-empty',
-   'itin-title','itin-sub','itin-s1','clientlabel','agentelabel','datelabel','startlabel','showtlabel',
-   'startaddrlabel','itin-s2','itin-hint','itin-s3','drivehint','genbtn','itin-result','itin-empty'
-  ].forEach(k => { const el = document.getElementById('txt-'+k); if(el) el.textContent = t(k); });
+  // Send all button (if any confirmed)
+  if(confirmed.length>0){
+    html+=`<button class="st-send-btn" onclick="sendAllToPlan()">${t('send_to_plan')}</button>`;
+    html+=`<div id="stSendMsg" style="display:none;text-align:center;font-size:12px;color:var(--green);font-weight:700;margin-top:8px;">✓ ${confirmed.length} ${lang==='es'?'propiedades enviadas a Planificar Ruta':'properties sent to Plan My Route'}</div>`;
+  }
 
-  document.getElementById('planAddBtn').textContent = t('addprop');
-  document.getElementById('itinAddBtn').textContent = t('addprop');
-  document.getElementById('txt-optbtn').textContent = t('optbtn');
+  html+=`<div class="st-results" style="margin-top:14px;">`;
 
-  // ST parser texts
-  ['st-title-plan','st-sub-plan','st-parsebtn-plan','st-sendbtn-plan',
-   'st-title-itin','st-sub-itin','st-parsebtn-itin','st-sendbtn-itin',
-   'st-sample-plan','st-sample-itin'
-  ].forEach(k => {
-    const el = document.getElementById('txt-'+k);
-    if(el) el.textContent = t(k);
+  // Confirmed first
+  stParsed.forEach((s,i)=>{
+    if(s.status!=='confirmed') return;
+    html+=`<div class="st-card confirmed" id="stcard-${i}">
+      <div class="st-card-header">${t('confirmed')}</div>
+      <div class="st-card-body">
+        <div class="st-address">${s.address}</div>
+        <div class="st-meta">
+          ${s.date?`<span>📅 ${s.date}</span>`:''}
+          ${s.time?`<span>🕐 ${s.time}</span>`:''}
+        </div>
+        <button class="st-add-btn" id="staddbtn-${i}" onclick="addOnePropToPlan(${i})">${t('add_to_plan')}</button>
+      </div>
+    </div>`;
   });
-}
 
-function switchTab(tab) {
-  ['plan','itinerary'].forEach(t => {
-    document.getElementById('panel-'+t).classList.toggle('active', t === tab);
-    document.getElementById('tab-'+t).classList.toggle('active', t === tab);
+  // Declined after
+  stParsed.forEach((s,i)=>{
+    if(s.status!=='declined') return;
+    html+=`<div class="st-card declined">
+      <div class="st-card-header">${t('declined')}</div>
+      <div class="st-card-body">
+        <div class="st-address">${s.address}</div>
+        <div class="st-meta">
+          ${s.date?`<span>📅 ${s.date}</span>`:''}
+          ${s.time?`<span>🕐 ${s.time}</span>`:''}
+        </div>
+      </div>
+    </div>`;
   });
+
+  html+=`</div>`;
+  card.innerHTML=html;
 }
 
-function selectOrder(o) {
-  orderPref = o;
-  document.getElementById('opt-closest').classList.toggle('selected', o === 'closest');
-  document.getElementById('opt-farthest').classList.toggle('selected', o === 'farthest');
+function sendAllToPlan(){
+  const confirmed=stParsed.filter(s=>s.status==='confirmed');
+  if(confirmed.length===0) return;
+
+  // Clear existing plan props and load confirmed showings
+  planProps=[];planId=0;
+  confirmed.forEach(s=>{
+    planId++;
+    planProps.push({id:planId,address:s.address,price:''});
+  });
+  renderPlanProps();
+  checkOptimize();
+
+  // Set date on itinerary if all same date
+  const dates=[...new Set(confirmed.map(s=>s.isoDate).filter(Boolean))];
+  if(dates.length===1){
+    document.getElementById('showingDate').value=dates[0];
+  }
+
+  // Show success msg
+  const msg=document.getElementById('stSendMsg');
+  if(msg){msg.style.display='block';setTimeout(()=>msg.style.display='none',3000);}
+
+  // Switch to plan tab
+  setTimeout(()=>switchTab('plan'),600);
 }
 
-function addPlanProp(a='', p='') {
-  const id = ++planId;
-  planProps.push({id, address:a, price:p});
+function addOnePropToPlan(idx){
+  const s=stParsed[idx];
+  if(!s||s.status!=='confirmed') return;
+  planId++;
+  planProps.push({id:planId,address:s.address,price:''});
+  renderPlanProps();
+  checkOptimize();
+  stParsed[idx].added=true;
+  const btn=document.getElementById(`staddbtn-${idx}`);
+  if(btn){btn.textContent=t('added');btn.classList.add('added');btn.disabled=true;}
+}
+
+// ─── PLAN MY ROUTE ────────────────────────────────────────────
+
+function addPlanProp(a='',p=''){
+  const id=++planId;
+  planProps.push({id,address:a,price:p});
   renderPlanProps();
   checkOptimize();
 }
 
-function removePlanProp(id) {
-  planProps = planProps.filter(p => p.id !== id);
+function removePlanProp(id){
+  planProps=planProps.filter(p=>p.id!==id);
   renderPlanProps();
   checkOptimize();
 }
 
-function renderPlanProps() {
-  const list = document.getElementById('planPropList');
-  list.innerHTML = '';
-  planProps.forEach((p, i) => {
-    const d = document.createElement('div');
-    d.className = 'prop-item';
-    d.innerHTML = `<div class="prop-num">${i+1}</div><input class="prop-input" placeholder="Address..." value="${escHtml(p.address)}" oninput="planProps[${i}].address=this.value;checkOptimize();"><input class="prop-price" placeholder="Price" value="${escHtml(p.price)}" oninput="planProps[${i}].price=this.value;"><button class="prop-remove" onclick="removePlanProp(${p.id})">×</button>`;
+function renderPlanProps(){
+  const list=document.getElementById('planPropList');
+  list.innerHTML='';
+  planProps.forEach((p,i)=>{
+    const d=document.createElement('div');
+    d.className='prop-item';
+    d.innerHTML=`<div class="prop-num">${i+1}</div><input class="prop-input" placeholder="Address..." value="${p.address}" oninput="planProps[${i}].address=this.value;checkOptimize();"><input class="prop-price" placeholder="Time (min)" value="${p.price}" oninput="planProps[${i}].price=this.value;"><button class="prop-remove" onclick="removePlanProp(${p.id})">×</button>`;
     list.appendChild(d);
   });
 }
 
-function checkOptimize() {
-  document.getElementById('optimizeBtn').disabled = planProps.filter(p => p.address.trim()).length < 2;
+function checkOptimize(){
+  document.getElementById('optimizeBtn').disabled=planProps.filter(p=>p.address.trim()).length<2;
 }
 
-async function callMaps(params) {
-  const qs = Object.entries(params).map(([k,v]) => `${k}=${encodeURIComponent(v)}`).join('&');
-  const res = await fetch(`/.netlify/functions/maps?${qs}`);
+async function getDistances(origin,destinations){
+  const res=await fetch(`/.netlify/functions/maps?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destinations.join('|'))}`);
   return res.json();
 }
 
-async function getDistances(origin, destinations) {
-  return callMaps({ mode: 'matrix', origin, waypoints: destinations.join('|') });
+async function optimizeRoute(){
+  const filled=planProps.filter(p=>p.address.trim());
+  if(filled.length<2) return;
+  const sp=document.getElementById('optimizeSpinner'),bt=document.getElementById('txt-optbtn'),er=document.getElementById('apiError');
+  sp.classList.add('show');bt.textContent=t('optimizing');document.getElementById('optimizeBtn').disabled=true;er.classList.remove('show');
+  try{
+    const origin=document.getElementById('planStart').value||'My Location';
+    const data=await getDistances(origin,filled.map(p=>p.address));
+    const withDist=filled.map((p,i)=>{
+      const el=data.rows[0].elements[i];
+      return{...p,distM:el.status==='OK'?el.distance.value:99999,distText:el.status==='OK'?el.distance.text:'?',durText:el.status==='OK'?el.duration.text:'?'};
+    });
+    const sorted=[...withDist].sort((a,b)=>orderPref==='closest'?a.distM-b.distM:b.distM-a.distM);
+    const driveMap={};
+    for(let i=0;i<sorted.length-1;i++){
+      try{
+        const leg=await getDistances(sorted[i].address,[sorted[i+1].address]);
+        const el=leg.rows[0].elements[0];
+        if(el.status==='OK') driveMap[`${sorted[i].id}_${sorted[i+1].id}`]={minutes:Math.round(el.duration.value/60),text:el.duration.text,dist:el.distance.text};
+      }catch(e){}
+    }
+    renderOptResult(sorted,driveMap,origin);
+  }catch(e){er.classList.add('show');}
+  finally{sp.classList.remove('show');bt.textContent=t('optbtn');document.getElementById('optimizeBtn').disabled=false;}
 }
 
-async function optimizeRoute() {
-  const filled = planProps.filter(p => p.address.trim());
-  if (filled.length < 2) return;
-  const sp = document.getElementById('optimizeSpinner'), bt = document.getElementById('txt-optbtn'), er = document.getElementById('apiError');
-  sp.classList.add('show'); bt.textContent = t('optimizing');
-  document.getElementById('optimizeBtn').disabled = true; er.classList.remove('show');
-
-  try {
-    const origin = document.getElementById('planStart').value.trim() || filled[0].address;
-    const addresses = filled.map(p => p.address);
-
-    // Use Directions API with optimize:true
-    // Origin = starting point, destination = last stop (Google will reorder middle waypoints)
-    // We send all properties as waypoints and let Google optimize
-    const destination = addresses[addresses.length - 1];
-    const middleWaypoints = addresses.slice(0, addresses.length - 1);
-
-    const data = await callMaps({
-      mode: 'optimize',
-      origin: origin,
-      destination: destination,
-      waypoints: middleWaypoints.join('|')
-    });
-
-    if (!data.routes || !data.routes[0]) { er.classList.add('show'); return; }
-
-    const route = data.routes[0];
-    const order = route.waypoint_order; // Google's optimized order for middle waypoints
-    const legs = route.legs;
-
-    // Reconstruct sorted array based on Google's optimized order
-    // middleWaypoints[order[0]], middleWaypoints[order[1]], ... destination
-    const optimizedAddresses = [...order.map(i => middleWaypoints[i]), destination];
-    const driveMap = {};
-
-    // First leg: origin → first stop
-    driveMap['origin_0'] = {
-      minutes: Math.round(legs[0].duration.value / 60),
-      text: legs[0].duration.text,
-      dist: legs[0].distance.text
-    };
-
-    // Build sorted props array and driveMap
-    const sortedKeyed = optimizedAddresses.map((addr, i) => {
-      const original = filled.find(p => p.address === addr) || {address: addr, price: '', id: i};
-      if (i < optimizedAddresses.length - 1) {
-        driveMap[`${i}_${i+1}`] = {
-          minutes: Math.round(legs[i+1].duration.value / 60),
-          text: legs[i+1].duration.text,
-          dist: legs[i+1].distance.text
-        };
-      }
-      return {...original, sortIdx: i, distText: legs[i].distance.text, durText: legs[i].duration.text};
-    });
-
-    renderOptResult(sortedKeyed, driveMap, origin);
-
-  } catch(e) { er.classList.add('show'); console.error(e); }
-  finally { sp.classList.remove('show'); bt.textContent = t('optbtn'); document.getElementById('optimizeBtn').disabled = false; }
-}
-
-function renderOptResult(sorted, driveMap, origin) {
-  const label = orderPref === 'closest' ? t('optimized_closest') : t('optimized_farthest');
-
-  // First leg: origin → stop 1
-  const originLeg = driveMap['origin_0'];
-  const originHTML = originLeg
-    ? `<div class="opt-origin-row"><span class="opt-origin-label">📍 ${origin}</span></div><div class="opt-drive"><span class="opt-drive-badge">🚗 ${originLeg.text}</span><span class="opt-drive-dist">${originLeg.dist} ${t('real_dist')}</span></div>`
-    : `<div class="opt-origin-row"><span class="opt-origin-label">📍 ${origin}</span></div>`;
-
-  // Stops with correct consecutive drive times
-  const stopsHTML = sorted.map((p, i) => {
-    const legKey = `${i}_${i+1}`;
-    const di = i < sorted.length - 1 ? driveMap[legKey] : null;
-    return `<div class="opt-stop"><div class="opt-stop-num">${i+1}</div><div class="opt-stop-content"><div class="opt-stop-addr">${p.address}</div><div class="opt-stop-meta">${p.price ? `<span class="opt-stop-price">${p.price}</span> · ` : ''}📍 ${p.distText} ${t('real_dist')} from start</div></div></div>${di ? `<div class="opt-drive"><span class="opt-drive-badge">🚗 ${di.text}</span><span class="opt-drive-dist">${di.dist}</span></div>` : ''}`;
+function renderOptResult(sorted,driveMap,origin){
+  const label=orderPref==='closest'?t('optimized_closest'):t('optimized_farthest');
+  const stopsHTML=sorted.map((p,i)=>{
+    const nk=i<sorted.length-1?`${p.id}_${sorted[i+1].id}`:null;
+    const di=nk&&driveMap[nk];
+    return`<div class="opt-stop"><div class="opt-stop-num">${i+1}</div><div class="opt-stop-content"><div class="opt-stop-addr">${p.address}</div><div class="opt-stop-meta">${p.price?`<span class="opt-stop-price">${p.price}</span> · `:''}📍 ${p.distText} ${t('real_dist')}</div></div></div>${di?`<div class="opt-drive"><span class="opt-drive-badge">🚗 ${di.text}</span><span class="opt-drive-dist">${di.dist}</span></div>`:''}`;
   }).join('');
-
-  document.getElementById('planResult').innerHTML = `<div class="opt-result"><div class="opt-header"><div class="opt-label">${label}</div><div class="opt-title">${origin} → ${sorted.length} stops</div></div><div class="opt-body">${originHTML}${stopsHTML}<button class="use-order-btn" onclick='useThisOrder(${JSON.stringify(sorted)},${JSON.stringify(driveMap)})'>${t('use_order')}</button><button class="copy-order-btn" onclick='copyOrder(${JSON.stringify(sorted)})'>${t('copy_order')}</button><div id="orderCopiedMsg" style="display:none;text-align:center;font-size:12px;color:var(--green);font-weight:600;margin-top:8px;">${t('order_copied')}</div></div></div>`;
+  document.getElementById('planResult').innerHTML=`<div class="opt-result"><div class="opt-header"><div class="opt-label">${label}</div><div class="opt-title">${origin} → ${sorted.length} stops</div></div><div class="opt-body">${stopsHTML}<button class="use-order-btn" onclick='useThisOrder(${JSON.stringify(sorted)},${JSON.stringify(driveMap)})'>${t('use_order')}</button><button class="copy-order-btn" onclick='copyOrder(${JSON.stringify(sorted)})'>${t('copy_order')}</button><div id="orderCopiedMsg" style="display:none;text-align:center;font-size:12px;color:var(--green);font-weight:600;margin-top:8px;">${t('order_copied')}</div></div></div>`;
 }
 
-function useThisOrder(sorted, driveMap) {
-  itinProps = []; itinId = 0;
-  sorted.forEach((p, i) => { itinId++; itinProps.push({id: itinId, address: p.address, price: p.price||'', sortIdx: i}); });
-  const start = document.getElementById('planStart').value;
-  if (start) document.getElementById('itinStart').value = start;
-  // Build itinDriveMap using itinProp ids (1-based sequential)
-  const itinDriveMap = {};
-  sorted.forEach((p, i) => {
-    const leg = driveMap[`${i}_${i+1}`];
-    if (leg) itinDriveMap[`drv_${i+1}_${i+2}`] = leg;
-  });
-  if (driveMap['origin_0']) itinDriveMap['origin_first'] = driveMap['origin_0'];
-  window._tm = itinDriveMap; window._ts = sorted;
-  renderItinProps(); updateDriveList(itinDriveMap, sorted); checkGenerate(); switchTab('itinerary');
+function useThisOrder(sorted,driveMap){
+  itinProps=[];itinId=0;
+  sorted.forEach(p=>{itinId++;itinProps.push({id:itinId,address:p.address,price:p.price||'',origId:p.id});});
+  const start=document.getElementById('planStart').value;
+  if(start) document.getElementById('itinStart').value=start;
+  window._tm=driveMap;window._ts=sorted;
+  renderItinProps();updateDriveList(driveMap,sorted);checkGenerate();switchTab('itinerary');
 }
 
-function copyOrder(sorted) {
-  navigator.clipboard.writeText(sorted.map((p, i) => `${i+1}. ${p.address}${p.price ? ' — '+p.price : ''}`).join('\n')).then(() => {
-    const el = document.getElementById('orderCopiedMsg');
-    if (el) { el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 2000); }
+function copyOrder(sorted){
+  navigator.clipboard.writeText(sorted.map((p,i)=>`${i+1}. ${p.address}${p.price?' — '+p.price:''}`).join('\n')).then(()=>{
+    const el=document.getElementById('orderCopiedMsg');
+    if(el){el.style.display='block';setTimeout(()=>el.style.display='none',2000);}
   });
 }
 
-function addItinProp(a='', p='') {
-  const id = ++itinId;
-  itinProps.push({id, address:a, price:p});
-  renderItinProps(); updateDriveList(); checkGenerate();
+// ─── ITINERARY ────────────────────────────────────────────────
+
+function addItinProp(a='',p=''){
+  const id=++itinId;
+  itinProps.push({id,address:a,price:p});
+  renderItinProps();updateDriveList();checkGenerate();
 }
 
-function removeItinProp(id) {
-  itinProps = itinProps.filter(p => p.id !== id);
-  renderItinProps(); updateDriveList(); checkGenerate();
+function removeItinProp(id){
+  itinProps=itinProps.filter(p=>p.id!==id);
+  renderItinProps();updateDriveList();checkGenerate();
 }
 
-function renderItinProps() {
-  const list = document.getElementById('itinPropList');
-  list.innerHTML = '';
-  itinProps.forEach((p, i) => {
-    const d = document.createElement('div');
-    d.className = 'prop-item';
-    d.innerHTML = `<div class="prop-num">${i+1}</div><input class="prop-input" placeholder="Address..." value="${escHtml(p.address)}" oninput="itinProps[${i}].address=this.value;updateDriveList();checkGenerate();"><input class="prop-price" placeholder="Price" value="${escHtml(p.price)}" oninput="itinProps[${i}].price=this.value;"><button class="prop-remove" onclick="removeItinProp(${p.id})">×</button>`;
+function renderItinProps(){
+  const list=document.getElementById('itinPropList');
+  list.innerHTML='';
+  itinProps.forEach((p,i)=>{
+    const d=document.createElement('div');
+    d.className='prop-item';
+    d.innerHTML=`<div class="prop-num">${i+1}</div><input class="prop-input" placeholder="Address..." value="${p.address}" oninput="itinProps[${i}].address=this.value;updateDriveList();checkGenerate();"><input class="prop-price" placeholder="Time (min)" value="${p.price}" oninput="itinProps[${i}].price=this.value;"><button class="prop-remove" onclick="removeItinProp(${p.id})">×</button>`;
     list.appendChild(d);
   });
 }
 
-function updateDriveList(dm, sorted) {
-  const card = document.getElementById('driveCard'), list = document.getElementById('driveList');
-  const filled = itinProps.filter(p => p.address.trim());
-  if (filled.length < 1) { card.style.display = 'none'; return; }
-  card.style.display = 'block';
-  const existing = {};
-  document.querySelectorAll('.drive-min').forEach(el => { existing[el.id] = el.value; });
-  list.innerHTML = '';
-  const startAddr = document.getElementById('itinStart').value.trim();
-
-  // First leg: starting point → first property
-  if (startAddr && filled.length >= 1) {
-    const firstKey = 'drv_start_' + filled[0].id;
-    // Check if we got origin_first from useThisOrder
-    const autoInfo = (dm && dm['origin_first']) ? dm['origin_first'] : window._startDriveInfo;
-    const autoLabel = autoInfo ? `<span class="drive-auto">🟢 Google Maps: ${autoInfo.text}</span>` : '';
-    const val = existing[firstKey] || (autoInfo?.minutes || '');
-    const d = document.createElement('div'); d.className = 'drive-item';
-    d.innerHTML = `<div class="drive-arrow"><strong>${startAddr}</strong><span style="color:var(--gold);font-size:10px;font-weight:700;margin-left:4px">★ START</span><br>↓<br><strong>${filled[0].address||'...'}</strong>${autoLabel}</div><span style="font-size:17px">🚗</span><input class="drive-min" id="${firstKey}" type="number" min="1" max="180" value="${val}" placeholder="0"><span style="font-size:12px;color:var(--gray)">min</span>`;
+function updateDriveList(dm,sorted){
+  const card=document.getElementById('driveCard'),list=document.getElementById('driveList'),filled=itinProps.filter(p=>p.address.trim());
+  if(filled.length<1){card.style.display='none';return;}
+  card.style.display='block';
+  const existing={};document.querySelectorAll('.drive-min').forEach(el=>{existing[el.id]=el.value;});
+  list.innerHTML='';
+  const startAddr=document.getElementById('itinStart').value.trim();
+  if(startAddr&&filled.length>=1){
+    const firstKey='drv_start_'+filled[0].id;
+    const autoLabel=window._startDriveInfo?`<span class="drive-auto">🟢 Google Maps: ${window._startDriveInfo.text}</span>`:'';
+    const val=existing[firstKey]||(window._startDriveInfo?.minutes||'');
+    const d=document.createElement('div');d.className='drive-item';
+    d.innerHTML=`<div class="drive-arrow"><strong>${startAddr}</strong><span style="color:var(--gold);font-size:10px;font-weight:700;margin-left:4px">★ START</span><br>↓<br><strong>${filled[0].address||'...'}</strong>${autoLabel}</div><span style="font-size:17px">🚗</span><input class="drive-min" id="${firstKey}" type="number" min="1" max="180" value="${val}" placeholder="0"><span style="font-size:12px;color:var(--gray)">min</span>`;
     list.appendChild(d);
-    // Auto-fetch if not already available
-    if (!autoInfo && startAddr && filled[0].address) {
-      getDistances(startAddr, [filled[0].address]).then(data => {
-        const el = data?.rows?.[0]?.elements?.[0];
-        if (el?.status === 'OK') { window._startDriveInfo = {minutes: Math.round(el.duration.value/60), text: el.duration.text}; updateDriveList(dm, sorted); }
-      }).catch(() => {});
+    if(!window._startDriveInfo&&startAddr&&filled[0].address){
+      getDistances(startAddr,[filled[0].address]).then(data=>{
+        const el=data?.rows?.[0]?.elements?.[0];
+        if(el?.status==='OK'){window._startDriveInfo={minutes:Math.round(el.duration.value/60),text:el.duration.text};updateDriveList(dm,sorted);}
+      }).catch(()=>{});
     }
   }
-
-  // Legs between consecutive stops — use sequential itinProp ids
-  for (let i = 0; i < filled.length - 1; i++) {
-    const from = filled[i], to = filled[i+1];
-    const key = `drv_${from.id}_${to.id}`;
-    let autoVal = '', autoLabel = '';
-    // New key format from optimizeRoute: drv_{fromId}_{toId}
-    if (dm) {
-      const newKey = `drv_${from.id}_${to.id}`;
-      if (dm[newKey]) { autoVal = dm[newKey].minutes; autoLabel = `<span class="drive-auto">🟢 Google Maps: ${dm[newKey].text}</span>`; }
-    }
-    const val = existing[key] || autoVal;
-    const d = document.createElement('div'); d.className = 'drive-item';
-    d.innerHTML = `<div class="drive-arrow"><strong>${from.address||'...'}</strong>↓<strong>${to.address||'...'}</strong>${autoLabel}</div><span style="font-size:17px">🚗</span><input class="drive-min" id="${key}" type="number" min="1" max="180" value="${val}" placeholder="0"><span style="font-size:12px;color:var(--gray)">min</span>`;
+  for(let i=0;i<filled.length-1;i++){
+    const from=filled[i],to=filled[i+1],key=`drv_${from.id}_${to.id}`;
+    let autoVal='',autoLabel='';
+    if(dm&&sorted){const of=sorted[i],ot=sorted[i+1];if(of&&ot){const dk=`${of.id}_${ot.id}`;if(dm[dk]){autoVal=dm[dk].minutes;autoLabel=`<span class="drive-auto">🟢 Google Maps: ${dm[dk].text}</span>`;}}}
+    const val=existing[key]||autoVal;
+    const d=document.createElement('div');d.className='drive-item';
+    d.innerHTML=`<div class="drive-arrow"><strong>${from.address||'...'}</strong>↓<strong>${to.address||'...'}</strong>${autoLabel}</div><span style="font-size:17px">🚗</span><input class="drive-min" id="${key}" type="number" min="1" max="180" value="${val}" placeholder="0"><span style="font-size:12px;color:var(--gray)">min</span>`;
     list.appendChild(d);
   }
 }
 
-function checkGenerate() {
-  const has = itinProps.filter(p => p.address.trim()).length >= 1;
-  const hasDate = document.getElementById('showingDate').value;
-  document.getElementById('generateBtn').disabled = !(has && hasDate);
-}
+async function calcAllDriveTimes(){
+  const filled=itinProps.filter(p=>p.address.trim());
+  if(filled.length<1) return;
+  const btn=document.getElementById('calcDriveBtn');
+  const sp=document.getElementById('calcDriveSpinner');
+  const txt=document.getElementById('calcDriveTxt');
+  btn.disabled=true;
+  sp.classList.add('show');
+  txt.textContent=lang==='es'?'Calculando...':'Calculating...';
 
-function formatTime(m) {
-  const h = Math.floor(m/60), min = m%60, suf = h >= 12 ? 'PM' : 'AM';
-  const dh = h > 12 ? h - 12 : h === 0 ? 12 : h;
-  return `${dh}:${String(min).padStart(2,'0')} ${suf}`;
-}
+  try{
+    const startAddr=document.getElementById('itinStart').value.trim();
 
-function generate() {
-  const client = document.getElementById('clientName').value || 'Client';
-  const agent = document.getElementById('agentName').value || '';
-  const dateVal = document.getElementById('showingDate').value;
-  const startTimeVal = document.getElementById('startTime').value;
-  const showMin = parseInt(document.getElementById('showTime').value) || 20;
-  const startAddr = document.getElementById('itinStart').value;
-  const filled = itinProps.filter(p => p.address.trim());
-  if (!filled.length || !dateVal) return;
-
-  const dateDisplay = new Date(dateVal+'T12:00:00').toLocaleDateString(lang==='es'?'es-US':'en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const [sh, sm] = startTimeVal.split(':').map(Number);
-  let cursor = sh*60+sm, totalDrive = 0;
-
-  const startKey = 'drv_start_' + filled[0].id;
-  const startDriveEl = document.getElementById(startKey);
-  const startDriveMin = startDriveEl ? (parseInt(startDriveEl.value)||0) : 0;
-  cursor += startDriveMin; totalDrive += startDriveMin;
-
-  const stops = filled.map((p, i) => {
-    const arrival = cursor, departure = cursor + showMin;
-    let driveMin = 0;
-    if (i < filled.length - 1) {
-      const next = filled[i+1], key = `drv_${p.id}_${next.id}`, el = document.getElementById(key);
-      driveMin = el ? (parseInt(el.value)||0) : 0;
-      totalDrive += driveMin;
+    // Drive time from start to first property
+    if(startAddr && filled.length>=1){
+      const firstKey='drv_start_'+filled[0].id;
+      try{
+        const data=await getDistances(startAddr,[filled[0].address]);
+        const el=data?.rows?.[0]?.elements?.[0];
+        if(el?.status==='OK'){
+          window._startDriveInfo={minutes:Math.round(el.duration.value/60),text:el.duration.text};
+          const input=document.getElementById(firstKey);
+          if(input) input.value=window._startDriveInfo.minutes;
+        }
+      }catch(e){}
     }
-    cursor = departure + driveMin;
-    return {...p, arrival: formatTime(arrival), departure: formatTime(departure), driveAfter: i < filled.length-1 ? driveMin : null};
-  });
 
-  const totalMin = (filled.length * showMin) + totalDrive;
-  const totalH = Math.floor(totalMin/60), totalM = totalMin%60;
-  const totalStr = totalH > 0 ? `${totalH}h ${totalM}m` : `${totalM}m`;
-  const returnTime = formatTime(sh*60+sm+totalMin);
-  window._itinData = {client, agent, dateDisplay, stops, totalStr, returnTime, showMin, startAddr, startDriveMin};
+    // Drive times between each stop
+    for(let i=0;i<filled.length-1;i++){
+      const from=filled[i],to=filled[i+1];
+      const key='drv_'+from.id+'_'+to.id;
+      try{
+        const data=await getDistances(from.address,[to.address]);
+        const el=data?.rows?.[0]?.elements?.[0];
+        if(el?.status==='OK'){
+          const mins=Math.round(el.duration.value/60);
+          const input=document.getElementById(key);
+          if(input){
+            input.value=mins;
+            input.style.borderColor='var(--green)';
+          }
+        }
+      }catch(e){}
+    }
 
-  const stopsHTML = stops.map((s, i) => `<div class="stop"><div class="stop-timeline"><div class="stop-dot">${i+1}</div>${s.driveAfter!==null?'<div class="stop-line"></div>':''}</div><div class="stop-content"><div class="stop-address">${s.address}</div><div class="stop-meta">${s.price?`<span class="stop-price">${s.price}</span>`:''}</div><div class="stop-times"><div class="time-chip"><span class="time-chip-label">${t('arrival')}</span><span class="time-chip-val arrival">${s.arrival}</span></div><div class="time-chip"><span class="time-chip-label">${t('departure')}</span><span class="time-chip-val departure">${s.departure}</span></div></div></div></div>${s.driveAfter!==null?`<div class="drive-connector"><span>🚗</span><span class="drive-connector-text">${s.driveAfter} ${t('drive')}</span></div>`:''}`).join('');
+    // Update visuals
+    updateDriveList(null,null);
+    txt.textContent='✓ '+(lang==='es'?'Tiempos calculados':'Drive times calculated');
+    setTimeout(()=>{txt.textContent=lang==='es'?'🗺️ Recalcular con Google Maps':'🗺️ Recalculate with Google Maps';},3000);
 
-  document.getElementById('itineraryOut').innerHTML = `<div class="itinerary"><div class="itin-header"><div class="itin-label">${t('itin_label')}</div><div class="itin-client">${client}</div><div class="itin-date">${dateDisplay}${agent?' · '+agent:''}</div><div class="itin-stats"><div class="stat"><div class="stat-val">${stops.length}</div><div class="stat-label">${t('homes')}</div></div><div class="stat"><div class="stat-val">${totalStr}</div><div class="stat-label">${t('total')}</div></div><div class="stat"><div class="stat-val">${returnTime}</div><div class="stat-label">${t('returnlabel')}</div></div></div></div><div class="itin-body">${startAddr?`<div style="font-size:12px;color:var(--gray);margin-bottom:8px;font-style:italic">📍 ${t('from')}: ${startAddr}</div>`:''}${startDriveMin>0?`<div class="drive-connector" style="margin-left:0;margin-bottom:12px"><span>🚗</span><span class="drive-connector-text">${startDriveMin} min ${lang==='es'?'de manejo al primer showing':'drive to first showing'}</span></div>`:''}${stopsHTML}<div class="summary-box"><strong>${showMin} min</strong> ${lang==='es'?'por casa':'per home'} · <strong>${t('returnlabel')}:</strong> ${returnTime}</div></div><div class="share-bar"><span class="share-label">${t('sharelabel')}</span><button class="share-btn copy" onclick="copyItinerary()">📋 ${t('copybtn')}</button><button class="share-btn sms" onclick="smsItinerary()">💬 ${t('smsbtn')}</button><button class="share-btn email" onclick="emailItinerary()">📧 ${t('emailbtn')}</button><button class="share-btn maps" onclick="openMapsRoute()" style="background:var(--green);color:var(--white);">🗺️ Maps</button><span class="copied-msg" id="copiedMsg">${t('copied')}</span></div></div>`;
+  }catch(e){
+    txt.textContent=lang==='es'?'Error - intenta de nuevo':'Error - try again';
+    setTimeout(()=>{txt.textContent=lang==='es'?'🗺️ Calcular con Google Maps':'🗺️ Calculate with Google Maps';},2000);
+  }finally{
+    btn.disabled=false;
+    sp.classList.remove('show');
+  }
 }
 
-function buildText() {
-  const d = window._itinData; if (!d) return '';
-  let txt = `📍 ${t('itin_label').toUpperCase()}\n👤 ${d.client}\n📅 ${d.dateDisplay}\n`;
-  if (d.startAddr) txt += `🚀 ${t('from')}: ${d.startAddr}\n`;
-  txt += '\n';
-  if (d.startDriveMin > 0) txt += `   🚗 ${d.startDriveMin} min ${lang==='es'?'de manejo al primer showing':'drive to first showing'}\n\n`;
-  d.stops.forEach((s, i) => {
-    txt += `${i+1}. ${s.address}\n`;
-    if (s.price) txt += `   💰 ${s.price}\n`;
-    txt += `   🟢 ${t('arrival')}: ${s.arrival}  🔴 ${t('departure')}: ${s.departure}\n`;
-    if (s.driveAfter !== null) txt += `   🚗 ${s.driveAfter} ${t('drive')}\n`;
-    txt += '\n';
+function checkGenerate(){
+  // Auto-fill today if date is empty
+  const dateEl=document.getElementById('showingDate');
+  if(!dateEl.value){
+    const today=new Date();
+    const yyyy=today.getFullYear();
+    const mm=String(today.getMonth()+1).padStart(2,'0');
+    const dd=String(today.getDate()).padStart(2,'0');
+    dateEl.value=yyyy+'-'+mm+'-'+dd;
+  }
+  const has=itinProps.filter(p=>p.address.trim()).length>=1;
+  document.getElementById('generateBtn').disabled=!has;
+}
+
+function formatTime(m){
+  const h=Math.floor(m/60),min=m%60,suf=h>=12?'PM':'AM',dh=h>12?h-12:h===0?12:h;
+  return`${dh}:${String(min).padStart(2,'0')} ${suf}`;
+}
+
+function generate(){
+  const client=document.getElementById('clientName').value||'Client',
+    agent=document.getElementById('agentName').value||'',
+    dateVal=document.getElementById('showingDate').value,
+    startTimeVal=document.getElementById('startTime').value,
+    showMin=parseInt(document.getElementById('showTime').value)||20,
+    startAddr=document.getElementById('itinStart').value,
+    filled=itinProps.filter(p=>p.address.trim());
+  if(!filled.length||!dateVal) return;
+  const dateDisplay=new Date(dateVal+'T12:00:00').toLocaleDateString(lang==='es'?'es-US':'en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const[sh,sm]=startTimeVal.split(':').map(Number);
+  let cursor=sh*60+sm,totalDrive=0;
+  const startKey='drv_start_'+filled[0].id;
+  const startDriveEl=document.getElementById(startKey);
+  const startDriveMin=startDriveEl?(parseInt(startDriveEl.value)||0):0;
+  cursor+=startDriveMin;totalDrive+=startDriveMin;
+  const stops=filled.map((p,i)=>{
+    const arrival=cursor,departure=cursor+showMin;
+    let driveMin=0;
+    if(i<filled.length-1){const next=filled[i+1],key=`drv_${p.id}_${next.id}`,el=document.getElementById(key);driveMin=el?(parseInt(el.value)||0):0;totalDrive+=driveMin;}
+    cursor=departure+driveMin;
+    return{...p,arrival:formatTime(arrival),departure:formatTime(departure),driveAfter:i<filled.length-1?driveMin:null};
   });
-  txt += `⏱️ ${t('total')}: ${d.totalStr} · ${t('returnlabel')}: ${d.returnTime}\n`;
-  if (d.agent) txt += `\n— ${d.agent} · RouteReady`;
+  const totalMin=(filled.length*showMin)+totalDrive,totalH=Math.floor(totalMin/60),totalM=totalMin%60,
+    totalStr=totalH>0?`${totalH}h ${totalM}m`:`${totalM}m`,returnTime=formatTime(sh*60+sm+totalMin);
+  window._itinData={client,agent,dateDisplay,stops,totalStr,returnTime,showMin,startAddr,startDriveMin};
+  const stopsHTML=stops.map((s,i)=>`<div class="stop"><div class="stop-timeline"><div class="stop-dot">${i+1}</div>${s.driveAfter!==null?'<div class="stop-line"></div>':''}</div><div class="stop-content"><div class="stop-address">${s.address}</div><div class="stop-meta">${s.price?`<span class="stop-price">${s.price}</span>`:''}</div><div class="stop-times"><div class="time-chip"><span class="time-chip-label">${t('arrival')}</span><span class="time-chip-val arrival">${s.arrival}</span></div><div class="time-chip"><span class="time-chip-label">${t('departure')}</span><span class="time-chip-val departure">${s.departure}</span></div></div></div></div>${s.driveAfter!==null?`<div class="drive-connector"><span>🚗</span><span class="drive-connector-text">${s.driveAfter} ${t('drive')}</span></div>`:''}`).join('');
+  document.getElementById('itineraryOut').innerHTML=`<div class="itinerary"><div class="itin-header"><div class="itin-label">${t('itin_label')}</div><div class="itin-client">${client}</div><div class="itin-date">${dateDisplay}${agent?' · '+agent:''}</div><div class="itin-stats"><div class="stat"><div class="stat-val">${stops.length}</div><div class="stat-label">${t('homes')}</div></div><div class="stat"><div class="stat-val">${totalStr}</div><div class="stat-label">${t('total')}</div></div><div class="stat"><div class="stat-val">${returnTime}</div><div class="stat-label">${t('returnlabel')}</div></div></div></div><div class="itin-body">${startAddr?`<div style="font-size:12px;color:var(--gray);margin-bottom:8px;font-style:italic">📍 ${t('from')}: ${startAddr}</div>`:''}${startDriveMin>0?`<div class="drive-connector" style="margin-left:0;margin-bottom:12px"><span>🚗</span><span class="drive-connector-text">${startDriveMin} min ${lang==='es'?'de manejo al primer showing':'drive to first showing'}</span></div>`:''}${stopsHTML}<div class="summary-box"><strong>${showMin} min</strong> ${lang==='es'?'por casa':'per home'} · <strong>${t('returnlabel')}:</strong> ${returnTime}</div></div><div class="share-bar"><span class="share-label">${t('sharelabel')}</span><button class="share-btn copy" onclick="copyItinerary()">📋 ${t('copybtn')}</button><button class="share-btn sms" onclick="smsItinerary()">💬 ${t('smsbtn')}</button><button class="share-btn email" onclick="emailItinerary()">📧 ${t('emailbtn')}</button><span class="copied-msg" id="copiedMsg">${t('copied')}</span></div></div>`;
+}
+
+function buildText(){
+  const d=window._itinData;if(!d) return'';
+  let txt=`📍 ${t('itin_label').toUpperCase()}\n👤 ${d.client}\n📅 ${d.dateDisplay}\n`;
+  if(d.startAddr) txt+=`🚀 ${t('from')}: ${d.startAddr}\n`;
+  txt+='\n';
+  if(d.startDriveMin>0) txt+=`   🚗 ${d.startDriveMin} min ${lang==='es'?'de manejo al primer showing':'drive to first showing'}\n\n`;
+  d.stops.forEach((s,i)=>{
+    txt+=`${i+1}. ${s.address}\n`;
+    if(s.price) txt+=`   💰 ${s.price}\n`;
+    txt+=`   🟢 ETA: ${s.arrival}  🔴 ${t('departure')}: ${s.departure}\n`;
+    if(s.driveAfter!==null) txt+=`   🚗 ${s.driveAfter} ${t('drive')}\n`;
+    txt+='\n';
+  });
+  txt+=`⏱️ ${t('total')}: ${d.totalStr} · ${t('returnlabel')}: ${d.returnTime}\n`;
+  if(d.agent) txt+=`\n— ${d.agent} · RouteReady`;
   return txt;
 }
 
-function copyItinerary() {
-  navigator.clipboard.writeText(buildText()).then(() => {
-    const el = document.getElementById('copiedMsg');
-    if (el) { el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2000); }
+function copyItinerary(){
+  navigator.clipboard.writeText(buildText()).then(()=>{
+    const el=document.getElementById('copiedMsg');
+    if(el){el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2000);}
   });
 }
-
-function smsItinerary() {
-  const txt = buildText();
-  const encoded = encodeURIComponent(txt);
-  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const url = isIOS ? 'sms:&body=' + encoded : 'sms:?body=' + encoded;
-  window.location.href = url;
+function smsItinerary(){window.open(`sms:?body=${encodeURIComponent(buildText())}`);}
+function emailItinerary(){
+  const d=window._itinData;
+  window.open(`mailto:?subject=${encodeURIComponent(t('itin_label')+' - '+(d?d.dateDisplay:''))}&body=${encodeURIComponent(buildText())}`);
 }
 
-function emailItinerary() {
-  const d = window._itinData;
-  const subject = encodeURIComponent(t('itin_label') + ' - ' + (d ? d.dateDisplay : ''));
-  const body = encodeURIComponent(buildText());
-  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
-}
-
-function buildGoogleMapsLink() {
-  const d = window._itinData;
-  if (!d || !d.stops.length) return null;
-  const parts = [];
-  if (d.startAddr) parts.push(encodeURIComponent(d.startAddr));
-  d.stops.forEach(s => parts.push(encodeURIComponent(s.address)));
-  return 'https://www.google.com/maps/dir/' + parts.join('/');
-}
-
-// Utility: escape HTML for safe attribute injection
-function escHtml(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-function openMapsRoute() {
-  const link = buildGoogleMapsLink();
-  if (link) window.open(link, '_blank');
-}
-
-// ===================== INIT =====================
+// ─── INIT ─────────────────────────────────────────────────────
 addPlanProp(); addPlanProp();
+// Auto-fill today's date
+const _today=new Date();
+const _yyyy=_today.getFullYear();
+const _mm=String(_today.getMonth()+1).padStart(2,'0');
+const _dd=String(_today.getDate()).padStart(2,'0');
+document.getElementById('showingDate').value=_yyyy+'-'+_mm+'-'+_dd;
 updateAllTexts();
 </script>
 </body>
