@@ -1028,4 +1028,37 @@ setTimeout(()=>{
 },800);
 
 function detectLocation(fieldId){
-  if(!navigator.geolocation){alert('G
+  if(!navigator.geolocation){alert('Geolocation not supported');return;}
+  const btn=event.currentTarget;
+  const orig=btn.textContent;
+  btn.textContent='⏳';
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const{latitude:lat,longitude:lng}=pos.coords;
+    try{
+      const res=await fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng+'&key=AIzaSyACUHQvhblwWo1XxO2iPNGxeg_H41rPBQs');
+      const data=await res.json();
+      if(data.results&&data.results[0]){
+        document.getElementById(fieldId).value=data.results[0].formatted_address.replace(/, USA$/,'');
+      }else{document.getElementById(fieldId).value=lat.toFixed(5)+', '+lng.toFixed(5);}
+    }catch(e){document.getElementById(fieldId).value=lat.toFixed(5)+', '+lng.toFixed(5);}
+    if(fieldId==='planStart')checkOptimize();
+    if(fieldId==='itinStart'){window._startDriveInfo=null;updateDriveList();}
+    btn.textContent=orig;
+  },()=>{btn.textContent=orig;alert('Could not get location.');});
+}
+
+function showRouteMap(origin,sorted){
+  const div=document.getElementById('routeMapDiv');
+  if(!div)return;
+  const waypts=sorted.map(p=>encodeURIComponent(p.validatedAddress||p.address)).join('|');
+  div.innerHTML='<iframe width="100%" height="260" style="border:0;border-radius:10px;" loading="lazy" allowfullscreen src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyACUHQvhblwWo1XxO2iPNGxeg_H41rPBQs&origin='+encodeURIComponent(origin)+'&destination='+encodeURIComponent(origin)+'&waypoints='+waypts+'&mode=driving"></iframe>';
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+addPlanProp();addPlanProp();
+const _today=new Date();
+document.getElementById('showingDate').value=`${_today.getFullYear()}-${String(_today.getMonth()+1).padStart(2,'0')}-${String(_today.getDate()).padStart(2,'0')}`;
+updateAllTexts();
+</script>
+</body>
+</html>
