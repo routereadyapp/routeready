@@ -665,7 +665,9 @@ async function optimizeRoute(){
         const order=route.waypoint_order||filled.map((_,i)=>i);
         sorted=order.map(i=>filled[i]);
         // Apply closest/farthest preference by reversing if needed
-        if(orderPref==='farthest') sorted.reverse();
+        const distData=await getDistances(origin,sorted.map(p=>p.address));
+        sorted.forEach((p,i)=>{p.distFromOrigin=distData.rows[0].elements[i]?.status==='OK'?distData.rows[0].elements[i].distance.value:99999;});
+        sorted.sort((a,b)=>orderPref==='closest'?a.distFromOrigin-b.distFromOrigin:b.distFromOrigin-a.distFromOrigin);
         // Extract leg distances and times + validated addresses from Google
         route.legs.forEach((leg,i)=>{
           if(i<sorted.length){
@@ -690,7 +692,7 @@ async function optimizeRoute(){
         const el=data.rows[0].elements[i];
         return{...p,distM:el.status==='OK'?el.distance.value:99999,distText:el.status==='OK'?el.distance.text:'?',durText:el.status==='OK'?el.duration.text:'?'};
       });
-      sorted=[...withDist].sort((a,b)=>a.distM-b.distM);
+      sorted=[...withDist].sort((a,b)=>orderPref==='closest'?a.distM-b.distM:b.distM-a.distM);
       for(let i=0;i<sorted.length-1;i++){
         try{
           const leg=await getDistances(sorted[i].address,[sorted[i+1].address]);
