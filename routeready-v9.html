@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RouteReady Beta</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burgundy: #6B1A2A; --burgundy2: #8B2438; --burgundy3: #4A1020;
+    --gold: #C9A84C; --gold2: #E8C97A; --gold3: #F5E0A0;
+    --cream: #FBF6F0; --white: #FFFFFF; --gray: #8A7A7A; --lightgray: #EDE5E0;
+    --green: #1A6B3A; --green2: #E8F5EE; --red: #C0392B; --red2: #FDECEA;
+    --shadow: 0 4px 24px rgba(107,26,42,0.12); --shadow2: 0 2px 8px rgba(107,26,42,0.07);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--burgundy3); min-height: 100vh; }
+
+  header { background: #2D0A12; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 70px; border-bottom: 3px solid var(--gold); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(107,26,42,0.2); }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 34px; height: 34px; background: var(--gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .logo-text { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--burgundy); font-weight: 700; letter-spacing: -0.5px; }
+  .logo-text span { color: var(--gold); font-weight: 900; }
+  .lang-toggle { display: flex; background: var(--burgundy); border-radius: 20px; padding: 3px; gap: 2px; }
+  .lang-btn { padding: 5px 14px; border-radius: 16px; border: none; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--gold3); }
+  .lang-btn.active { background: var(--gold); color: var(--burgundy); }
+
+  .tabs { display: flex; background: var(--burgundy3); border-bottom: 3px solid var(--gold); overflow-x: auto; }
+  .tab { flex: 1; min-width: 70px; padding: 11px 8px; text-align: center; cursor: pointer; font-size: 11px; font-weight: 600; color: var(--gold3); border: none; background: transparent; transition: all 0.2s; opacity: 0.7; white-space: nowrap; }
+  .tab.active { color: var(--gold); background: var(--burgundy); border-bottom: 3px solid var(--gold); margin-bottom: -3px; opacity: 1; }
+  .tab:hover:not(.active) { opacity: 1; }
+  .tab-icon { font-size: 14px; display: block; margin-bottom: 2px; }
+  .panel { display: none; } .panel.active { display: block; }
+
+  .app { max-width: 960px; margin: 0 auto; padding: 24px 16px 80px; }
+  .page-title { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--burgundy); margin-bottom: 4px; }
+  .page-sub { font-size: 13px; color: var(--gray); margin-bottom: 20px; line-height: 1.5; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+  .card { background: var(--white); border-radius: 16px; padding: 20px; box-shadow: var(--shadow2); border: 1px solid var(--lightgray); }
+  .card-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--lightgray); }
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gray); margin-bottom: 6px; }
+  .field input, .field select { width: 100%; padding: 10px 14px; border: 1.5px solid var(--lightgray); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--burgundy3); background: var(--white); outline: none; transition: border-color 0.2s; }
+  .field input:focus, .field select:focus { border-color: var(--gold); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .prop-list { display: flex; flex-direction: column; gap: 8px; }
+  .prop-item { display: flex; align-items: center; gap: 8px; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+  .prop-num { width: 26px; height: 26px; border-radius: 50%; background: var(--burgundy); color: var(--white); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .prop-input { flex: 1; padding: 9px 12px; border: 1.5px solid var(--lightgray); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--burgundy3); outline: none; transition: border-color 0.2s; }
+  .prop-input:focus { border-color: var(--gold); }
+  .prop-time { width: 80px; padding: 9px 8px; border: 1.5px solid var(--lightgray); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--green); font-weight: 600; outline: none; text-align: center; }
+  .prop-time:focus { border-color: var(--gold); }
+  .prop-remove { width: 26px; height: 26px; border-radius: 50%; border: none; background: var(--lightgray); color: var(--gray); cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+  .prop-remove:hover { background: var(--red2); color: var(--red); }
+  .add-btn { width: 100%; padding: 10px; border: 2px dashed var(--lightgray); border-radius: 8px; background: transparent; color: var(--gray); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
+  .add-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  .order-toggle { display: flex; gap: 10px; margin-bottom: 14px; }
+  .order-opt { flex: 1; padding: 10px 8px; border-radius: 10px; border: 2px solid var(--lightgray); cursor: pointer; text-align: center; transition: all 0.2s; background: var(--white); }
+  .order-opt.selected { border-color: var(--gold); background: #FFF8EE; }
+  .order-opt-icon { font-size: 18px; display: block; margin-bottom: 3px; }
+  .order-opt-label { font-size: 12px; font-weight: 700; color: var(--burgundy); }
+  .order-opt-sub { font-size: 10px; color: var(--gray); margin-top: 2px; }
+
+  .primary-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--burgundy), var(--burgundy2)); color: var(--gold2); border: none; border-radius: 12px; font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 16px; transition: all 0.2s; box-shadow: 0 4px 16px rgba(107,26,42,0.3); display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .primary-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(107,26,42,0.4); }
+  .primary-btn:disabled { background: var(--lightgray); color: var(--gray); cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .spinner { width: 18px; height: 18px; border: 2px solid rgba(201,168,76,0.3); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+  .spinner.show { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .api-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--green2); color: var(--green); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; margin-bottom: 14px; }
+  .hint { font-size: 11px; color: var(--gray); font-style: italic; margin-bottom: 10px; }
+
+  /* OPT RESULT */
+  .opt-result { animation: fadeIn 0.3s ease; }
+  .opt-header { background: linear-gradient(135deg, var(--burgundy), var(--burgundy2)); border-radius: 12px 12px 0 0; padding: 14px 18px; }
+  .opt-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+  .opt-title { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--white); }
+  .opt-body { border: 2px solid var(--gold); border-top: none; border-radius: 0 0 12px 12px; background: var(--white); padding: 16px; }
+  .opt-stop { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 4px; }
+  .opt-stop-num { width: 28px; height: 28px; border-radius: 50%; background: var(--gold); color: var(--burgundy); font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .opt-stop-content { flex: 1; }
+  .opt-stop-addr { font-weight: 600; font-size: 13px; color: var(--burgundy3); }
+  .opt-stop-meta { font-size: 11px; color: var(--gray); margin-top: 2px; }
+  .opt-drive { display: flex; align-items: center; gap: 8px; margin: 5px 0 5px 38px; }
+  .opt-drive-badge { background: var(--burgundy); color: var(--gold2); padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .opt-drive-dist { font-size: 11px; color: var(--gray); }
+
+  .use-order-btn { width: 100%; padding: 12px; background: var(--burgundy); color: var(--gold2); border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 14px; transition: all 0.2s; }
+  .use-order-btn:hover { background: var(--burgundy2); }
+  .copy-order-btn { width: 100%; padding: 10px; background: var(--cream); color: var(--burgundy); border: 1.5px solid var(--lightgray); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 6px; transition: all 0.2s; }
+  .copy-order-btn:hover { border-color: var(--gold); }
+
+  /* DRIVE TIMES */
+  .drive-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--cream); border-radius: 8px; margin-bottom: 8px; }
+  .drive-arrow { font-size: 12px; color: var(--gray); flex: 1; line-height: 1.4; }
+  .drive-arrow strong { display: block; color: var(--burgundy3); font-size: 12px; }
+  .drive-min { width: 55px; padding: 6px 8px; border: 1.5px solid var(--lightgray); border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; color: var(--burgundy3); text-align: center; outline: none; flex-shrink: 0; }
+  .drive-min:focus { border-color: var(--gold); }
+  .drive-auto { font-size: 10px; color: var(--green); font-weight: 600; }
+  .calc-drive-btn { width:100%; padding:11px; background:linear-gradient(135deg,var(--burgundy),var(--burgundy2)); color:var(--gold2); border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:6px; transition:all 0.2s; }
+  .calc-drive-btn:hover { transform:translateY(-1px); }
+  .calc-drive-btn:disabled { background:var(--lightgray); color:var(--gray); cursor:not-allowed; transform:none; }
+
+  /* ITINERARY */
+  .itinerary { background: var(--white); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); border: 2px solid var(--gold); animation: fadeIn 0.4s ease; }
+  .itin-header { background: linear-gradient(135deg, var(--burgundy), var(--burgundy2)); padding: 18px 20px; }
+  .itin-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+  .itin-client { font-family: 'Playfair Display', serif; font-size: 19px; color: var(--white); }
+  .itin-date { font-size: 12px; color: var(--gold3); margin-top: 3px; text-transform: capitalize; }
+  .itin-stats { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+  .stat { text-align: left; }
+  .stat-val { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--gold); font-weight: 700; }
+  .stat-label { font-size: 10px; color: var(--gold3); text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
+  .itin-body { padding: 18px; }
+  .stop { display: flex; gap: 12px; align-items: flex-start; }
+  .stop-timeline { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+  .stop-dot { width: 32px; height: 32px; border-radius: 50%; background: var(--gold); color: var(--burgundy); font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; }
+  .stop-line { width: 2px; flex: 1; min-height: 24px; background: var(--lightgray); margin: 4px 0; }
+  .stop-content { flex: 1; padding-bottom: 4px; }
+  .stop-address { font-weight: 600; font-size: 14px; color: var(--burgundy3); }
+  .stop-meta { font-size: 12px; color: var(--gray); margin-top: 2px; }
+  .stop-times { display: flex; gap: 16px; margin-top: 6px; margin-bottom: 4px; }
+  .time-chip { display: flex; flex-direction: column; }
+  .time-chip-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray); font-weight: 600; }
+  .time-chip-val { font-size: 14px; font-weight: 700; font-family: 'Playfair Display', serif; }
+  .time-chip-val.arrival { color: var(--green); }
+  .time-chip-val.departure { color: var(--burgundy); }
+  .drive-connector { display: flex; align-items: center; gap: 8px; padding: 4px 0; margin-left: 44px; }
+  .drive-connector-text { font-size: 11px; color: var(--gray); font-style: italic; }
+  .summary-box { background: var(--cream); border-radius: 10px; padding: 12px 14px; margin-top: 8px; font-size: 13px; color: var(--gray); line-height: 1.9; border-left: 3px solid var(--gold); }
+  .summary-box strong { color: var(--burgundy); }
+
+  /* MILEAGE LOG */
+  .mileage-box { background: linear-gradient(135deg, #f0f9f4, #e8f5ee); border: 2px solid var(--green); border-radius: 12px; padding: 16px; margin-top: 12px; }
+  .mileage-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--green); margin-bottom: 10px; }
+  .mileage-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .mileage-stat { text-align: center; background: white; border-radius: 8px; padding: 10px 6px; }
+  .mileage-val { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--green); font-weight: 700; }
+  .mileage-label { font-size: 9px; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+  .mileage-deduction { background: white; border-radius: 8px; padding: 10px 12px; font-size: 12px; color: var(--gray); line-height: 1.7; }
+  .mileage-deduction strong { color: var(--green); }
+  .mpg-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .mpg-input { width: 60px; padding: 6px 8px; border: 1.5px solid var(--lightgray); border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; text-align: center; outline: none; }
+  .mpg-input:focus { border-color: var(--green); }
+  .mpg-label { font-size: 12px; color: var(--gray); }
+
+  /* SHARE BAR */
+  .share-bar { border-top: 1px solid var(--lightgray); padding: 12px 16px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; background: var(--cream); }
+  .share-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray); flex-shrink: 0; width: 100%; margin-bottom: 4px; }
+  .share-btn { padding: 8px 12px; border-radius: 8px; border: none; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.18s; }
+  .share-btn.copy { background: var(--burgundy); color: var(--gold2); }
+  .share-btn.copy:hover { background: var(--burgundy2); }
+  .share-btn.whatsapp { background: #25D366; color: white; }
+  .share-btn.whatsapp:hover { background: #1ebe5d; }
+  .share-btn.sms { background: #5856D6; color: white; }
+  .share-btn.email { background: var(--gold); color: var(--burgundy); }
+  .share-btn.email:hover { background: var(--gold2); }
+  .share-btn.print { background: var(--cream); color: var(--burgundy); border: 1.5px solid var(--lightgray); }
+  .copied-msg { font-size: 12px; color: var(--green); font-weight: 600; display: none; }
+  .copied-msg.show { display: inline-block; }
+
+  /* SHOWINGTIME */
+  .st-paste-area { width: 100%; min-height: 150px; padding: 14px; border: 2px dashed var(--lightgray); border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--burgundy3); background: var(--cream); outline: none; resize: vertical; transition: border-color 0.2s; line-height: 1.6; }
+  .st-paste-area:focus { border-color: var(--gold); background: var(--white); }
+  .st-parse-btn { width: 100%; padding: 13px; background: linear-gradient(135deg, var(--burgundy), var(--burgundy2)); color: var(--gold2); border: none; border-radius: 12px; font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 12px; transition: all 0.2s; }
+  .st-parse-btn:disabled { background: var(--lightgray); color: var(--gray); cursor: not-allowed; }
+  .st-results { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .st-card { border-radius: 12px; overflow: hidden; border: 2px solid var(--lightgray); animation: fadeIn 0.3s ease; }
+  .st-card.confirmed { border-color: var(--green); }
+  .st-card.declined { border-color: var(--red); opacity: 0.6; }
+  .st-card-header { padding: 8px 14px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .st-card.confirmed .st-card-header { background: var(--green2); color: var(--green); }
+  .st-card.declined .st-card-header { background: var(--red2); color: var(--red); }
+  .st-card-body { padding: 12px 14px; background: var(--white); }
+  .st-address { font-weight: 700; font-size: 14px; color: var(--burgundy3); margin-bottom: 4px; }
+  .st-meta { font-size: 12px; color: var(--gray); display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+  .st-add-btn { margin-top: 8px; padding: 7px 12px; background: var(--burgundy); color: var(--gold2); border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .st-add-btn.added { background: var(--green); cursor: default; }
+  .st-summary { background: var(--cream); border-radius: 10px; padding: 10px 14px; font-size: 13px; color: var(--gray); border-left: 3px solid var(--gold); margin-bottom: 14px; }
+  .st-summary strong { color: var(--burgundy); }
+  .st-send-btn { width: 100%; padding: 12px; background: var(--burgundy); color: var(--gold2); border: none; border-radius: 10px; font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .st-send-btn:hover { background: var(--burgundy2); }
+  .st-steps { display: flex; flex-direction: column; gap: 12px; }
+  .st-step { display: flex; gap: 10px; align-items: flex-start; }
+  .st-step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--gold); color: var(--burgundy); font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .st-step-text { font-size: 13px; color: var(--burgundy3); line-height: 1.5; padding-top: 3px; }
+  .st-step-text strong { color: var(--burgundy); }
+
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--gray); }
+  .empty-icon { font-size: 36px; margin-bottom: 10px; }
+  .empty-text { font-size: 13px; line-height: 1.7; }
+  .section-gap { margin-top: 18px; }
+  .error-msg { background: var(--red2); color: var(--red); padding: 10px 14px; border-radius: 8px; font-size: 12px; margin-top: 10px; display: none; }
+  .error-msg.show { display: block; }
+
+  @media print {
+    header, .tabs, .share-bar, .primary-btn, .add-btn, .calc-drive-btn, 
+    .prop-remove, .field, .drive-item, .page-title, .page-sub, 
+    .api-badge, .order-toggle, .hint, .card { display: none !important; }
+    .itinerary { box-shadow: none !important; border: 1px solid #ccc !important; display: block !important; }
+    body { background: white; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQQAAABCCAYAAACxfqjPAABTQ0lEQVR4nO29d3wc1bk+/rznnJnd1a6qJdmWLfcuV2yKwdgyzQYMhCKRBBJKCCUECNyEUC6RNslNAmmUEAIBEiAJIIUk9GLAMqEEsCHGBWzj3iWrS9tmznl/f8zMam2McW75/pJ79fijz3pnZ86cKec97/u85RD2Qw0gGwENALPsivHjQ+qCIilPdommOkaLmFArLSGTae0OzsBUCiI2YNIMMAMgBnv/AYggvf+BCPC2EgwYzJQslvZKNoyEcYakYYYQmIlBRF5fGIBhvzMECBALAuWT2hAi0d6qMzMFEcVUaINL2Osa962Pk70vvpTY/QIANACy1j+8H/3ox2eDcr8EwmBYKDSyOjSwrkCGzokKGbWIwP6ABtgb+PAGuQAB5A1c4/+ebZi8rwRAEIH9X5kBBgc/+/t434PGGQARgRkw5P2f/JYFCAKcbY+EgEUEGwJdxkWzTj+zJtn5nbcSe9/PFXD96Ec/Do6sQAgGzol5pSdXhUoeG6Tsgi7SyDBrBoiIhAAgGIaJYQBiBsEfqEQ5A50IxH0D1tcXsgJAIBjcMN5e8JQDhid4OLeDBPKUjWx3CcQAMwGCPIHEzGD2pIoIk6CE1mZLuvv6hs7tP+3XFPrRj0MDAX3CYE7+wEXT7aKnikmQC+OyEJIBMv7OIhj8AJjZV+U91YH8WTzQEOALB/izPAAIAZAvIZR/LBPDGM5qGIazB8Mf7J4mkj23dw7OUW6yAoe89hlGh6QizSyW97Rf81z3jjvnAWop4P6P3s1+9ONfHKIOEA2AGWXnj50gYo9FhEQPGWNIKH9yhiBPTQcHWgAAIm87MwT1qRqesAA0AUzCO4kALGJwt4tUt4OE4yBlDEzGhe5yIA1DSM9sEGAI9s8p4LedY9kQwEHH/PMKkC8wCEwEkJS9RlMGxhkdyb9jTrT8+KWAWwPI/5c3tx/9+FeDWoMaIjTiS+GiewZZoWiCtSshlBYEgb5Byj4HAADGsxX82dsfrBSYBwQSgGB4xwjApF0wEcaeOgSVU2OIlUhYdgg6BWx6rwUrX9qFTIcLK6oA7bOKlDUPwBToA76OkDUrOLsfZzkF77sEkcssC6XiqeHCezb2JmcDCzuAxhw1ph/96EcuCADOKB66YJqKvZBmaEOQnGMGeNqBBw48BGAQUzAW0fcfnxwknyJUAKUZMl9hwTcnYUxVDCblQDuON6ClBWkLtLRk8PSdH6Hjg06EYxa0yWmSPUIzR+7kbO8b14F8gPC1Bvb6y2A3KqT6INnxw8b2rTfVYZ6KY2m/6dCPfhwABEB8pWjYGyNC+Ud2G21AJPchAikg9vq4AJP1CATehL7RGuzPwt8BAmd+dzqGj7XR1Zz02jEGHEzuRMiLhZFgQsMtK9D7cTdEREEHdGOgG+T6Q4LOBZ8Br8C+N4Lgk5oEQ8xExJ2ZdMvivbumrEfP3hyvZj/60Y8ciOlW3pSosA7vYQNDEOzb5sI30ok/OXwIHnmXo9n3DczAtBBAd1cGh51bgZFjFbpbUhCWglQSeYUhxIps2BELUllIJjUiQmPeJaPh2JTlKQKzgPY5f4424nMb++gn7Jk0GgTtCQlyjTEFyho4oSB2NgE8D/P6uYR+9OMAEJWhwoW2tKQLNgJEwtcGCB5ZmFUTsg5EIMvm5XxFDrEnJcBpjZJh+TjsuEFIdDkQiqAsCVh5+PDdXvz1qT3Ysz0NK08BABLdDipH52H4MYOQ7nVAQmRPEwgFYm/mh+9NQE4sAvumRV+n2CccAQlQlCSXqsjpAOhKlPdrB/3oxwGgCmRoriUUXNbZ4J9cM4D9qdoLPvS2eZwCAaIvZiArN8gLFHJSDiYcVoT8whC6W5OQwiDVq/H03R9g19/3QjNjmVI49opRmH5sKRJdAIzB+KMGYPMrO/sClbLwiE0EwQpZUcFZ00H4HSEmGJ9f8MwHIg1QVNrjAchaNLrYV6T1ox/9ACCilj1CCAIRkYEfbZgl5Dz13yCw5/cfpLnuQI9sNOyFLmcIKBlhwaQTMK4LZRu8/fQWbF/WgvziEAqLQ8hXAu88tBWtbS7sEMNNuygulxBRAaP3HasGXuxD3/zfxzBQ9p+/L/XpM8a7FsrAQMMMHhQOD/lk5/vRj34AgChUyjFgmD4G0ZuJkWMRcN/Y6RMNnq1u/Mma0Wf7a8MgCyguVdCOgSSCZhvtG1KI5imwC7DD4BAh0+Nix5pu2CGCcTQieQJ2noTR5oBDts+x0Udyem5JznY4cEFSENwEJgPAJhEZIwsKAaDuIDeF95d7/ejH/xEIl02oz97OmWcD+z1g7oF95uEc+ZF18+Vus5SEHQkBJCGlAkOB0oD0p23DBNcQ0q5Gb3vKj2cgSKmgJEESI+AzsiEH2RwKP4GKcvQE7hNkXjBVELTk8w9gKAgUI/SZIcw5IRf96Mf/KYgE6/HCywgQ+5jU3GeDIyDy8Mk/4asFgcfBEwoE1ox0yoWAgHYZSmnIMgHXYbDycxbIC38uGR6F0YAQAmABm730JSAIZYavufSZAUEXA46jbwOywiPIsGSQZ0cAMMhRd3IQeFCv/PyMit/ctOC3/w33th/9+JeDkCAiDmb+3Ilxf7agb9rM2ubcFx0Y5CEYBkgQdMageWcaRAyjGZx2Me6EUqQJoG4DywBdu1MYMKkAlePDSPUYkJTo7sygt8cFpPDtf/Yzl/w++X1lXxoEveKcnma9Dn5+RHAoAbA/5UZkTRGtQ2FLT/9P39F+9ONfGMIw56Q2U3aGB+Cz9zmeB+SQeSIwIYRHP/aR/QADthDYuy4BlhIkCekUY/zEIiy4aTzyxuVDRC1MPLUSZ147ARYDmgWUJbFncw96uhwYEdRV6As28ujBnPNk4Qsmyg1z5r7gKmbf/fjp1EAgUKQgtkj2/qfvaD/68S8MxVkKLge55gKwrzMhsMiDfYLtRH1JTswIhyTa1ifR0+3CkoDLQDqlMXFqDKOnjEWmFygsCSHTm4aTUSAycI2LdctaYbIZVF7OhKA+q8DrH/bRVgKtIEi5DtyP2XBm6suRzBzCTWEv07sf/fg/B7VvpB/gDS4/wYjZJ/L6yDoAYBjswzoCPskXsP8MaQm07kxiw5ouTJ1RADcJCCmQ7jEgMggrQqI9BRICRIBtS7S3Oti+oh2hPC90OZtDsZ8w8AY77+P98MKrcyRFTn/B+5RjOShSKcDV/aUT+vHPi4aaGln2tWZCk/e9Or5U06G83IcAFSjWFKja3DfACfBKkAQl0ZBjyyMwGThLy3s2u7ePQ4AE48O/tmLKkWUQmTRIBO5Jhg4ymBgw2iAcC2Pdq3shOl3YhTaM6eukCfpFAZPhBSflmg65bkdkNQr2DZo+V+SnYR+hyId2b5mZLMvyxU3u/fHbzMnEBAOu6wp4CgwDMET03/IQ/zeDmUlJccj3ydXnSDQ1U+Mvy7m2sTFLIf1vQm1jo0bj/0zbyiDHrQdkJ/5ABrAfGejNvoEA8Hb0PnKHkjcgBBHABpE8hd1/78DGdb0YMy4PqUTGFwL+QDEMhgYRo7PHxdpXdiISUdC+zc8gn1j0O+Z1E4I9MwL+PsHkn+UdA/ek/1sguA42/ALhEgaybX8W/tEBnRv7BQDMLInoX0odYWZqamqS1dXVAIDGxkaura39H7uGf/weN2b7Iojw2DnnyNrGxn+pe/xpYD+R+Mkfzz9u9MDYsM4erYVx5LIP97501d3v7wx+/6+cQ/WZAb7FzvC1BcrOqgHpGGgRffEGlDPz9rkfg8KqgAHSBm/9cSOG3zgRMLrPP+n3XrsGkQKFt5/Zg+4tvYgUWB7hkCU4A3PEa1EI8t2KfTxHUHfRM3GoL/XC10bIJyMPaZyHvYIuB0NdXZ2Ix+PmkQcemDR4+PDHpJTCuC4ZBqSSEILAhj3TgxlSKSYiGlA2YOPO7Tu3dHS0Lvn8589bTERdzEz/SpqC39f/8fRxbqiRVNuov3vh9LrZk8pq047WYJKOduG6LtgwhCBYUsCAYAyDBaFyUOEHza3pbZt3di6+6u63l9Q2NroNDTWytvZ/gVBorBFAow6p0M2jBhYe15qnkWcTPt7TswjAzkb/9//KKZTYx4uQq/IGg9+b0YVS2dlWiP3ckOyr8QiKqnhqssMGKo+wZXk71rzbiqkzYkgkGCQFhBRgBuywQmubwcpndiAUVV7YsfC9F77ZEVRrCs5vgvjqoM++IAs0jwMLyX9AdNLBJUJVVRUBQKykZPDxxx8/5VCbBTBpStUUGGOuPPzwo3b+9a9L7yGi7zOz8AfaP61gCITg1y7+2vDJsyb/m5RSwxjZ3t7+8Q033XTnf7dgayprJgAYUByeccy08kmtPQxLCjAbGDZgo8EgCCG8RDh/NhIkJ40Y5GLC8LxvvT5xwftvrm6/oba28aX/NUIBgHFFV0dXyk27IsNk26Fw5FC48kOCyrrm4A9yr4AqAD/60J/xe9rb4RgXll/hmIigAThswIYhQZCCoZnhgmAJC3bIRl40D8Vhgdcf3YaRE8dCkerTEjRgl+Thvd+vg7s9CY5aSBoD1zcZCARJgEUiyFoEE0HYEmQJuMbAGD/KMvAkZL0LPi9C++djHBwpIFv67bOg09pJJpLGtkPGsBFCEKSUfXarAbBvU8Z1XRJCyVGjRlWMGjXqe5MnTx1DRBf+s5sPgRCce9zcoeeed+5Vwfaurq53b7jppjuRNdz+e0ECifauhOnucV2QVFIJoZQEA9DaAbPx3NJCwBhmMDLMEFJaYtyoghmDBpW/aCjv8traxnuZ6wRR3HzmSf9ZUeN9RKMKylaKMxkDJkV04GC7/wzU/qw8BXY7eXURyTBcYXDUN76MWGkJhGGfIwA0M4w/dUtftU+m0+jYvQe9u1uR3LkHzR9tBBmGsyWEvz3bhpO+NAK9bRkwA3n5Nja834X1z23HmOMHIDwghJ6k6xGZvq9RCYItFWwSyKRddLan0bE5jfbdKYTCEjJE+9VT5n2EQXYr5xjvB0EY4X1pkYPACEMkSEghIIgEM6Orq0uwYfi1qiGVJ5CklIhGo1BKAZ5gYKWUM3PmzAueffbZlUT004MIBaqrq6OqqiqqqanhxsZGWr16Ncfj/+9fbiOM29Pd48byYy4AtWfPnhg86iWNQxAKdXV1wr8ONDY2oqam5oDkarX/GVJK2OGwEKmUIIKwlJ0gO+QQESRrGDftmxAErREtzrdD2hCSDkxHl6OjeVKcckTpT7ftnLoEiK+vq4OIxz/xKlBdHaiqqoZWr26mqqpyXr26kQ+w38FADTU1AjVA0AYagf8EsUl1dXUENIlqAC1V5by6tpHjAIAGA1DJ3s5MpRxRDEaaXCcJN53+B5o/OBQQ8AfwSpJlHQreqNDMSMHguGuuRGn5wH+o8XQ6hbXvLMPLt/8K2156DRueacHmwypQOdpCsjuBzm6Jpb9eBxigB8CiCyuApANSIS+MGfC1CY+cZ2K4xqC73cWqd5vx1h93weowiEQVXO2LJvbeSS+ase9aiBhsDi0O4R+pnkJEftk2wq5duzIXXnjhz4cMGfKKEYYEWRwNh+E4Dg0cOIRmTJsyatyEcRdUVVUdqZTSrtaWklJPmjjxOwsWLPgDgN3IGVQBgXfccce58Xj8Ey8VM/vKER3wpfN/l+h7qsbf91OvxRgTWH1obGxEbW2tDtphZixZsgRSSmUMSAjIZDJRcMIJJ4QAuNxnb+r9Bjkxs5BS6gMJMWavvtaB+sYCkMqCtLQuiIXUe+vaXqucNPi8YaUkOvaykQCSXV3oTWbo7RV7ysoLzcIRFQU3jRySX9bV0cs9XSldURqOnnDE4JuJPriAuUbE41mKnpbUzZPHf+81Nx5nxn7UPTNTY2OtOJipwXV1AvVriKhRH4j9JwCv1s1TTfGlJn7wOYm4oUaIcxu1/6xNPOfHJUvmKaCWAThKiqR3vwSEABQk6urqRM2kNZK5BmiaRI0ta/izTCRmUFPTPFldXc5oaiZUVxslgGyUoTbcl8hEHhGnhGenpTu7YEoGeCSdn2nIxvh2HDzXo2/bk19ZxVIWph47B1OPnYPFv/o1Fv/7rXj+7lU45zsTUVZu44+3b8SujZ0IxwTWNXXitXHNOO7UQehpZ0gZEIkGgPZ4Az+1OiwJc0+owOTDB+OZu9ahdUUn7AIF1vvHVHjjIFsz4RBxqNOCggq0EANARKPRvYsXL77hMw574Omnn/7tokWLvkAMo13Dw0eMKPjyRV8+kYgeXrJkiZo/f77b0NAQaAsugNB111036cYbbxSFhYXYumsr7n/w/nYi2ghACyFwyy23iP0H2z9KAPrP9hOX77eTAYBrrrlGHHXUkRACBoCsqBi88eWXX+6kT1Gr6urqxPe+9z0TaD5XXHHFxGuuuSa2atWqQQMHDtx500037SSiXQDQ0NAg9/dYaOOl1BsAJAg9vZnQ5IU/b/uUS2gF8NExEysX3/6tI/4yuECO7kkxJR3BA4qjZwwfPrxIUGMHvFcegsDz40tdAOLamkmjFh49oeK1D7ZPqZkzaNnDz37USUQfAdCfwj8QN9QIqo1rxAFgQP4dV08cN31SRfSZ19bPPPmY4e+tXLur55o73/5wfnxpwrsXB9ROUFcH8d04DHnnyPv+pTMnFBfmje3pcYqPnjLo3a/fuqR1/vylm0kAROguyLNadCYNMFhaEcSK8ih+bdzE44c03/VdAIGxT33RpR6HkI0xoiAC0Wf0iWABUAKwbBtCKRhjfKY/xz8Z+C1lnwfBdTVAAlprEAMnXv5VsBR47NKb8cYT+agYV4C1L+5GbEgUhVUx8JJWrHqyFZOOGIrBpQqppOu1aQyMMSA2vkAgMCv0dhkUxyzU3DQRv6tfjfTaHsiYhDHkLeHC6BNcQLZ+42chlUpBm0MTCa7jevcr4AoY9PDDD0effvrp1KRJk6iqqmp/MSS/8IUvZE477bSvfvDBB9VTpkwZpF1tiAQPGTTkKAAPV1dXZwfG1KlTy+++++7LyspKLxwwoHRUaWkpAGB4xXB88+pvJr92ydf+/vLil5+8+OKLfxqPx92A+AuOf+WVV+aWl5dfpbV2LMuyPt748atnnHbGPfsPvOD7Td++6ctnfO6M82IFsVYppb1z984Pjqs+7rvf+Ma3ZtXWnn2DENDd3d3jiQQcx5VKSrhpd9rixYufiEVjxhhtUum0eO6ll+756a23vnrvvfdal112mQPAeuSRR66cOXPmBSUlJVPKy8vl+PHjkXEyePzxxzq2b9/x5quvvhqvra19JxCI2ZdWSBjtQjsOdBogMn6ITI0AGvd5UPX1oPNKFlrjrnlh9TNvVMQvXjj8ESUEp9MGRVEZO3tu4cifPYL3L710pqL7ljtghO751gmXT6i0vlpeqMYWFuTZU0dPgHaSuOiMKfqLp814ffFbu++vrW383f78AwFMtY36/hsWzB47iK4qzFNzI7HYkGjUxrWfnwrtagwpqMB795++ccuu1Et1v15xWzy+Z9P+QiF4ZsDQyNO3z752YL6+LGo7w/LzwlAyjLQ2+G38pMSulswff/GHFd957v3NW7Q2IWOMNyFrB6k0d//kG8dectz08oXdvZyJRULW3z/a8dFXbnvtlgORvUEfvnRK1cTzThz53ZglOBwWtGpDR57yJ97gIrODJjcmwWSNCm8WMRreEk7aH6Raw2jtpTkLAWlZUJZHT7AxIEFwMg6O+8pFWPP8K9jy4tvY+FoE0SKJzl1JHHZeJewejT1vtuCV32zA526aDGIBNgKsHUBnwCwgiBGJ2NAZwLhAKq0RyVNYdM14PHH930Eucoq79i0dFyjhhE9PbsqFOcTAJP+G9BGHBITDYdPY2Kg/hXXXzKyEEL2u4z4N4FKppCeviCb6PaXa2lq3rq7uhPPPP/+hMWPGVATd0lp79jaBBpQMiAwoGTD7oosumj1x4sRTrr/++vPj8fi2uro6UVNTQwAwZ868YbYtz8m5MgfAPcHvAcrKyggAJk6eOPSIo444KdgeyYsMBfDd8aOHVc6efeTZwXbHcTzOxDAGVVQUDBpScVZue1u3bn0FwKtXXHGFc+qpp46qr6//3axZs2YDgNZGE5EDgG3LpsGDK4oGD644ZdSoUcdXVlZ+ff78+fc3NDRI4G6/y8gW5QUYRmt/3pqUuzJA9mmg7gWnrg5izZvtb+xpL9Ol+SGVdjI6bAk5rLhgCID37713mbv29apBN3xl9F8Orxp0pKsz6O5JcjKZzghBxkDIvFhYVeRH5n15Ud68KSNDU4ji3+aGGlm/upHr68FEhYXP3jHv1nEDw1/ND4F60wzN2kn2ppmENNo1UihbDoypUaOHlV1eXBw6/a/v7T36O999a0swIL3PuLn4rBnDL1ww6smpY4qmJZMOenqTnEi5DijDQgpRELPDIwbGvlx66dST7N+bRUJSm/Q9K+w6ML3dTp4d6Zk2buDZrR0ZRC1GMpGfmjR06M+FoDbsx+1UV88T340vNQvnDDvnhCMHnbO3LYPiPImOLv2cYjYwATUYaOnUV98g8OVr15tQ2DWQtoXtGz7GIxd+DdIAvdoFmJGvbAhJcAvyMGzWTCz4+mUoLiuF0QwiASUEjrnky/jDS28iTwi4YEg22PVuO+acNwZ/XtGBrtXt+M033gUs6XkQgkAnYlgSGDo+H4efNgTFUQtuxiDZazC0MoLRpw7Gqt9vQ7TIAhvPTDC+lpAdr4cwzsPhf4BDsNQ+WgczYxu2feZh3/nOd0TlsOEfA4AxhoQQ6O7uHg0gQoIS8Vvix1xw0QXPDR8+3ALgaK1JSqmklAIAhH9FmbTrCin4qKOOmvvz23/++uWXXT6nvr5+++rVqwUALF/+Ttns2bNdeM6TMCB6DtavdDqdMcZoIUQSQNiyrE4ASLlun48XICFlNo7kQDZaWUmJISIsXLhw0K233vpSVVXVaAAODKSUQsLnIwIzw9U6M2DAAPtzn/vcr3/605+mamtrf7fuuTtCwFI34zpgrSGkgLRs7O+2+QTiQBwwEyd2GYbKSCkjcA0rqVBeHBXMoNra2eH/uGb8X6qGRY7c09GdMQw5oCAkybh2KmUQjVjQpNDannCUcjF7evn1D984P0a1jVcy18jKyrdCz/7i8KVzJ5VN3dXcza29mXTYolB+WFrsz7BWNIyE46A3bXR3MqEnjSqoyDjuU8yYXQ+k1tRA1tezafrT0KHnH1/5+pQR0aHNrd2OgRRKWaIoGralH1DjpNPY09LmDitXgy47bexfWlozrc7gMEBSkCKUl+dFz77qlT/PHF/WM3RAKLytLaUHl4ZCV59Tdszlt29/pqGhZh8epLq62jCW0qhhJSe3dzq6uzfltO111AvLdv1cBb79YArNDTwKfPyuAbQf3x/MuE4yhbZVGyGVhQx7VZEceARbxmhsffFNbH/tHVz+54cRLSzwV2NkjJp1GGRFKdJtPVCWQkF+CLtWdKLsqgKMmFuBzYu3QrgppHRQucDLp1QkYMBY92ECu/7ejdNvnoCSqI2U4yLTncaEwwvxwZ+3+9GP3nF9OkJwYYc285NUh7Tf/ub5ofp+4vG4Of74E6cfe+wx0K5mYQtEIqHNANLn1p5bee4Xz/3z8OHDrVQqrS3LUlJK2rp1a8u2bdve2bhhfebwI46w8qKxE4dVDgu5jjbGIDPzsJnDbrvttvuJaEFA7jU3N5cCUK6rlVJSKaUOOppCVoiEEBIe2ayU9Pbv6kq0vP7669v9UO28GTNmFCtlgQShpaWFP1yzZq8dsh1muKFQSG7YvKGXmfFv1177h6qqqtFam4yUwu7u7cb69eueXLVm9Svvv7MMJyw4sXDUqDFfmThx4gittZuXlydOO23Rnc8+++zisScP3gt4LmeP1zIQQsBSB382a2pqiBsmiR9e2WRFI6GIZoIQLJLJDO/o6OogAjf+qPShaWMGHLljT6cjyKg8W4nVH/csX76u+ZXNOzu3V08tG1g5dMDnRw4pGt3R1Wu6k65zzIyyr/3osmP+QtS4GIDjpqc0p9KusZRyimJ2aFtzT8tHmzte0WzeSiWNUnbk+PEj8k8oigq7q8cVbR3GnTymbOoPLj38Eoq/e+eqhhqbiMwfv3fiLw4bUzK0pSPlGGaVHyHqShp83Jz6286WnpVF+bKnNCqqpODjUooxqiJvKAl7aE/KQNqKhGUh7YoIgPT6zXveHDtw6Ek9gtzCWIiGV+SfC+DpMj+mA/BMFKK4ufLsGbOi0hzV3Zk2UYvCa1q7N/zkD8v+qgJVWvguxtz8YoZXylwb05fd6Mf1Gq1hLIWwbXu+S/aKoBoCbIRQMKwIu95ahqZ7H8Sib18LRxvYAIrLSjG4aiy2vfw2VDgEKQ3SbRlsfb8VR9UMx5rXtiNPAraSCMILA+ITRAjnKyS3p7Ds6R046cIR4LSDdBooHRhC8eAIUjtSIFv4Mxh85sQPXT7EIUuHGLvsOM4+HAIJgdlDZwfsPuWw7qitrRXf/va3hVLKAZA3euTIYwGw8OrdcyaTWQdAf+XCr/xw/ITxZVob1xvATE1NTfd94xvf+PaKFSs6gva+8IWzxn7r+n9/YMb0GccaVyvNcI899tiTbrvtti8S0R8A4Iwzzvggt7/ms7iR/cWFV+YC3/nOTW8S0TgAoc997nPHPfLwI42hUIgBSMdx3plXXf0FAHvhEY8KQOq++x5YdOy8efMdx3WISHV1dydefeWVmjPPPPO5oPnb77oLAG7/4IMPnpoyZcp87er02LHjii+5+MLLiWrjAJAXUbBCYXAiAaNdMDMtqZungF3EDX2mTyOAstXNVF0/CURx/dAtJ1w8oECgO2HccMhWbU6mWwh+93tXHXv0rIlFNXs7066yLBFREC+/s/2HF/zwtZuCtu7+MwDgR6/e/blfTxpW8PmOrpQuKbIwc3z+bQBmEZF7z593fXFwcWTtkAHR4rdWt99735+3fO/Zv63YkXP3fnZt7WFHnX/KmD8NKrIH9vQ6LFib2ZMHVgO4c8q5jZn/uOzIEw+bWHzG3vaUNoAsitq0bXfvjuf+tuOiugfeXpz7KG656MgjF8wqfWDUkNikRIoNiCSEN+V1J10CQBt3dd3V3pM+SQIqmQIGlRUuXLRoZulx85furQNEHDDV1U0iHoc58cghC8oLFHV1OZlwOBxZvyv5GoC0CFRqL+SXsjkB7CcPaeMFG2UNiCzHQCCjPSFivOAkbQxYM8gYuE4GKhbDuiVvwNEaSnneL0ECxcOHwGjHEzpMsAsFPn6vFUNGhlA2uRiJXtfLggRBcrAKkzfuMo4BIoTNKzvQ05PwSr4zIRQKI1pow81Z9ikQADmFlA4B4ZwyTQeHZVkIak1552H+wQ+uIiJiIjL+JxMRNzY26lmzZjlaa7Xk5VcfqRhaUQnASG/Wpo8/Xv/y9OnTy8ZNGFcLwIAYSknxxhtvPDV//vzLVq5c2cHMipklM6tHH/3T+sNmHHbmhg0bNwklyY9r4IULF3416F9nZ6cC/HBvfHZI9v7QfVmfgplTUsqOq6/+ty0kKEjQQlFRUUIIsUkp1S2ESFuW1QtAT5s29RrLshhMWikpXnrx+QfOPPPM55g5fMcdd4SuuuqqUENDQ0QI0fODePyqXTt3uvCECR8264jT4FtuQkoiqaCUglISGa2d+fGlLtF9DtU26uCvtrZRe9vj7v11p1x4RFXZjSnHGGOYYlGbO7r1h//2878lZ4wq+mZhiDiTzujiPEu+t67zpQt++NpNzPdaz92xMNRQN8leUjcvLCX1nHflX76yZUfb9ljEtnrTQg8bWjL1mpppU5gZL7z+95a3P2y96fElm64+49tPXf7COx/s4OeuCq17bmFo3R0LQ/zmtZGfN7z3t1ff2/VdIVwB4yKVSouQ5OkDBgzIZwYOm1j+tZLCGGtmE5bA3nan++eN68+oe+DtxcwNcsmSOrVkyTzFS+ap7/3m7bdvfnDVOc3d6M3Ls4nBDGPgppNIOykNgJ98n17csTe9KRoWynE5U1FWMGDucHkuA1RdN08AnrkAQA0oULVGA9JSVkuPgxXru34D+LkMwRJtkj1Nwat+xNkSZUx9L1X2DZECgigbAcjUN/8G87EFAel6kWSKCMbXsF32ZmuLCMbViI2KoXXrXqS6B2HyMUV4ZVkblPDcmIEjI/CNen40hpNkOGkgku8VcmVjYITPGwDZZeU9E8gf4IxDq4dgDjVgUO2jTQhBRqnKaXV1izbU19cnmpubUV5ejocffji0Ys2aieeeddaYwsLCq8aPH3+Y4xgDGFiWEh+sWNFx1VXfeOaRRx75/PARwyztGpcEyebmZvfOO++sZ2aqr6+XRJS1URoaGuza2trWF59/4bbLv3b5PZYVIgBUVlZ22BlnnFH55JNPbjPGSO968JmmN4CD+lvr6+ul1lo3N++wgBl994pZGGPoscceE42NjWhsbDSnn3764IHlZccAgGVLe9u2belv18V/AgBElAqOvcvTEPDYE0+s/uYNN74xuKJiHgCTn58/5WsXf3HoLx/8wxZtiPxoRHIMoSjfrrzz60d8+fPzRm5Kut7tUFLwWx+1lgJi2qABeQtHDC85Cmw4kXDIVo7u6U7LjTvSN186c6ZVGqM5vb0OKTKqubVLP7ts69Vevy5z9r/mXUBiexffN2505Lsd3elMYUEsMrqy8AwAf19270xr1mVLfxXsqw2DTrkrJ0LoBQDAt+7866/mTV70H2X54RLXKLas0JAFE6Nl7+wuzhRFrTk9PWmCcWGTEMtXt/zkDy+tXP7cHQtDRLX7RBs1NNTYtbWNHy1+p/KBi08dd00imXGNmyGwC8cvUb58+XKn7azyJ6NjS76RdJPGVpIPH1s2F8Dd1fXlXLOmRhLF9ZdOn3LcoNLo1LTDTjQkrA+3db/7qydXvs5cJ5TJRht6giEoTcb+qBJgSD9U2X8FAPTZy0ERMy/7gLPcgwGQdhwUDCqHEgJGa7A/8zo9CShBkAC0NsgfnI+WD1vQ1eJg7LRCvDcwAtGrYSRlJ2vhuxKZCK5hWFGFSDTseTGI4TgZJHtdKCX6kpuyYdh9wupQvAyHNnoAx0kG1yS01rDtUEVDQ8OfjDYinU5TUVERMpkMzj7rbLVo0aLikpISAIDrGqO15nDYkj09PVj62utfA9BTUVExxxNfxkgh1bq1az984oknVgKgeDy+D2FRW1vrMjPNnbvg2UWnL0oMGzYsD4AuKioqOP/888c9+eST25566qkjL7jggqy5d4je1CxyhZ3vQmVp5IHUJ66pqWEA1NjYyFdcccXooZVDIz5BKTdv3ryzsqysYv5XvjJICC+VOeE4gOOgpCRfJhKO2dO8J4gt0Pn5+faIsWPHAtgCgHwvlujsMhg/tGBi1bCCh9IkICMRAAytXRwxcQBCtoAkga5EEi4T25bgkmiB9djLmx679MdLXv7h5XNnlBTGSlw2JmQLuas9syekwiPuu35eccoxxmiPZNKGKRZi2t3Snbd8za5JsyeVQbuOhFYYX1lSAQDh4lEELAeA0F3XHTe3qjJvdk86dcTwwQWQJLilPUl7O3pa7ZC9uicJe2Cxgtag/Gg4+fu/3rztq+fcPy4/JItTKYcty5J7ejRefGfbs3V1EG+3vfAJ4bR6daPLDKqdu/WO+dPLvjagQFmZNGsvMKkP73+4q3HauMKrpRRWT28aoZA4deaowcOIGrc21NXYjYA+cdagU0tjFu/tSGpN0trZ3P0AAG5qapIqGCyUIxj818ETBn4YsfDj+wOzWGsDlhLCUgB5S7gDwepJgGSB9q5OjFwwFwBgDEMqhYx20LF1B6SyYIxBmhnFQ6LYtWIPUgkLQ8bGMGhMMXa+swuUb2djCoSvvViK0NXuYtRJJQhHgGQXQ1kSqQwj0+nAVl6t2Fwz4UCVn/474Lpu1i4XQsC2bUFEg6D2PZdt2YjGogYAG21IKSGUEmhvb+9+6qmnvnX11V9/FAA5mcxU714ZAiR279m909cKDiShWErJxpjW7du3dw0bNizPzRgdDodlKBSqAvDK5MmTNyLn+tVnEHIi4By1AaQ3uD4Ba9+vOWZF1n3ZtrdtvJS+cmIYU6ZMHvHwQw+9pSwFIRS8QewdJ6WXlxAJh+C6riFSHIlEzLBhoysBwNFMWru++1oi47LRghwIJjaup41qhmEWKdeAjRGApqKYEkktsHhZy68u/fGSa5lBf7ktf3BhQZ5MpTI64zooL44OvPKssS8IKaEdDTedhDEaQihIy/InQkZ3V6/RBsJRSeM46cEAMLm2MXPdl46Zc2515R0DC+gwWxoYjoCIIIkwIBaFGRIBpETKAVKOYUFMxnVIycudh+pOHVZcmCcTyYwOhSOyt72r95X3trf+YQlM3QGedzwOrq8HGv+6deslZ1ZtGFwcm5AmySQVoELeC8ENkqj2reMOr1g5YXjBtJ4UZUZVFkcXHjPwwuUbd32vpr5GI94YLstXp2UyDlkEe1tzQv/u2U1LAKCpaalRgUpu0EfCc2AWkycoBKEvAdCXCJlMGp3t7UAkg6A4iSEvc5mYAe3g2KsvxtFfqIHruN5LKYC27bvRtX4LVDgEx2g4AigeGkHIdeEkNeyQhZKR+dj29i7YaUayV8P1g+cUCNIhDJw2AMfWDIOTSIENYNsWtmzOwGlzEA4puEGRF1CWIw2iHD8bqUMOasyJVERQe8H/EsAAEAyGdrVQSrGQAul0unXVqpVvvPzyK/9+ww03rAxyGPILCnwFxnsSkVD4I7/PAp9U6FlrLerr61PhcHgtgEFBTvjwkcNDADBz5sztQA7v8xmBWdojQ/tysg5CrmpHQ1qyL8Q8975I1RfAQ0BRUTEVFRUf9Nw+BAAbUBg/fjwDQMbxnpsUEpoEIiEhomEr1BfF6oXvJZJJJJMuSAgTtm18tLX3r2+s3PP9m+575yV/oPDqx0oyUgLGaBhjELIV8mNhgAjGdWFcL11dSAvCskAMuE4GriuEo0kUxSxEQpYNAD+5buGMk2aWvDCsLC/a3JZwXSYVUQrJZArGaA0SMi+aB2VZgJMCswFIgAjq6gqONHdlKm3bRjKd0UQZmUwlO/d0pncJIsQP/KIyGmsko9H8NWx/KAkTpFRG2RaUDAMAflt/t0VA6uMtrU9MGB6bRlIaWykcObFsDgAmqtU3XjRnfGVpeGQiZXR+XkjuXN/xxvPvblofBF6pbM0D+OsyZF1zfUSi2W8wMTNiA0ow/QunIWqFvHRo9rg4zYz80hJMXHA8qo6r9vY3DCeThlQK7zz+J6C5DbK0GE5aI1YQxoBBURj2aiOw4yK/woKjGYPGRlE5JIZUOuO5ndhg4IgYpp8wBGFlkE4QYDLQKoT3ntsG4RroEGB8Uye3phIHb+ehgP8B3TqnyVQyiS3btu6ylJXs7Owc6LpuVCrZVTm0MlpcXCwy6QzbIZuam5szs2YdfgmAlrq6OlsplQEAx3G80e8PxGh+1PU9Fp92Zo7H4/aCk04qBwBheRe4eeNmAwBPP/30tNNOOy23jweVdZKkCyCrDX6a4cTshRP31b3YF652s4cSCDt37nS279jRHAmH05lMxhvgUnqVtZwM2DAs24JUCoLINdqot5e93QUASoClsgCpTUFeCBt3dH9YGFM/JqEFGxglXJFhm1O9ieuGlcequpLQ4UjIIkonbrrvnZd42aXWZZfdCgD63Q92WCccNQRsDJSU6EpoZ82W1u2CDDsZFwYMAZl9T4zRAIx/P0jnhW358baeLQDU5GHqTxVFFN3Z0ukUFUSsvR26be227gf3tPa8dviUkR+/t2ZDeVmhnpTSfObEIZHjJEGQUMZhDr8k7RFLThixLJ3shdZaGM2QXobewRzjhJoGQyB6yXGHMWwwDOXm8G5Gi2EAb63e+6cjpw39Tn6esLu7e1FeFDr880dXVjz25radIwfbXx9cVih6EkgxKfnx5t7HAXBTfZMEYFTWRkfWy+dHJXvEoGHANX4oMpD1RAwdPRpfe+jXn959eGYFgcHGwA6H8eHy5Xjl9l8hVlAIGIZwgfLKKMpKC5BwgEQiAZOOoLjURperUT6rCKd8aTQSbWlIIcDGBRsXmYSDdEbAuBoFZREseX43tr2xC9F8G67pq57opT73VV8+tNJoYdAhpj+7cANBySBwy9696TnHzKneu3fvxwCGWpZV4jjO7scff/yUs886+wESxFprU1lZOfjZZ56589RFi75QX1+vfcJQE/ARgMnGt91KSkpHEBHzp6g2vj1uFxUVDQayAUv8/vvv2wCCRKXsLO66jn0gLaG6uhrMTL97+HcjvYa97QfiHBzfurVsz/zYp2NNTQCATVs2ZbwQd8Eg4OOPP26fN2/eLAAtAIKp/YCX5DfJM30vQzgETVJCG4dtS6ClI7n1mMue+M3+B979raM3DSzNf1kKFt2JjJ48pmTBI3WnXkyz7nuwoa7Gvg/L8fHOxPajetNuyIIIhaNo7uhtPvnaJycBCGz2T3tBgn5JAM4dVx2/oGpE8Yj2rpQbDSvV0p5qve33G076/YvL38s55kMASwHc9+rtJ+8cMyS/PO1qshW6Vm1Or7v23FlHXX7GGLZtSY4WKC2OFV2ycEjp/S/s2NE3je0DAojLy8vLbMueqFkA7ArmIN0FAMqMHyG7+pwTx31w2Liiwzq6dWZIeazohGOGH//Ym9seHVcZO8XRYKVkaFtzou3lN9t+TwDmx5dqwJ+MRE4HDPfF/3t3iLOJTF63/NWUjIGbceBmHGSSaWRSKWjHgdEa2nWhXddXvySkZWHdO+/gofMuh0hqGCVAAFzHoGJCISwySGRcGPZCoKMxhooopLtcJJsT6O1II9GVQaJbo7eL4bgGynJRUB7D+28m8PZvN8DOk3B8YZCtZehfyL506GeD1KFpEpFIBEL2xUoXFha2trS0bCYiI4TY6jjO35VSu88999wHV3yw4g3LsgRJYgDm2GOPPauurm66EEI///zzCgBa97a97vdUADBFxUUL/Cg/1NXV7SOl7r33XkVEuPXWW+ePHDmqUGujAcjW1r20esWK9X7/0gCgtbdKTSKRnO7LlgMmMFUOHz4J6BMkWh8gL8pN7vOViTm4379cs4YB4LXX3lqxbdt2GANlDHjq1KnF119zTTEzG2Y2QohP/PmRi66UUgshzDKuY8AreKsdB8Z14WZSINb2kiXzFHONvWTJPLWkbp7iVTX2lT9+c8nHW7tfKS6wpdGGHa3NtHFFt1906pRRNVXQzKCXXt+7pas71R1SJFLJhFuUxxU3fnHabCWFZm6AEGTkfn/MzFKQKwVpZtaCiOceMWhCfjTMJG03FovQh9s6nv79i8vf43ULQw0NNZLr6kTdvHlq2b0zreHDC/OVZQsSXnEXdh0GrrNfenvrhu4UMrYdkhnHdUuLI3nzj5h0KgC+795LP0H23HvpTCkE+LzjKxeMKA/lpTOuFh5PA3+uRlVVOTc1VUsA1NzS8yAzQFIiGouivDz/7OMOq5w9sqJweCqtnYgFbNjW8spLa9a0Ga4JMmIhgvKVQTl2r3aJrzLBzzRjZGdNEn5VZiGgbAvKtmBHQrDDYUjLAsirriSkBIOx9aN1aKj/Ae4/40ugvZ0IR/r8/NoSGD49H+2725DKaNgRG67WCOcJ5MVsGMmwiiJQloQQnh+dBIOFxu7daTx533os+dkqxKTKOtkN7V9ONVdfPrT0Z3HIoiPXfwH4Nr1iZjr77LMlAHHzzTcrZqYnnnjim+3t7SwgKJPRnF9QYJ9yysm/YmaUl5cbAFj8yuKXdu/ew0oJBcAMqxwW++Y3v3kDEen6+np57733WkuWLFHLli2zrrzySscYgxNPPPHGcCRMxnjOxW3btq5v/POfnwGAQYMGbQPAjmOEMeCRo0aOO//880eSlyFkLVmyRK1atcomIvdzn/vcxLFjR8/xtRMRPP/9wVLmrrOLXTt3jWLmyPLly+UJJ5wgmFm99NKzH+7ZtXuFEACzdoqKiqwTTznlR35uB73zzjvWY489Jm+55RZ1zz33WFprSURmwoQJw7XWpLUWTb62kUx59j55jSGdTvP8+UtdYJI7f/5Sd358qdsY9wZ80/s7b97bmTYhm0R3b8qMLFP5Zx9b8V2qbdRYXWe98/HHXakMvx62JWccrYsLIzT/iBH/7moDoIbvueQw69+Pnau+MuMw65eXHGa5+hxJRKwNF2nDhOWXCcOM4ZUFGSJDJAhMAhmDbcw18s7ngdraRkPxOEqmRuQRly93jps2Znx5aXSAhtRCSpASWN+4PbZmS8uePW2pFRGLYLRmx3V5zNCCGwAUXn75fQ4vqVMNDTWyoaFGLrt3pnX5fcsdZpQsmj3w321y2HG0F/jGArl+hqb5Sw0Ablyy5bkdbdoJR0JW2gUKCyLHHzNzyK/zQiHW2si2niSt29n1awDUWNv3fFWQSJ99xlkrhnKmVN7X/iZCojeBratXQxrjeQ8yGRQPH47SisEgX5tgZjxy3Y3Y/PwrKK8YDoQ9TUMLIJlyUTAsiqFjbXzweju0w1CW97uyQxhYlofNzzfjiQ4LC78yApzohdYMYwysWAivPbkdW5/bheKKKFwDkEE2UzMouh4QfQZBtAUdkttRu4fGITi+RhRACJF1zzU0NBgi4ng8burr6+UPfvCDv82ZM+e3J5988kVsWBsDffisw4985Le/vWTWrFn3M7NFRB998YvnvTpo0MDjfZVbn3XWmRcaY94jonv2O31s8eKX75wxY8ZRAIzwlC76cO3ae+HlLuC9997bNG7cOFLKlkZrLiosCl9++eUP/+53vzuZiLJ5DV/60peG3XjjjY9WVFQox9FMROQJ4E+aThs3blSudqG1IQK4tGTAwCuuuKJ01qxZ2wDgsssuAwDs2LXjbgD3SSnJdbSZO6/69CeeeOJWIvo29itpc9lll+FXv/rVaSeeeOJv3nrrrbuIKM6rGhSwFFIQpJAgMlnyen/UNjZqbqyR3/tt47tTRpY+vOCogRe2tCVNa0e3njwy75x7/23uHWJK/F0AtK3F+dW44eo0y2LZlXL1tIllxz32g5N/RkTfRJ/pACwHLrtvOf7jyrknnjC95NfL1rV+m2bd9zgAbGvutYaX2MzGkNYOBkbVsX5xV+0n+/I1d72QBqDOP7GyviRPUkePA8uSJpGRhd+/562JAF5bu7n9jsPGxH5vSUmJtOYRFfaI5398QuNX7/jo8zQ/npvirScdPmnQ92tGPTp5RNHYzu5eFyClHUcLduG62dAOxAHjE4RbvnLW9HdGDC44pqM3pStKY7Ez540a35vImGjYkh9tad9+871vv+mVK+3LGlUafQI/8DgE7Dz8T0kEKX013DCEAPZs2oS7TqlFBBIsCL09CZQfeRhufv6PsG0LWhsoy8Lnv/fv+PX7q2HDIGPIK3UmCJ1pjcmHRREKC3TvzaAgpBArDMEY8rIlFSDSjE0v7sC7Q2zMXlAIt8OAlAC5wMkXjMMTa3vhdKZhlKc69dnHPovgx0QgZ+sh4VA5BHdfWuLTWPz6+npmZlFbW/vNiRMnnjJixIhyJ6ONZUsz+5hjbj3ppJP+BKCTmVFfX3/9xIkT3hkwYABlMhnKi+bLL3zhi7+cffTRp2/ZvHHJu2+/TVOmTSsaOXJ0zbRp00a7rjFEzFJK9dHaj7Z+/57v38vMQghhfvzjH7999NFHd4wbN67AGAOtNR9zzDFzPlq79v1VK1e+ZAy2jRg2dNSIUaNOKysrGwQAliXh+gtTiJz7sHr1agaAxYsXt1x00UVOUVGRcjIuF5eUhK6//vo/jh8/9olhw0ZweXn50Q8/+OB/nHXWvz+0bFnlt2bOnDXWdbUbjtg466yzrl+7du2xra2tDxUVFa1YtmxZkZRy2rhx404aN3bccQWFBYhGo3UP/+bht1FV8yLgh7DDwGgXEGFY1oFFev3qRmZmOuOYCTePqAifPWyAFe1MwBQXR0JTx5fey4zZzOwQ0etP/2TRB3NnlE/d3dzt9pikqZ4+5NqX7zrjpA83tz/S3NL+wfptiTGHTR5oTRxeVD2izD5tSGkeIpHQbd+9dO6a79z32srXlm3fc/YxQwjGVd09xowbVlz9aPyUX/yxaeU9TyzZtrm8sHDglWdWTZl75JB/q6qMHptIpo0xWhomA4ZWEL0A8G93v/b45DGLbjiiqmxKc2uv29WTwaxJg078U7xk1eqPd78woFA1diY5vzAWnlNWQOdWlkbLu5IG0o4qTqfBnPFMc3ffQLqm+iYBwN24u+e3s3XZMWQMS9JcEmF2MhmTHwqJ9Vu7ngPQ29Q0T+XWRFC5AUfsxxLAL7keaAtSCng5L95+AfJUBLa04LBB8YAoOt9ajhdvvxun33AdjOMCrovRM2dg7jevxIu33Ib80lKw1rC0QbQghMlHlyOdEWhe242IYMSKop5SbzwXpkMMlU94849bMKxqHAaWKria4LpAaVkIs84fhyU/W4GQLZFd5sHXEogEvLUng+8HHtQHxqHtrJQfvGPgLVyrNbZt+2S2Y6AlNDY2tp1yyinfOP/88x+1bMWu62L0mDElN9xw/V1EdN6qVavseDz+3ty5cy+dM2fOA7Ztm2Qy7dq2LSZOmLBw4oQJCxcuPCXbrnaNNkazbVtq9+7dzvPPPf/FNUvX9AAQxhhJRD2rVq360bhx434khMhorS3tajN+3Lgx48eNGxO0Y3wTbv369VuGDh06JBKJkLd2ht7nGvxisB83NzcvGzJkyFGGjXEcFiNGjDjimmuuPSLYd8WK91/Fgw8u+8Uv7j7v5ptvbhozZkyeMcYRQphx48bNBjDbGIMJEydkTS5jjOu6rh44cGCoYkjFSUT0AgBvXVBjfDWWPpUXjsdh6qtq5VNvrt15+tFlN4+cM+ROKcBdvcYdOzRvxqPfOe5yIrqDua7njmtePm3skNDfSguswR295PSmXEwfN6Cqanj+j7q6SyCkhVhUQRCjvStl9namM2Mqi4eV5LedC2DlS0s3LZkyLL9rfGVBfldPxpDl8vEzy64cN+zIK79RM3On46aLhxaHIoUFFhIZgx3tWgwsVKwdR4SEabv76vkb/rDkIQgi/dBzG75eVhR+ZXCxUD0p5XaniIcNDA8eXTHiolQ6cxFJASWAzo5uaMfh9l7e0tubaZ0wPH9mR7drwJD75+c2xZcaIuCR59c/N2/6oO5BxSK/uyfFBBKWZOxqTruvvbfz1wDQ1FRtPO7TQ9bT3FeDi/s8Dr7V4GV07vskXMdBIp1BRrueieA4iBYX4dXb78HG1Wtg25YX2qw1TrzqMpQfNR29bW0QSqCzI4ORR5Vg4PAIEt0G+UMjmHrWaFiK4DoGOpNByjHIMKAVwU04eLlxO0SeDUECQgkkOhKYVl2C4fMGw+lxQCpYw6FPkwG8CwkKrzIOLXT5UIWHZVmwLdt3hRP87ORPaZM0M8uLLrro8b++9trfACilFANwjz127hd/85vfLJw8eXJm1apV9vHHH//giy+++NVdu3aJSCSkpBTCGKThmQIpACntGkcqIW3bUls2bel48MEHa6+77ro3/EpLxucJxNlnn/2zpqbXngNgSykJROw6bsYYE7SVEYLw0Udrlz733EtfiUQiAv4iMqFIaB/bqbGxkYiIX3/99W+3tLRQKGQr27Zc/7am4FXC42nTpn8OAH7729+++7vf/e7EzZu3bBFCWACUcY0DICWEyLDh4DhXCKGklKGmpqb7TjjphJt42b0W/GdmhTyOSkmCcdxPEQkA1TYabqiRl/zk9V+u2Z5cNaA0JglAMpnWU0YX13/rvFnjAeAbd76x9dGXN39uc4u7p2JwgZVnQ3R2Jpzu3lRKCJkhwanelJPqThq3sDAqigrzws+8ueOhr/908S1LltSpp9/etGfd5sSFPSlDRYVhKaRye1I6XVYYcYcNyqsYVhYOEzkmYgus2tz23PqtrUuLC0JEQkAKoChUYABAP36O/MPiD1979q09p7b1cteg8gJlKSG7e9PO3o5EqjdlMokUp3sSJpOfH0Wapd7RwqdbIrM6bDEsFeJILGai0eg+9yEOGGNq5Ptrt+1s7ex6ImwBBKEZMGFbiM27ulc/8vLaZcxM+1fZEp5Ztu89DtyPAoAi8iopB+nPwTjzXA/+SPNXaBYKotfBU/U/hPbtPdcAQln44u0/QLS8CDrlgIsUDj99INLdCZBOYdFXx+PEL42GSWfAxiCTSiCTdqEJYJcRy1PYu6wTq97tRbQkBBg/szKRxrHnjYQpCsHNeAu+ZAOtKFhwjvaJr/ksDiF8COsyBNixYwtt3rIZO3fulK1tbdi1e7fcvn37p+5fW1sLZsYfHn30inXr1nXs2b1HbdmyWXV0dGLIkCG/nDRpUklVVZW7ZMkSdfrpp99/xx0/nbdu3bqn2traEkIgBK+YaRhAWCph7di+I/n662803nzLzUfdfPPNf9mvEhITEQshnPnz5y1a/Mri+p07d+6RQkhlKVsIEQYQbm5uVsuWLXv8yCOPOKukpKBnx46dYseOnbKtrY02b9wS26//2hgjrr766r8+++xTtbt27doAj9Gy/X7Ftm/f7nR3dr0FgJYtW2bF4/E3zznn7NlLli65q729/WPD2vL3tYUQNoBwZ2enWr9+/fIHHnjg4vnz519GRKnly5cDAHodIzoTGl0JV/amBToSHDrII+FGAETQz7y57fvb96aRSjuqpcOR0ahVVDWy8JdEcVp276VW/IHl79x816oZL/5t++9au1KdIUtYJUWx8ICSIrswGgnnWRR2XaM2bE+sf/i5bd+ovfH5C5kZ8+fHNXOduPQni/+8eNmu2t3tzo5I2LZKCsKhglhYRSyFiC0IlJdY+kH7bxdd98y5IJ3s7EmjNyPR3ou8b/7mxQGAZ+Y0NNTIW+7760sPvbD1qJUbup7oTaTTBRFllRXFwgMK8+z8iAgZUvaGZqxobNpzypk3NK7cm6Tylo4kOnod2Z0QorPXfOKNbfRqO9Kyj3Y92t6V0dIiIZU0QkWwu819mAA01Vd/ovQHXVI6hsusMLQx3iDP4Q6EICgm9JKDq195EsMmjIeTcWDZFjZ/sBK/qD4Tth3yIwO9oKaQstHTvhen3P0jnHDh+ejtSSAay8POTZvw27O+hNa1e3D4pWNw9CmlSHc56Ow02Lo5g3GTChHNA4yTQXtbEr//jw0QaQNLEAQxLE2QpRF8/tZpyCMXmYyGdjXyCiy8+WoLXvvFehQWhOC6nNV2Ai0niKpwjMHaRM+UZ3u3r6rz00Gzb5KvEH37giNHHDW+9NEzb3p29kFePALAU6dOjU6fPn1ELBZDLBZDmtm948c/Xo/PKKYJgBcuXDh0xLhxRYmODgaAwtJS+82lS9cuX748AWCfVZ1uuOGGUdOnTz/utNNOk88+++xRxphMynH++vwfn3n98Scf3wwcuB5hcD4hBBtjMGnSpJJbbrnlxGnTpo0gYrl+/YbmV1999a3bb799NQBcfPHF+bZtD7csy7S3txdt377dampqWhr0OXuvPNPBAIjddttPzjn//C+GYrEYGv/UyH98/I9Nzz///LrgmH36NXRo5O4bbzxhwYIFFaNHj+bOzjZavPhVs3HjxuXf/va3/w4g8KNnT3XusaMrq0bGCpKauCS/ULz69230/N82rty/Twe6x1+eP7pq/MgoaUHcmSTu7tHyvidXrgZg+kqXAfMmDR90zoIhx5w8e0zp4MH5vHdvN73ytw1Ob0a/e9XP//YhvAKy+1TAyqmzWPbdi4889YLTxoQK8wvR2dmJt1dsybT05L185c9e2gYAF506ZdT44QURrR1u6zXimec3bVnb2tqdvUc1NdnVpa45ffz4I6cPmnvi7HFCCIFVa3fgg42p5Vfd/vIKAE5dXZ3YteaZoflEBRl2zfadPUO6U+adl5dv7My9J0Hp01lVFZW/+Ppha8tL8sIkFTq6jPujh94f9/jStZsPVOORLi0dw6V2OBtEBHg1DYg9+1iBkCYXV736F1SOHw8n7cAKWdi8ahV+Nf8sKGXDMcYLIiWvupFxNTJ5IVz38p9QOXY0dqxbj7vOuQDJD7ej8tiROPeWSUi19yAyIB+Lf7YG7y3ehovuPxpFYa+g6tZNSfzph+uQb8vs45WSoDs1Rp5SgVMvH4ZEcxKQAqwN7GIbj9+6FjvfaoOdrwDdt3w8E8GwVzpeG4OPDkkgDHz0zJueOphA+C8h92X8rP3q6+sPWPg0ADOL+vp6fFZ7B1v3wa96zAcqh/5pOIgAyhUYwXcCsE+25v4QQuCxxx771Db/Ufhs/0ER1GbMXf7tE/0iwmOPn3PARV4+a/EXf/WpQyrDXlcHUV9fh09bN+IfWJaOAHBd3TxVj2rzw5YXv/DFeRW/S2VMuqggz377w85nzrjh2dOZa+SBrluRX1jViwqnrKnA6KuFYCRDyYDJ9y/WMFx4dIYggvDjFTQYwrbBLW14ru6HOKXuetx/7sXoXLcV1sAiHPeVSuhEL2RIomOPg23LWjB2XjmKihjpdgd5BRa6Wl2EHAMVFlkCVWtA5kt8+PwOVM4Io2pKAdI9DJIScID5F43HH1Yvg3AMSHpLqXme04BVOPTApEOvuxzU0O/DoQz0eDxu9g80OtCx8XjcxONx1NXVierqalFdXZ39rampCU1NTQctq75PRz0OY591GQ/QRvZ61qxZQwDQ+CkvYFCevb6+XtbX1x+0T0H1Z6+seaPIrenY1NSE6upqQ0QHXCOSAaqvCx5hHYA4DmW9BGZvkO2/PfdYryZjo2YGNTbWiJqySf55mtDUBDSh2sTj8U8tZ+5vp7q6ebK+GgCqc45dGlRR9vtRl9OHeJ+nP6df3rOGqMY8kfuMqlFtKB7nQBjkXteaNTXUuO/aD8wNNRI1DYaIzJM/PuWrsfw8pDsy1JvStH57z4NA1qT4BOjy0rFcbIeQ0RoCwVJswcwKaAaMcPGtpU9j0KhR0FpDSol1772PuxZ8HtFQOGf5NngrKzF7S2yBIYsi0DvbkLTCOOWGURg3MYLuDoP8gVG89dgevP7wRzjxxipMm5mP3m5GtDiCpkd34cO/bIZVYMEYhmFfayEgk9IIDQ7hgh9MQkgLuOytHh0riuBvLzTjjbs/QqTYhuOvEtvniSQ42mBt8rM1hCPHDHj0rFue+x/TEPrRj/8ReIMwAiAJAD+/as4Vp82t/CXB6HDIpo3be5pPv7lpQkdHR6evtX1ijlSBRiD81gwIwSrP3lJqXv0BlR/zIhD9FNpIQQG0bypQTockef5rJgYkIb27C66ycNqNVZhwWB7am1MI5xE2ruzCG4+sR9nEARg7tRCplJc9p42N5g0JCCX6CrTA6zozEIooJLYk8caTLTj90lFId6YAUjDawewzS7F5bTm2Lm1BKGZ5MRN+Srbvezi0+3roq4/3ox//DCAAXJ6Hgb/57qK3po4c8HFze+eA4pg8DMZlx3G0FVL2yo/aHmpvb+9cUjdP+etRfAKKvWUMfJM7qC3kKdoqm+0k8davH0bJoHK4jgMhBXZv2YqQpXxh0icUiL2pPKQI6S4XVBzG6d8Yi3GTo+hty0ApL4aweWsvhlYXYfrxIxG2BFIuEI5YaGtOYs+mNkhLQGv242jZT8cmCMPIz7ew7sVdeDEPyLOFZx4wQ0lCUUkIu8MyW3Yt9+9QwgvCAKSU/7RrLPajH/ujrg4Uj4NnTB4eGVxiD8+LyJEDRQyplOMaw6a8JGqvWNv+8fd/896Pua5OUDz+qe+30mDytWvPs5BTPxHwBnuIFF6/7R642oHjF1yVlo1IYZFnHvhTuGEClHdMR2sGgw8rxslXj0VxgUR3ewYkAKUELCUwZ+FAzF5QBjcNOGm/THtYYuOavUh2phArCvurxxOCgqmB+5DJK5jy9kNbof16DRZ5HhEpCaE8BdeY7IpUwSUdUuiy0IJZF/8Xnk8/+vH/C2aNHUiFsTxB7IB1BtGQUOFwHj7c0rPn+bd2nrOrp7u1HvFsPcwDQVkQbQJUwkRMfbpCdlb1uDmDSHERDAguG69+IgPQ2iMgCd7sLQhuwkUvgCm1g3Hc5yuhHCDZo0EkYIcttLcYbFrdCi01Jk6JQgkJkgrEjGSa8WHTboRtBRg/wyYbPdl3FcYf4LFC21snxe8PkUeEOsbAMLLmQuBNdZnRnckcUE/INt8Tbc7o0Df/64+nH/34f4N43FuF78raSMumXckfdheKo1raeyoKQ6FNO5vb3r36lyt+s3XPJ1eNOhDouoGTVhQoa2paa0NgkU13hvcnfD9+MF4M+3VqiHw3o/d/J2nQm3JQVpWPY88bhglVUfR2u2AWgAHssIWelMJTP/oAW5e3YOoXRuLk8wYj08MwBghHJVa+34OlP12DcMyCNr4Lc7+8Kvg96UthQraGYtY8yNaE9LQCw57J0e2m3efbtk3ejMxaHLgKUT/68b8F+5CGhyIMAEC0uZluhp827K9hwOT9eWG/oq/GgP9HflyARQKUADIdGlapxJyvjcaXvjsV4ybE0NOpAUgYbRCOEHqSwPM/W4P2Ne2YfMJQnH7JWJiMAEkBpQgpLfHOE5ugJGXTsAMzJjeOnbORkTmXG2gR/vfAWyKB4NOEiUDMzZuR2ZJ71IHQ0FDzjywA3Y9+/NPAqxVRJ4QgZq4TS+rmqTocmjAAAGWYn3PZHONp1x7hx379cxFU7wpi9YU322ZSjGRPBmFboXR0FKNOKMak2eXIj1pIdmeQgDdDs+MiVqiwbXMaz9/zIXrWd6JkbAmO+9poOImkJ3y0QaTYwit/3IOeTb0I51vQOjfKEH2URpBwxf6KzvC9CIDX58CX4Gs1gXfB95twL5u1ANKMOkH49HiBz1pGux/9+GeFVytiKQAEQU7/kBastiS6XhsSChubhOgLQfZFg/IKm5IhmIxBJqORJIPQAAsjqssxo3owKsfnwxIZpDpc9HRoCEkgw7BCAohYeOvVNrz1h01I7epFyaQiLLpxFPJsB5mkZ/fHikJYs6oX7/1pI0IxBVezHxxF2aXniQlMfcvQBylM2eIkjKyJ4NsTwUegBnCGmXrYPAqA6+HVj/sv3vt+9ON/HQgAfb1s/FvldviIHqO9+t/E0GkDnXJhGQEVUYhVhlE2uQAVVfkYPjaKwhIb7DLS3Rm4rgsiL87RCluwC6LYvrEbrz+6CZvfaAYlXYysHoIFVw9HHmWQTikQCUSLwtjTYtBwyzJwb8YrrabhKfxEOYlJAl4FlIA5IC+xKiAN0af/+xpBXxVpBlsE7nZ1uinRPHZFsm0HDh4H349+/J+FAsCbMsmf5lt2g0cfENhl5A3Nw9AZAzB0YgxDxuZhwMAQbFvDuA6MI6GNAEkgrCwYx1P9DSl0tgqs/vMmfLR4FyhhMKAsiqmfH4Y55w0Fd3Yh3S0RtgWUHcLOnRrP3LoKuseBCkmQ21eYZV9wjhYQmAs5oUbcd4Tos3L8EGzWIVJqu0nfvyLZtqMBNbIW/SZBP/pxIFANamQjGs2FpaPeGBUpmJ0wriscqAFVJRg4rACu24tUKoVUWiPtGlhKIqQkpJDe6kyuA+27H40WaP8wAdORgZ0fApgRKs9HxZR8pDs6kTQMDQPBAtKysP2DTridGaiIBFwvtsBT94PYg74qTn2EAvfZA+gzIQL2sS9qkuAyc9jAtLqZ9ifbdk/Yge426lMg+tGPfuwHNQmNzACOSvZcXmyH34ySijjSmLYVLaL93RY48JcuoaA+AiB9jVv7Ky8ZAJIELCKEohKUbyFlNKQQcHd2YO36VhgipP3RasFT50VEwgopsMO+F6PPbdhX6NUD5Wj4JHIFBeDFMuYYDQRoZrYYLjNZH6Z763eiu7UWNRL92kE/+vGpIACoAWQjoE8rHbmoKhR7OsKEDGuXpFCauS82yE8jhr/Nq8qMnKQob5CanLEpAEB6i8IS/AAif/C62nMfeitPc3bWB7CPhb+vFeF5GrLl3pDjmvTPwQRDbFgaIVemum7/S9fWa31NqF8Y9KMfB4EAgEZA12Geenrvpmc+6Gm/pFe7XRGSSrsMrdkYL6/Zqx2o2SuUZAA25BU/ZGS3BYurBtO9F9DIYA2wy2DDMJo9YeB3gIKabZ7IwD7LovnNBeXhyQ9BBlFw6iwYMAKsC0kJyVKuSHZ+7y9dW6+tA0S/MOhHPz4b+7B3wSw6NVQ48pj8QXURZX055ocIaQAs4NctzFYu9LMks+EBMFnXpff7fqkR+5CA5Ldj4KVNByvFsh9r3BeG0FcklXO6HSgGWUKRvX70us7Gvyc7/mNJYs+DdZin4jhwZlc/+tGPffGJuP7AfACAEwsqTxqpQlfElJyfp6wCDcCBIW+ZeC+hKFjajQPTIlDbc6x6b2sgLODHGeSs2+XnQjBTX6Vknyf0zAXRZzbwPukNgPE4jV7jcLfrvrfbSf/+me5t9wPo7jcT+tGPfwz/H5/LHyEJ5QF3AAAAAElFTkSuQmCC" alt="RouteReady" style="height:52px;object-fit:contain;"><span style="background:#C9A84C;color:#4A1020;font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;letter-spacing:1px;margin-left:8px;vertical-align:middle;">BETA</span>
+  </div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')" id="btn-en">EN</button>
+    <button class="lang-btn" onclick="setLang('es')" id="btn-es">ES</button>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab" onclick="switchTab('import')" id="tab-import">
+    <span class="tab-icon">📨</span><span id="txt-tab0">Import ST</span>
+  </button>
+  <button class="tab active" onclick="switchTab('plan')" id="tab-plan">
+    <span class="tab-icon">🧭</span><span id="txt-tab1">Plan Route</span>
+  </button>
+  <button class="tab" onclick="switchTab('itinerary')" id="tab-itinerary">
+    <span class="tab-icon">📋</span><span id="txt-tab2">Itinerary</span>
+  </button>
+  <button class="tab" onclick="switchTab('mileage')" id="tab-mileage">
+    <span class="tab-icon">🛣️</span><span id="txt-tab3">Mileage</span>
+  </button>
+</div>
+
+<!-- ══ TAB 1 — IMPORT SHOWINGTIME ══ -->
+<div class="panel" id="panel-import">
+  <div class="app">
+    <div class="page-title" id="txt-import-title">Import from ShowingTime</div>
+    <div class="page-sub" id="txt-import-sub">Paste one or more ShowingTime emails. RouteReady extracts address, date and time automatically.</div>
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-title" id="txt-how-title">How to use</div>
+          <div class="st-steps">
+            <div class="st-step"><div class="st-step-num">1</div><div class="st-step-text" id="txt-step1">Open your ShowingTime email and <strong>select all the text</strong>.</div></div>
+            <div class="st-step"><div class="st-step-num">2</div><div class="st-step-text" id="txt-step2"><strong>Copy and paste</strong> it below. Multiple emails at once is fine.</div></div>
+            <div class="st-step"><div class="st-step-num">3</div><div class="st-step-text" id="txt-step3">Tap <strong>Extract Showings</strong>. Confirmed ones load automatically. Declined are ignored.</div></div>
+            <div class="st-step"><div class="st-step-num">4</div><div class="st-step-text" id="txt-step4">Tap <strong>Send to Plan Route</strong> to optimize with Google Maps.</div></div>
+          </div>
+        </div>
+        <div class="card section-gap">
+          <div class="card-title" id="txt-paste-title">Paste ShowingTime Email(s)</div>
+          <div class="hint" id="txt-paste-hint">Paste multiple emails together — RouteReady separates them automatically.</div>
+          <textarea class="st-paste-area" id="stPasteArea" placeholder="Paste ShowingTime email text here..." oninput="checkParse()"></textarea>
+          <button class="st-parse-btn" id="stParseBtn" onclick="parseShowingTime()" disabled>✦ Extract Showings</button>
+          <div class="error-msg" id="stError"></div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="min-height:300px;" id="stResultsCard">
+          <div class="card-title" id="txt-st-result">Extracted Showings</div>
+          <div class="empty-state"><div class="empty-icon">📨</div><div class="empty-text" id="txt-st-empty">Paste your ShowingTime emails and tap Extract Showings.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB 2 — PLAN MY ROUTE ══ -->
+<div class="panel active" id="panel-plan">
+  <div class="app">
+    <div class="page-title" id="txt-plan-title">Plan My Route</div>
+    <div class="page-sub" id="txt-plan-sub">Add stops and RouteReady finds the most efficient order using Google Maps waypoint optimization.</div>
+    <div class="api-badge">🟢 <span id="txt-api-badge">Google Maps API Connected</span></div>
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-title" id="txt-plan-s1">Starting Point</div>
+          <div class="field"><label id="txt-startfrom">Starting From</label><input type="text" id="planStart" placeholder="e.g. Cranford, NJ" oninput="checkOptimize()"></div>
+        </div>
+        <div class="card section-gap">
+          <div class="card-title" id="txt-plan-s2">Stops to Visit</div>
+          <div class="hint" id="txt-plan-hint">Add addresses in any order — RouteReady finds the optimal route automatically.</div>
+          <div class="prop-list" id="planPropList"></div>
+          <button class="add-btn" onclick="addPlanProp()" id="planAddBtn">+ Add Stop</button>
+        </div>
+        <div class="card section-gap">
+          <div class="card-title" id="txt-plan-s3">Preferred Order</div>
+          <div class="order-toggle">
+            <div class="order-opt selected" id="opt-closest" onclick="selectOrder('closest')">
+              <span class="order-opt-icon">🏠➡️🏡</span>
+              <div class="order-opt-label" id="txt-closest">Closest First</div>
+              <div class="order-opt-sub" id="txt-closest-sub">Start near, end far</div>
+            </div>
+            <div class="order-opt" id="opt-farthest" onclick="selectOrder('farthest')">
+              <span class="order-opt-icon">🏡➡️🏠</span>
+              <div class="order-opt-label" id="txt-farthest">Farthest First</div>
+              <div class="order-opt-sub" id="txt-farthest-sub">Start far, end near</div>
+            </div>
+          </div>
+          <div class="hint" id="txt-order-hint">💡 Farthest First = you end closer to home on the way back.</div>
+        </div>
+        <button class="primary-btn" onclick="optimizeRoute()" id="optimizeBtn" disabled>
+          <div class="spinner" id="optimizeSpinner"></div>
+          <span id="txt-optbtn">✦ Optimize Route with Google Maps</span>
+        </button>
+        <div class="error-msg" id="apiError">Could not reach Google Maps API. Check connection and try again.</div>
+      </div>
+      <div id="planResult">
+        <div class="card" style="min-height:300px;">
+          <div class="card-title" id="txt-plan-result">Optimized Order</div>
+          <div class="empty-state"><div class="empty-icon">🧭</div><div class="empty-text" id="txt-plan-empty">Add your stops and tap Optimize Route.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB 3 — ITINERARY ══ -->
+<div class="panel" id="panel-itinerary">
+  <div class="app">
+    <div class="page-title" id="txt-itin-title">Generate Itinerary</div>
+    <div class="page-sub" id="txt-itin-sub">Generate a professional itinerary to share with your client.</div>
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-title" id="txt-itin-s1">Appointment Info</div>
+          <div class="field-row">
+            <div class="field"><label id="txt-clientlabel">Client Name</label><input type="text" id="clientName" placeholder="e.g. Maria Lopez"></div>
+            <div class="field"><label id="txt-agentelabel">Agent Name</label><input type="text" id="agentName" placeholder="e.g. Dessire Vega"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label id="txt-datelabel">Date</label><input type="date" id="showingDate" onchange="checkGenerate()"></div>
+            <div class="field"><label id="txt-startlabel">Start Time</label><input type="time" id="startTime" value="10:00"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label id="txt-showtlabel">Time per Stop (min)</label><input type="number" id="showTime" value="20" min="5" max="120"></div>
+            <div class="field"><label id="txt-startaddrlabel">Starting From</label><input type="text" id="itinStart" placeholder="e.g. Cranford, NJ" oninput="window._startDriveInfo=null;updateDriveList()"></div>
+          </div>
+        </div>
+        <div class="card section-gap">
+          <div class="card-title" id="txt-itin-s2">Stops (in order)</div>
+          <div class="hint" id="txt-itin-hint">Use order from Plan Route, or enter manually.</div>
+          <div class="prop-list" id="itinPropList"></div>
+          <button class="add-btn" onclick="addItinProp()" id="itinAddBtn">+ Add Stop</button>
+        </div>
+        <div class="card section-gap" id="driveCard" style="display:none">
+          <div class="card-title" id="txt-itin-s3">Drive Times</div>
+          <button class="calc-drive-btn" id="calcDriveBtn" onclick="calcAllDriveTimes()">
+            <span id="calcDriveSpinner" class="spinner"></span>
+            <span id="calcDriveTxt">🗺️ Calculate with Google Maps</span>
+          </button>
+          <div class="hint" style="margin-top:6px;" id="txt-drivehint">RouteReady calculates real drive times automatically.</div>
+          <div id="driveList"></div>
+        </div>
+        <button class="primary-btn" onclick="generate()" id="generateBtn" disabled>
+          <span id="txt-genbtn">✦ Generate Itinerary</span>
+        </button>
+      </div>
+      <div>
+        <div id="itineraryOut">
+          <div class="card" style="min-height:300px;">
+            <div class="card-title" id="txt-itin-result">Client Itinerary</div>
+            <div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text" id="txt-itin-empty">Fill in the details and generate the itinerary.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB 4 — MILEAGE LOG ══ -->
+<div class="panel" id="panel-mileage">
+  <div class="app">
+    <div class="page-title" id="txt-mile-title">Mileage Log</div>
+    <div class="page-sub" id="txt-mile-sub">Track miles for tax deductions and fuel cost estimates. Generate after your itinerary.</div>
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="card-title" id="txt-mile-s1">Vehicle Settings</div>
+          <div class="field">
+            <label id="txt-mpglabel">Miles per Gallon (MPG)</label>
+            <input type="number" id="mpgInput" value="28" min="5" max="80" onchange="updateMileageCalc()">
+          </div>
+          <div class="field">
+            <label id="txt-gaslabel">Gas Price per Gallon ($)</label>
+            <input type="number" id="gasPriceInput" value="3.50" min="1" step="0.10" onchange="updateMileageCalc()">
+          </div>
+          <div class="field">
+            <label id="txt-ratelabel">IRS Mileage Rate (¢/mile)</label>
+            <input type="number" id="irsRateInput" value="67" min="1" max="100" onchange="updateMileageCalc()">
+          </div>
+        </div>
+        <div class="card section-gap">
+          <div class="card-title" id="txt-mile-s2">How It Works</div>
+          <div class="hint" style="font-style:normal;font-size:13px;line-height:1.8;color:var(--burgundy3);">
+            1. Generate your itinerary first<br>
+            2. Come here to see your mileage summary<br>
+            3. Save or print for your tax records
+          </div>
+        </div>
+      </div>
+      <div id="mileageOut">
+        <div class="card" style="min-height:300px;">
+          <div class="card-title" id="txt-mile-result">Mileage Summary</div>
+          <div class="empty-state"><div class="empty-icon">🛣️</div><div class="empty-text" id="txt-mile-empty">Generate your itinerary first, then come here to see your mileage log.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let lang='en', orderPref='closest', planProps=[], itinProps=[], planId=0, itinId=0, stParsed=[];
+let _totalMiles=0, _totalDriveMin=0;
+
+// ─── TRANSLATIONS ─────────────────────────────────────────────
+const T={
+  en:{
+    tab0:'Import ST',tab1:'Plan Route',tab2:'Itinerary',tab3:'Mileage',
+    'import-title':'Import from ShowingTime','import-sub':'Paste one or more ShowingTime emails. RouteReady extracts address, date and time automatically.',
+    'how-title':'How to use',
+    step1:'Open your ShowingTime email and <strong>select all the text</strong>.',
+    step2:'<strong>Copy and paste</strong> it below. Multiple emails at once is fine.',
+    step3:'Tap <strong>Extract Showings</strong>. Confirmed ones load automatically. Declined are ignored.',
+    step4:'Tap <strong>Send to Plan Route</strong> to optimize with Google Maps.',
+    'paste-title':'Paste ShowingTime Email(s)','paste-hint':'Paste multiple emails together — RouteReady separates them automatically.',
+    parsebtn:'✦ Extract Showings','st-result':'Extracted Showings','st-empty':'Paste your ShowingTime emails and tap Extract Showings.',
+    confirmed:'✅ Confirmed',declined:'❌ Declined',send_to_plan:'🗺️ Send All to Plan Route',add_to_plan:'+ Add to Route',added:'✓ Added',
+    'plan-title':'Plan My Route','plan-sub':'Add stops and RouteReady finds the most efficient order using Google Maps waypoint optimization.',
+    'api-badge':'Google Maps API Connected','plan-s1':'Starting Point',startfrom:'Starting From',
+    'plan-s2':'Stops to Visit','plan-hint':'Add addresses in any order — RouteReady finds the optimal route automatically.',
+    'plan-result':'Optimized Order','plan-empty':'Add your stops and tap Optimize Route.',
+    optbtn:'✦ Optimize Route with Google Maps',optimizing:'Optimizing route...',
+    optimized:'✦ Optimal Route Found','plan-s3':'Preferred Order',closest:'Closest First','closest-sub':'Start near, end far',farthest:'Farthest First','farthest-sub':'Start far, end near','order-hint':'💡 Farthest First = you end closer to home on the way back.',real_dist:'by road',
+    use_order:'✓ Use This Order → Go to Itinerary',copy_order:'📋 Copy Order',order_copied:'Order copied!',
+    'itin-title':'Generate Itinerary','itin-sub':'Generate a professional itinerary to share with your client.',
+    'itin-s1':'Appointment Info',clientlabel:'Client Name',agentelabel:'Agent Name',
+    datelabel:'Date',startlabel:'Start Time',showtlabel:'Time per Stop (min)',startaddrlabel:'Starting From',
+    'itin-s2':'Stops (in order)','itin-hint':'Use order from Plan Route, or enter manually.',
+    'itin-s3':'Drive Times',drivehint:'RouteReady calculates real drive times automatically.',
+    genbtn:'✦ Generate Itinerary','itin-result':'Client Itinerary','itin-empty':'Fill in the details and generate the itinerary.',
+    addprop:'+ Add Stop',itin_label:'Showing Itinerary',arrival:'ETA',departure:'Departure',
+    drive:'min drive to next stop',sharelabel:'Share with Client:',copybtn:'Copy',
+    wabtn:'WhatsApp',smsbtn:'Text',emailbtn:'Email',printbtn:'Print',
+    copied:'Copied!',total:'Total',homes:'Stops',returnlabel:'Est. Return',from:'Starting from',
+    'mile-title':'Mileage Log','mile-sub':'Track miles for tax deductions and fuel cost estimates.',
+    'mile-s1':'Vehicle Settings','mile-s2':'How It Works','mile-result':'Mileage Summary','mile-empty':'Generate your itinerary first, then come here to see your mileage log.',
+    mpglabel:'Miles per Gallon (MPG)',gaslabel:'Gas Price per Gallon ($)',ratelabel:'IRS Mileage Rate (¢/mile)',
+    total_miles:'Total Miles',fuel_cost:'Fuel Cost',tax_deduction:'Tax Deduction',
+    save_log:'📋 Copy Mileage Log',mile_copied:'Mileage log copied!'
+  },
+  es:{
+    tab0:'Importar ST',tab1:'Planificar',tab2:'Itinerario',tab3:'Millas',
+    'import-title':'Importar de ShowingTime','import-sub':'Pega uno o más emails de ShowingTime. RouteReady extrae dirección, fecha y hora automáticamente.',
+    'how-title':'Cómo usar',
+    step1:'Abre tu email de ShowingTime y <strong>selecciona todo el texto</strong>.',
+    step2:'<strong>Copia y pega</strong> abajo. Puedes pegar varios emails a la vez.',
+    step3:'Toca <strong>Extraer Showings</strong>. Los confirmados se cargan solos. Los declinados se ignoran.',
+    step4:'Toca <strong>Enviar a Planificar Ruta</strong> para optimizar con Google Maps.',
+    'paste-title':'Pega Email(s) de ShowingTime','paste-hint':'Puedes pegar varios emails juntos — RouteReady los separa automáticamente.',
+    parsebtn:'✦ Extraer Showings','st-result':'Showings Extraídos','st-empty':'Pega tus emails de ShowingTime y toca Extraer Showings.',
+    confirmed:'✅ Confirmado',declined:'❌ Declinado',send_to_plan:'🗺️ Enviar Todo a Planificar Ruta',add_to_plan:'+ Agregar a Ruta',added:'✓ Agregado',
+    'plan-title':'Planificar Ruta','plan-sub':'Agrega paradas y RouteReady encuentra el orden más eficiente con optimización de waypoints de Google Maps.',
+    'api-badge':'Google Maps API Conectada','plan-s1':'Punto de Salida',startfrom:'Saliendo Desde',
+    'plan-s2':'Paradas a Visitar','plan-hint':'Agrega en cualquier orden — RouteReady encuentra la ruta óptima automáticamente.',
+    'plan-result':'Orden Optimizado','plan-empty':'Agrega tus paradas y toca Optimizar Ruta.',
+    optbtn:'✦ Optimizar Ruta con Google Maps',optimizing:'Optimizando ruta...',
+    optimized:'✦ Ruta Óptima Encontrada','plan-s3':'Orden Preferido',closest:'Más Cerca Primero','closest-sub':'Empieza cerca, termina lejos',farthest:'Más Lejos Primero','farthest-sub':'Empieza lejos, termina cerca','order-hint':'💡 Más lejos primero = terminas más cerca de casa al regresar.',real_dist:'por carretera',
+    use_order:'✓ Usar Este Orden → Ir a Itinerario',copy_order:'📋 Copiar Orden',order_copied:'¡Orden copiada!',
+    'itin-title':'Generar Itinerario','itin-sub':'Genera un itinerario profesional para compartir con tu cliente.',
+    'itin-s1':'Info del Día',clientlabel:'Nombre del Cliente',agentelabel:'Nombre del Agente',
+    datelabel:'Fecha',startlabel:'Hora de Inicio',showtlabel:'Tiempo por Parada (min)',startaddrlabel:'Saliendo Desde',
+    'itin-s2':'Paradas (en orden)','itin-hint':'Usa el orden de Planificar Ruta, o ingresa manualmente.',
+    'itin-s3':'Tiempos de Manejo',drivehint:'RouteReady calcula los tiempos reales automáticamente.',
+    genbtn:'✦ Generar Itinerario','itin-result':'Itinerario del Cliente','itin-empty':'Llena los datos y genera el itinerario.',
+    addprop:'+ Agregar Parada',itin_label:'Itinerario de Showings',arrival:'ETA',departure:'Salida',
+    drive:'min de manejo a la próxima',sharelabel:'Compartir con Cliente:',copybtn:'Copiar',
+    wabtn:'WhatsApp',smsbtn:'Texto',emailbtn:'Email',printbtn:'Imprimir',
+    copied:'¡Copiado!',total:'Total',homes:'Paradas',returnlabel:'Regreso Est.',from:'Saliendo de',
+    'mile-title':'Registro de Millas','mile-sub':'Registra millas para deducciones de impuestos y estimado de gasolina.',
+    'mile-s1':'Datos del Vehículo','mile-s2':'Cómo Funciona','mile-result':'Resumen de Millas','mile-empty':'Genera tu itinerario primero, luego ven aquí para ver el registro de millas.',
+    mpglabel:'Millas por Galón (MPG)',gaslabel:'Precio de Gasolina por Galón ($)',ratelabel:'Tasa IRS (¢/milla)',
+    total_miles:'Millas Totales',fuel_cost:'Costo Gasolina',tax_deduction:'Deducción Fiscal',
+    save_log:'📋 Copiar Registro',mile_copied:'¡Registro copiado!'
+  }
+};
+
+function t(k){return T[lang][k]||k;}
+function setLang(l){
+  lang=l;
+  document.getElementById('btn-en').classList.toggle('active',l==='en');
+  document.getElementById('btn-es').classList.toggle('active',l==='es');
+  updateAllTexts();
+}
+function updateAllTexts(){
+  ['tab0','tab1','tab2','tab3','import-title','import-sub','how-title','paste-title','paste-hint',
+   'st-result','st-empty','plan-title','plan-sub','api-badge','plan-s1','startfrom','plan-s2','plan-hint',
+   'plan-result','plan-empty','itin-title','itin-sub','itin-s1','clientlabel','agentelabel','datelabel',
+   'startlabel','showtlabel','startaddrlabel','itin-s2','itin-hint','itin-s3','drivehint','genbtn',
+   'itin-result','itin-empty','mile-title','mile-sub','mile-s1','mile-s2','mile-result','mile-empty',
+   'mpglabel','gaslabel','ratelabel'].forEach(k=>{
+    const el=document.getElementById('txt-'+k);if(el)el.innerHTML=t(k);
+  });
+  ['step1','step2','step3','step4'].forEach(k=>{const el=document.getElementById('txt-'+k);if(el)el.innerHTML=t(k);});
+  document.getElementById('planAddBtn').textContent=t('addprop');
+  document.getElementById('itinAddBtn').textContent=t('addprop');
+  document.getElementById('txt-optbtn').textContent=t('optbtn');
+  document.getElementById('stParseBtn').textContent=t('parsebtn');
+}
+function switchTab(tab){
+  ['import','plan','itinerary','mileage'].forEach(tt=>{
+    document.getElementById('panel-'+tt).classList.toggle('active',tt===tab);
+    document.getElementById('tab-'+tt).classList.toggle('active',tt===tab);
+  });
+  if(tab==='mileage') updateMileageOut();
+}
+
+// ─── SHOWINGTIME PARSER ───────────────────────────────────────
+function checkParse(){document.getElementById('stParseBtn').disabled=document.getElementById('stPasteArea').value.trim().length<20;}
+
+function parseShowingTime(){
+  const raw=document.getElementById('stPasteArea').value;
+  const errEl=document.getElementById('stError');
+  errEl.classList.remove('show'); stParsed=[];
+  const parts=raw.split(/(?=Showing\s+(?:Confirmed|Declined))|(?=YOUR SHOWING)/gi).filter(p=>p.trim().length>30);
+  const blocks=parts.length>0?parts:[raw];
+  blocks.forEach(b=>{const r=parseBlock(b);if(r)stParsed.push(r);});
+  if(stParsed.length===0){errEl.textContent=t('parse_error')||'Could not read emails.';errEl.classList.add('show');return;}
+  renderSTResults();
+}
+
+function parseBlock(block){
+  const text=block.trim();if(!text)return null;
+  let status='confirmed'; // default confirmed
+  if(/showing\s+declined/i.test(text)||/declined/i.test(text))status='declined';
+  let address='';
+  const addrPattern=/(\d+\s+[A-Za-z0-9\s\.\#\,\-]+(?:St|Ave|Rd|Dr|Blvd|Ct|Ln|Way|Pl|Circle|Cir|Ter|Trail|Unit|Apt|#)[^\n]*)\n([^\n]+(?:\d{5}))/i;
+  const addrMatch=text.match(addrPattern);
+  if(addrMatch){address=addrMatch[1].trim()+', '+addrMatch[2].trim();}
+  if(!address){
+    const lines=text.split('\n').map(l=>l.trim()).filter(l=>l);
+    for(let i=0;i<lines.length;i++){
+      if(/^\d+\s+[A-Za-z]/.test(lines[i])&&lines[i].length>5&&lines[i].length<100){
+        const nl=lines[i+1]||'';
+        address=lines[i]+(/\d{5}/.test(nl)||/Twp|NJ|NY|CT|PA/.test(nl)?', '+nl.replace(/\|.*$/,'').trim():'');
+        break;
+      }
+    }
+  }
+  if(!address)return null;
+  address=address.replace(/\$[\d,]+.*$/,'').replace(/\|.*$/,'').replace(/,\s*$/,'').trim();
+  const dateMatch=text.match(/(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),?\s+(\w+\s+\d{1,2},?\s+\d{4})/i);
+  const timeMatch=text.match(/(\d{1,2}:\d{2}\s*(?:AM|PM))\s*[-–]\s*(\d{1,2}:\d{2}\s*(?:AM|PM))/i);
+  let isoDate='';
+  if(dateMatch){try{const d=new Date(dateMatch[0]+' 12:00:00');if(!isNaN(d))isoDate=d.toISOString().split('T')[0];}catch(e){}}
+  return{status,address,date:dateMatch?dateMatch[0].trim():'',time:timeMatch?timeMatch[0].trim():'',isoDate,added:false};
+}
+
+function renderSTResults(){
+  const card=document.getElementById('stResultsCard');
+  const confirmed=stParsed.filter(s=>s.status==='confirmed');
+  const declined=stParsed.filter(s=>s.status==='declined');
+  let html=`<div class="card-title">${t('st-result')}</div>
+    <div class="st-summary"><strong>${confirmed.length}</strong> ${t('confirmed').replace('✅ ','')} · <strong>${declined.length}</strong> ${t('declined').replace('❌ ','')}</div>`;
+  if(confirmed.length>0){
+    html+=`<button class="st-send-btn" onclick="sendAllToPlan()">${t('send_to_plan')}</button>
+      <div id="stSendMsg" style="display:none;text-align:center;font-size:12px;color:var(--green);font-weight:700;margin-top:8px;">✓ ${confirmed.length} ${lang==='es'?'paradas enviadas':'stops sent'}</div>`;
+  }
+  html+=`<div class="st-results">`;
+  stParsed.forEach((s,i)=>{
+    if(s.status==='confirmed'){
+      html+=`<div class="st-card confirmed"><div class="st-card-header">${t('confirmed')}</div>
+        <div class="st-card-body"><div class="st-address">${s.address}</div>
+        <div class="st-meta">${s.date?`<span>📅 ${s.date}</span>`:''}${s.time?`<span>🕐 ${s.time}</span>`:''}</div>
+        <button class="st-add-btn" id="staddbtn-${i}" onclick="addOnePropToPlan(${i})">${t('add_to_plan')}</button></div></div>`;
+    } else {
+      html+=`<div class="st-card declined"><div class="st-card-header">${t('declined')}</div>
+        <div class="st-card-body"><div class="st-address">${s.address}</div>
+        <div class="st-meta">${s.date?`<span>📅 ${s.date}</span>`:''}${s.time?`<span>🕐 ${s.time}</span>`:''}</div></div></div>`;
+    }
+  });
+  html+=`</div>`;
+  card.innerHTML=html;
+}
+
+function sendAllToPlan(){
+  const confirmed=stParsed.filter(s=>s.status==='confirmed');
+  if(!confirmed.length)return;
+  planProps=[];planId=0;
+  confirmed.forEach(s=>{planId++;planProps.push({id:planId,address:s.address,price:''});});
+  renderPlanProps();checkOptimize();
+  const dates=[...new Set(confirmed.map(s=>s.isoDate).filter(Boolean))];
+  if(dates.length===1)document.getElementById('showingDate').value=dates[0];
+  const msg=document.getElementById('stSendMsg');
+  if(msg){msg.style.display='block';setTimeout(()=>msg.style.display='none',3000);}
+  setTimeout(()=>switchTab('plan'),600);
+}
+
+function addOnePropToPlan(idx){
+  const s=stParsed[idx];if(!s||s.status!=='confirmed')return;
+  planId++;planProps.push({id:planId,address:s.address,price:''});
+  renderPlanProps();checkOptimize();stParsed[idx].added=true;
+  const btn=document.getElementById(`staddbtn-${idx}`);
+  if(btn){btn.textContent=t('added');btn.classList.add('added');btn.disabled=true;}
+}
+
+// ─── PLAN MY ROUTE — WAYPOINT OPTIMIZATION ───────────────────
+function selectOrder(o){
+  orderPref=o;
+  document.getElementById('opt-closest').classList.toggle('selected',o==='closest');
+  document.getElementById('opt-farthest').classList.toggle('selected',o==='farthest');
+}
+function addPlanProp(a='',p=''){const id=++planId;planProps.push({id,address:a,price:p});renderPlanProps();checkOptimize();}
+function removePlanProp(id){planProps=planProps.filter(p=>p.id!==id);renderPlanProps();checkOptimize();}
+function renderPlanProps(){
+  const list=document.getElementById('planPropList');list.innerHTML='';
+  planProps.forEach((p,i)=>{
+    const d=document.createElement('div');d.className='prop-item';
+    d.innerHTML=`<div class="prop-num">${i+1}</div><input class="prop-input" placeholder="Address..." value="${p.address}" oninput="planProps[${i}].address=this.value;checkOptimize()"><input class="prop-time" placeholder="min" value="${p.price||''}" oninput="planProps[${i}].price=this.value" title="Time at stop (min)"><button class="prop-remove" onclick="removePlanProp(${p.id})">×</button>`;
+    list.appendChild(d);
+  });
+}
+function checkOptimize(){
+  const filled=planProps.filter(p=>p.address.trim()).length;
+  const hasStart=document.getElementById('planStart').value.trim().length>0;
+  document.getElementById('optimizeBtn').disabled=filled<2||!hasStart;
+}
+
+async function getDistances(origin,destinations){
+  const res=await fetch(`/.netlify/functions/maps?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destinations.join('|'))}`);
+  return res.json();
+}
+
+async function getWaypointOrder(origin,waypoints){
+  // Use origin as destination too so ALL waypoints get optimized
+  const res=await fetch(`/.netlify/functions/maps?mode=optimize&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(origin)}&waypoints=${encodeURIComponent(waypoints.join('|'))}`);
+  return res.json();
+}
+
+async function optimizeRoute(){
+  const filled=planProps.filter(p=>p.address.trim());
+  if(filled.length<2)return;
+  const sp=document.getElementById('optimizeSpinner'),bt=document.getElementById('txt-optbtn'),er=document.getElementById('apiError');
+  sp.classList.add('show');bt.textContent=t('optimizing');document.getElementById('optimizeBtn').disabled=true;er.classList.remove('show');
+  try{
+    const origin=document.getElementById('planStart').value.trim();
+    let sorted=[];
+    let driveMap={};
+    _totalMiles=0;
+
+    // Step 1: Get distances from origin to all stops
+    const originData=await getDistances(origin,filled.map(p=>p.address));
+    const withOriginDist=filled.map((p,i)=>{
+      const el=originData.rows[0].elements[i];
+      return{...p,
+        distFromOrigin:el.status==='OK'?el.distance.value:99999,
+        distText:el.status==='OK'?el.distance.text:'?',
+        durText:el.status==='OK'?el.duration.text:'?'
+      };
+    });
+
+    // Step 2: Greedy nearest-neighbor sort from each previous stop
+    // Closest First: always pick nearest unvisited stop from current location
+    // Farthest First: start with farthest from origin, then nearest-neighbor from there
+    const remaining=[...withOriginDist];
+    let currentAddr=origin;
+
+    if(orderPref==='farthest'){
+      // Start with the stop farthest from origin
+      remaining.sort((a,b)=>b.distFromOrigin-a.distFromOrigin);
+      const first=remaining.shift();
+      sorted.push(first);
+      currentAddr=first.address;
+    }
+
+    // Greedy nearest-neighbor for the rest
+    while(remaining.length>0){
+      const legData=await getDistances(currentAddr,remaining.map(p=>p.address));
+      const withDist=remaining.map((p,i)=>{
+        const el=legData.rows[0].elements[i];
+        return{...p,legDistM:el.status==='OK'?el.distance.value:99999,legDistText:el.status==='OK'?el.distance.text:'?',legDurText:el.status==='OK'?el.duration.text:'?',legDurSec:el.status==='OK'?el.duration.value:99999};
+      });
+      // Always pick nearest from current location
+      withDist.sort((a,b)=>a.legDistM-b.legDistM);
+      const next=withDist[0];
+      // Store drive info for this leg
+      const prev=sorted.length>0?sorted[sorted.length-1]:null;
+      if(prev){
+        driveMap[`${prev.id}_${next.id}`]={
+          minutes:Math.round(next.legDurSec/60),
+          text:next.legDurText,
+          dist:next.legDistText
+        };
+        _totalMiles+=next.legDistM*0.000621371;
+      }
+      sorted.push(next);
+      currentAddr=next.address;
+      remaining.splice(remaining.findIndex(p=>p.id===next.id),1);
+    }
+    _totalMiles=Math.round(_totalMiles);
+
+    renderOptResult(sorted,driveMap,origin);
+  }catch(e){er.classList.add('show');}
+  finally{sp.classList.remove('show');bt.textContent=t('optbtn');document.getElementById('optimizeBtn').disabled=false;}
+}
+
+function renderOptResult(sorted,driveMap,origin){
+  let totalDriveMin=0;
+  Object.values(driveMap).forEach(d=>totalDriveMin+=d.minutes||0);
+  _totalDriveMin=totalDriveMin;
+  const stopsHTML=sorted.map((p,i)=>{
+    const nk=i<sorted.length-1?`${p.id}_${sorted[i+1].id}`:null;
+    const di=nk&&driveMap[nk];
+    return`<div class="opt-stop"><div class="opt-stop-num">${i+1}</div><div class="opt-stop-content"><div class="opt-stop-addr">${p.validatedAddress||p.address}</div><div class="opt-stop-meta">${p.distText?`📍 ${p.distText} ${t('real_dist')}`:''}</div></div></div>${di?`<div class="opt-drive"><span class="opt-drive-badge">🚗 ${di.text}</span><span class="opt-drive-dist">${di.dist}</span></div>`:''}`;
+  }).join('');
+  const milesInfo=_totalMiles>0?`<div style="background:var(--green2);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--green);font-weight:600;margin-top:12px;">🛣️ ~${_totalMiles} mi total · ${totalDriveMin>=60?Math.floor(totalDriveMin/60)+'h '+( totalDriveMin%60>0?totalDriveMin%60+'min':''):totalDriveMin+' min'} drive time</div>`:'';
+  document.getElementById('planResult').innerHTML=`<div class="opt-result">
+    <div class="opt-header"><div class="opt-label">${t('optimized')}</div><div class="opt-title">${origin} → ${sorted.length} stops</div></div>
+    <div class="opt-body">${stopsHTML}${milesInfo}
+      <button class="use-order-btn" onclick='useThisOrder(${JSON.stringify(sorted)},${JSON.stringify(driveMap)})'>${t('use_order')}</button>
+      <button class="copy-order-btn" onclick='copyOrder(${JSON.stringify(sorted)})'>${t('copy_order')}</button>
+      <div id="orderCopiedMsg" style="display:none;text-align:center;font-size:12px;color:var(--green);font-weight:600;margin-top:6px;">${t('order_copied')}</div>
+    </div></div>`;
+}
+
+function useThisOrder(sorted,driveMap){
+  itinProps=[];itinId=0;
+  sorted.forEach(p=>{itinId++;itinProps.push({id:itinId,address:p.address,price:p.price||''});});
+  const start=document.getElementById('planStart').value;
+  if(start)document.getElementById('itinStart').value=start;
+  window._tm=driveMap;window._ts=sorted;
+  renderItinProps();updateDriveList(driveMap,sorted);checkGenerate();switchTab('itinerary');
+}
+
+function copyOrder(sorted){
+  navigator.clipboard.writeText(sorted.map((p,i)=>`${i+1}. ${p.address}`).join('\n')).then(()=>{
+    const el=document.getElementById('orderCopiedMsg');
+    if(el){el.style.display='block';setTimeout(()=>el.style.display='none',2000);}
+  });
+}
+
+// ─── ITINERARY ────────────────────────────────────────────────
+function addItinProp(a='',p=''){const id=++itinId;itinProps.push({id,address:a,price:p});renderItinProps();updateDriveList();checkGenerate();}
+function removeItinProp(id){itinProps=itinProps.filter(p=>p.id!==id);renderItinProps();updateDriveList();checkGenerate();}
+function renderItinProps(){
+  const list=document.getElementById('itinPropList');list.innerHTML='';
+  itinProps.forEach((p,i)=>{
+    const d=document.createElement('div');d.className='prop-item';
+    d.innerHTML=`<div class="prop-num">${i+1}</div><input class="prop-input" placeholder="Address..." value="${p.address}" oninput="itinProps[${i}].address=this.value;updateDriveList();checkGenerate()"><input class="prop-time" placeholder="min" value="${p.price}" oninput="itinProps[${i}].price=this.value"><button class="prop-remove" onclick="removeItinProp(${p.id})">×</button>`;
+    list.appendChild(d);
+  });
+}
+
+function updateDriveList(dm,sorted){
+  const card=document.getElementById('driveCard'),list=document.getElementById('driveList'),filled=itinProps.filter(p=>p.address.trim());
+  if(filled.length<1){card.style.display='none';return;}
+  card.style.display='block';
+  const existing={};document.querySelectorAll('.drive-min').forEach(el=>{existing[el.id]=el.value;});
+  list.innerHTML='';
+  const startAddr=document.getElementById('itinStart').value.trim();
+  if(startAddr&&filled.length>=1){
+    const firstKey='drv_start_'+filled[0].id;
+    const autoLabel=window._startDriveInfo?`<span class="drive-auto">🟢 ${window._startDriveInfo.text}</span>`:'';
+    const val=existing[firstKey]||(window._startDriveInfo?.minutes||'');
+    const d=document.createElement('div');d.className='drive-item';
+    d.innerHTML=`<div class="drive-arrow"><strong>${startAddr} <span style="color:var(--gold);font-size:10px">★ START</span></strong>↓<strong>${filled[0].address||'...'}</strong>${autoLabel}</div><span>🚗</span><input class="drive-min" id="${firstKey}" type="number" min="1" max="180" value="${val}" placeholder="0"><span style="font-size:12px;color:var(--gray)">min</span>`;
+    list.appendChild(d);
+    if(!window._startDriveInfo&&startAddr&&filled[0].address){
+      getDistances(startAddr,[filled[0].address]).then(data=>{
+        const el=data?.rows?.[0]?.elements?.[0];
+        if(el?.status==='OK'){window._startDriveInfo={minutes:Math.round(el.duration.value/60),text:el.duration.text};updateDriveList(dm,sorted);}
+      }).catch(()=>{});
+    }
+  }
+  for(let i=0;i<filled.length-1;i++){
+    const from=filled[i],to=filled[i+1],key=`drv_${from.id}_${to.id}`;
+    let autoVal='',autoLabel='';
+    if(dm&&sorted){const of=sorted[i],ot=sorted[i+1];if(of&&ot){const dk=`${of.id}_${ot.id}`;if(dm[dk]){autoVal=dm[dk].minutes;autoLabel=`<span class="drive-auto">🟢 ${dm[dk].text}</span>`;}}}
+    const val=existing[key]||autoVal;
+    const d=document.createElement('div');d.className='drive-item';
+    d.innerHTML=`<div class="drive-arrow"><strong>${from.address||'...'}</strong>↓<strong>${to.address||'...'}</strong>${autoLabel}</div><span>🚗</span><input class="drive-min" id="${key}" type="number" min="1" max="180" value="${val}" placeholder="0"><span style="font-size:12px;color:var(--gray)">min</span>`;
+    list.appendChild(d);
+  }
+}
+
+function calcAllDriveTimes(){
+  const filled=itinProps.filter(p=>p.address.trim());
+  if(!filled.length)return;
+  const btn=document.getElementById('calcDriveBtn'),sp=document.getElementById('calcDriveSpinner'),txt=document.getElementById('calcDriveTxt');
+  btn.disabled=true;sp.classList.add('show');txt.textContent=lang==='es'?'Calculando...':'Calculating...';
+  (async()=>{
+  let totalM=0;
+  try{
+    const startAddr=document.getElementById('itinStart').value.trim();
+    if(startAddr&&filled.length>=1){
+      const firstKey='drv_start_'+filled[0].id;
+      try{
+        const data=await getDistances(startAddr,[filled[0].address]);
+        const el=data?.rows?.[0]?.elements?.[0];
+        if(el?.status==='OK'){
+          window._startDriveInfo={minutes:Math.round(el.duration.value/60),text:el.duration.text};
+          const input=document.getElementById(firstKey);
+          if(input)input.value=window._startDriveInfo.minutes;
+          totalM+=el.distance?.value||0;
+        }
+      }catch(e){}
+    }
+    for(let i=0;i<filled.length-1;i++){
+      const from=filled[i],to=filled[i+1],key='drv_'+from.id+'_'+to.id;
+      try{
+        const data=await getDistances(from.address,[to.address]);
+        const el=data?.rows?.[0]?.elements?.[0];
+        if(el?.status==='OK'){
+          const mins=Math.round(el.duration.value/60);
+          const input=document.getElementById(key);
+          if(input){input.value=mins;input.style.borderColor='var(--green)';}
+          totalM+=el.distance?.value||0;
+        }
+      }catch(e){}
+    }
+    _totalMiles=Math.round(totalM*0.000621371);
+    updateDriveList(null,null);
+    txt.textContent='✓ '+(lang==='es'?'Tiempos calculados':'Drive times calculated');
+    setTimeout(()=>{txt.textContent=lang==='es'?'🗺️ Recalcular':'🗺️ Recalculate';},3000);
+  }catch(e){txt.textContent='Error';setTimeout(()=>{txt.textContent='🗺️ Calculate with Google Maps';},2000);}
+  finally{btn.disabled=false;sp.classList.remove('show');}
+  })();
+}
+
+function checkGenerate(){
+  const dateEl=document.getElementById('showingDate');
+  if(!dateEl.value){const today=new Date();dateEl.value=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;}
+  document.getElementById('generateBtn').disabled=itinProps.filter(p=>p.address.trim()).length<1;
+}
+
+function formatTime(m){const h=Math.floor(m/60),min=m%60,suf=h>=12?'PM':'AM',dh=h>12?h-12:h===0?12:h;return`${dh}:${String(min).padStart(2,'0')} ${suf}`;}
+
+function generate(){
+  const client=document.getElementById('clientName').value||'Client',
+    agent=document.getElementById('agentName').value||'',
+    dateVal=document.getElementById('showingDate').value,
+    startTimeVal=document.getElementById('startTime').value,
+    showMin=parseInt(document.getElementById('showTime').value)||20,
+    startAddr=document.getElementById('itinStart').value,
+    filled=itinProps.filter(p=>p.address.trim());
+  if(!filled.length||!dateVal)return;
+  const dateDisplay=new Date(dateVal+'T12:00:00').toLocaleDateString(lang==='es'?'es-US':'en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const[sh,sm]=startTimeVal.split(':').map(Number);
+  let cursor=sh*60+sm,totalDrive=0;
+  const startKey='drv_start_'+filled[0].id;
+  const startDriveEl=document.getElementById(startKey);
+  const startDriveMin=startDriveEl?(parseInt(startDriveEl.value)||0):0;
+  cursor+=startDriveMin;totalDrive+=startDriveMin;
+  const stops=filled.map((p,i)=>{
+    const stopMin=parseInt(p.price)||showMin;
+    const arrival=cursor,departure=cursor+stopMin;
+    let driveMin=0;
+    if(i<filled.length-1){const next=filled[i+1],key=`drv_${p.id}_${next.id}`,el=document.getElementById(key);driveMin=el?(parseInt(el.value)||0):0;totalDrive+=driveMin;}
+    cursor=departure+driveMin;
+    return{...p,arrival:formatTime(arrival),departure:formatTime(departure),driveAfter:i<filled.length-1?driveMin:null,stopMin};
+  });
+  const totalMin=stops.reduce((s,p)=>s+p.stopMin,0)+totalDrive;
+  const totalH=Math.floor(totalMin/60),totalM=totalMin%60,totalStr=totalH>0?`${totalH}h ${totalM}m`:`${totalM}m`;
+  const returnTime=formatTime(sh*60+sm+totalMin);
+  _totalDriveMin=totalDrive;
+  window._itinData={client,agent,dateDisplay,dateVal,stops,totalStr,returnTime,showMin,startAddr,startDriveMin,totalDriveMin:totalDrive};
+  const stopsHTML=stops.map((s,i)=>`
+    <div class="stop">
+      <div class="stop-timeline"><div class="stop-dot">${i+1}</div>${s.driveAfter!==null?'<div class="stop-line"></div>':''}</div>
+      <div class="stop-content">
+        <div class="stop-address">${s.address}</div>
+        <div class="stop-times">
+          <div class="time-chip"><span class="time-chip-label">${t('arrival')}</span><span class="time-chip-val arrival">${s.arrival}</span></div>
+          <div class="time-chip"><span class="time-chip-label">${t('departure')}</span><span class="time-chip-val departure">${s.departure}</span></div>
+        </div>
+      </div>
+    </div>
+    ${s.driveAfter!==null?`<div class="drive-connector"><span>🚗</span><span class="drive-connector-text">${s.driveAfter} ${t('drive')}</span></div>`:''}`).join('');
+
+  const milesHTML=_totalMiles>0?`<div class="mileage-box" style="margin-top:14px;">
+    <div class="mileage-title">🛣️ ${lang==='es'?'Millas del Día':'Day Mileage'}</div>
+    <div class="mileage-grid">
+      <div class="mileage-stat"><div class="mileage-val">${_totalMiles}</div><div class="mileage-label">${t('total_miles')}</div></div>
+      <div class="mileage-stat"><div class="mileage-val">$${(_totalMiles/parseFloat(document.getElementById('gasPriceInput')?.value||3.5)*parseFloat(document.getElementById('mpgInput')?.value||28)).toFixed(2)}</div><div class="mileage-label">${t('fuel_cost')}</div></div>
+      <div class="mileage-stat"><div class="mileage-val">$${(_totalMiles*(parseFloat(document.getElementById('irsRateInput')?.value||67)/100)).toFixed(2)}</div><div class="mileage-label">${t('tax_deduction')}</div></div>
+    </div></div>`:'';
+
+  document.getElementById('itineraryOut').innerHTML=`<div class="itinerary">
+    <div class="itin-header">
+      <div class="itin-label">${t('itin_label')}</div>
+      <div class="itin-client">${client}</div>
+      <div class="itin-date">${dateDisplay}${agent?' · '+agent:''}</div>
+      <div class="itin-stats">
+        <div class="stat"><div class="stat-val">${stops.length}</div><div class="stat-label">${t('homes')}</div></div>
+        <div class="stat"><div class="stat-val">${totalStr}</div><div class="stat-label">${t('total')}</div></div>
+        <div class="stat"><div class="stat-val">${returnTime}</div><div class="stat-label">${t('returnlabel')}</div></div>
+        ${_totalMiles>0?`<div class="stat"><div class="stat-val">${_totalMiles}mi</div><div class="stat-label">${t('total_miles')}</div></div>`:''}
+      </div>
+    </div>
+    <div class="itin-body">
+      ${startAddr?`<div style="font-size:12px;color:var(--gray);margin-bottom:8px;font-style:italic">📍 ${t('from')}: ${startAddr}</div>`:''}
+      ${startDriveMin>0?`<div class="drive-connector" style="margin-left:0;margin-bottom:10px"><span>🚗</span><span class="drive-connector-text">${startDriveMin} min ${lang==='es'?'al primer showing':'to first showing'}</span></div>`:''}
+      ${stopsHTML}
+      <div class="summary-box"><strong>${showMin} min</strong> ${lang==='es'?'por parada':'per stop'} · <strong>${t('returnlabel')}:</strong> ${returnTime}</div>
+      ${milesHTML}
+    </div>
+    <div class="share-bar">
+      <span class="share-label">${t('sharelabel')}</span>
+      <button class="share-btn copy" onclick="copyItinerary()">📋 ${t('copybtn')}</button>
+      <button class="share-btn whatsapp" onclick="waItinerary()">💬 WhatsApp</button>
+      <button class="share-btn sms" onclick="smsItinerary()">📱 ${t('smsbtn')}</button>
+      <button class="share-btn email" onclick="emailItinerary()">📧 ${t('emailbtn')}</button>
+      <button class="share-btn print" onclick="window.print()">🖨️ ${t('printbtn')}</button>
+      <span class="copied-msg" id="copiedMsg">${t('copied')}</span>
+    </div>
+  </div>`;
+  updateMileageOut();
+}
+
+function buildText(){
+  const d=window._itinData;if(!d)return'';
+  let txt=`📍 ${t('itin_label').toUpperCase()}\n👤 ${d.client}\n📅 ${d.dateDisplay}\n`;
+  if(d.startAddr)txt+=`🚀 ${t('from')}: ${d.startAddr}\n`;
+  txt+='\n';
+  if(d.startDriveMin>0)txt+=`   🚗 ${d.startDriveMin} min ${lang==='es'?'al primer showing':'to first showing'}\n\n`;
+  d.stops.forEach((s,i)=>{
+    txt+=`${i+1}. ${s.address}\n   🟢 ETA: ${s.arrival}  🔴 ${t('departure')}: ${s.departure}\n`;
+    if(s.driveAfter!==null&&s.driveAfter>0)txt+=`   🚗 ${s.driveAfter} ${t('drive')}\n`;
+    txt+='\n';
+  });
+  txt+=`⏱️ ${t('total')}: ${d.totalStr} · ${t('returnlabel')}: ${d.returnTime}`;
+  if(_totalMiles>0)txt+=`\n🛣️ ${t('total_miles')}: ${_totalMiles} mi`;
+  if(d.agent)txt+=`\n\n— ${d.agent} · RouteReady`;
+  return txt;
+}
+
+function copyItinerary(){navigator.clipboard.writeText(buildText()).then(()=>{const el=document.getElementById('copiedMsg');if(el){el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2000);}});}
+function waItinerary(){window.open(`https://wa.me/?text=${encodeURIComponent(buildText())}`);}
+function smsItinerary(){window.open(`sms:?body=${encodeURIComponent(buildText())}`);}
+function emailItinerary(){const d=window._itinData;window.open(`mailto:?subject=${encodeURIComponent(t('itin_label')+' - '+(d?d.dateDisplay:''))}&body=${encodeURIComponent(buildText())}`);}
+
+// ─── MILEAGE LOG ─────────────────────────────────────────────
+function updateMileageCalc(){updateMileageOut();}
+
+function updateMileageOut(){
+  const out=document.getElementById('mileageOut');
+  const d=window._itinData;
+  if(!d||!_totalMiles){
+    out.innerHTML=`<div class="card" style="min-height:300px;"><div class="card-title" id="txt-mile-result">${t('mile-result')}</div><div class="empty-state"><div class="empty-icon">🛣️</div><div class="empty-text">${t('mile-empty')}</div></div></div>`;
+    return;
+  }
+  const mpg=parseFloat(document.getElementById('mpgInput')?.value)||28;
+  const gasPrice=parseFloat(document.getElementById('gasPriceInput')?.value)||3.50;
+  const irsRate=parseFloat(document.getElementById('irsRateInput')?.value)||67;
+  const fuelCost=(_totalMiles/mpg*gasPrice).toFixed(2);
+  const taxDeduction=(_totalMiles*(irsRate/100)).toFixed(2);
+  const logText=buildMileageLog(mpg,gasPrice,irsRate,fuelCost,taxDeduction);
+
+  out.innerHTML=`<div class="card">
+    <div class="card-title">${t('mile-result')}</div>
+    <div style="font-size:12px;color:var(--gray);margin-bottom:12px;">📅 ${d.dateDisplay}</div>
+    <div class="mileage-grid">
+      <div class="mileage-stat"><div class="mileage-val">${_totalMiles}</div><div class="mileage-label">${t('total_miles')}</div></div>
+      <div class="mileage-stat"><div class="mileage-val">$${fuelCost}</div><div class="mileage-label">${t('fuel_cost')}</div></div>
+      <div class="mileage-stat"><div class="mileage-val">$${taxDeduction}</div><div class="mileage-label">${t('tax_deduction')}</div></div>
+    </div>
+    <div class="mileage-deduction" style="margin-top:12px;">
+      <strong>${lang==='es'?'Detalles':'Details'}</strong><br>
+      ${lang==='es'?'Vehículo':'Vehicle'}: ${mpg} MPG · ${lang==='es'?'Gasolina':'Gas'}: $${gasPrice}/gal<br>
+      ${lang==='es'?'Tasa IRS':'IRS Rate'}: ${irsRate}¢/mi = <strong>$${taxDeduction} deducible</strong><br>
+      ${lang==='es'?'Costo de gasolina estimado':'Est. fuel cost'}: <strong>$${fuelCost}</strong>
+    </div>
+    <div style="margin-top:14px;">
+      <div class="card-title">${lang==='es'?'Paradas del Día':'Stops Log'}</div>
+      ${d.startAddr?`<div style="font-size:12px;color:var(--gray);margin-bottom:6px;">📍 ${t('from')}: ${d.startAddr}</div>`:''}
+      ${d.stops.map((s,i)=>`<div style="font-size:12px;padding:6px 0;border-bottom:1px solid var(--lightgray);color:var(--burgundy3);">${i+1}. ${s.address} <span style="color:var(--gray)">· ETA ${s.arrival}</span></div>`).join('')}
+    </div>
+    <button class="primary-btn" style="margin-top:14px;font-size:13px;padding:12px;" onclick="copyMileageLog('${btoa(unescape(encodeURIComponent(logText)))}')">${t('save_log')}</button>
+    <div id="mileCopiedMsg" style="display:none;text-align:center;font-size:12px;color:var(--green);font-weight:600;margin-top:6px;">${t('mile_copied')}</div>
+  </div>`;
+}
+
+function buildMileageLog(mpg,gasPrice,irsRate,fuelCost,taxDeduction){
+  const d=window._itinData;if(!d)return'';
+  let log=`🛣️ MILEAGE LOG — RouteReady\n📅 ${d.dateDisplay}\n`;
+  if(d.agent)log+=`👤 ${d.agent}\n`;
+  log+=`\n📍 ${t('from')}: ${d.startAddr||'—'}\n\n`;
+  d.stops.forEach((s,i)=>{log+=`${i+1}. ${s.address}\n   ETA: ${s.arrival} · Out: ${s.departure}\n`;});
+  log+=`\n─────────────────\n`;
+  log+=`🛣️ ${t('total_miles')}: ${_totalMiles} mi\n`;
+  log+=`⛽ ${t('fuel_cost')}: $${fuelCost} (${mpg}mpg @ $${gasPrice}/gal)\n`;
+  log+=`💼 ${t('tax_deduction')}: $${taxDeduction} (${irsRate}¢/mi IRS rate)\n`;
+  log+=`\nGenerated by RouteReady`;
+  return log;
+}
+
+function copyMileageLog(b64){
+  try{
+    const txt=decodeURIComponent(escape(atob(b64)));
+    navigator.clipboard.writeText(txt).then(()=>{
+      const el=document.getElementById('mileCopiedMsg');
+      if(el){el.style.display='block';setTimeout(()=>el.style.display='none',2000);}
+    });
+  }catch(e){}
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+addPlanProp();addPlanProp();
+const _today=new Date();
+document.getElementById('showingDate').value=`${_today.getFullYear()}-${String(_today.getMonth()+1).padStart(2,'0')}-${String(_today.getDate()).padStart(2,'0')}`;
+updateAllTexts();
+</script>
+</body>
+</html>
