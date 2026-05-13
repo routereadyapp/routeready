@@ -201,8 +201,10 @@
   .error-msg.show { display: block; }
 
   @media print {
-    header, .tabs, .share-bar, .primary-btn, .add-btn, .calc-drive-btn, .prop-remove { display: none !important; }
-    .itinerary { box-shadow: none; border: 1px solid #ccc; }
+    header, .tabs, .share-bar, .primary-btn, .add-btn, .calc-drive-btn, 
+    .prop-remove, .field, .drive-item, .page-title, .page-sub, 
+    .api-badge, .order-toggle, .hint, .card { display: none !important; }
+    .itinerary { box-shadow: none !important; border: 1px solid #ccc !important; display: block !important; }
     body { background: white; }
   }
 </style>
@@ -443,8 +445,8 @@ const T={
     'itin-s3':'Drive Times',drivehint:'RouteReady calculates real drive times automatically.',
     genbtn:'✦ Generate Itinerary','itin-result':'Client Itinerary','itin-empty':'Fill in the details and generate the itinerary.',
     addprop:'+ Add Stop',itin_label:'Showing Itinerary',arrival:'ETA',departure:'Departure',
-    drive:'min drive to next stop',sharelabel:'Share with Client:',copybtn:'📋 Copy',
-    wabtn:'💬 WhatsApp',smsbtn:'📱 Text',emailbtn:'📧 Email',printbtn:'🖨️ Print',
+    drive:'min drive to next stop',sharelabel:'Share with Client:',copybtn:'Copy',
+    wabtn:'WhatsApp',smsbtn:'Text',emailbtn:'Email',printbtn:'Print',
     copied:'Copied!',total:'Total',homes:'Stops',returnlabel:'Est. Return',from:'Starting from',
     'mile-title':'Mileage Log','mile-sub':'Track miles for tax deductions and fuel cost estimates.',
     'mile-s1':'Vehicle Settings','mile-s2':'How It Works','mile-result':'Mileage Summary','mile-empty':'Generate your itinerary first, then come here to see your mileage log.',
@@ -477,8 +479,8 @@ const T={
     'itin-s3':'Tiempos de Manejo',drivehint:'RouteReady calcula los tiempos reales automáticamente.',
     genbtn:'✦ Generar Itinerario','itin-result':'Itinerario del Cliente','itin-empty':'Llena los datos y genera el itinerario.',
     addprop:'+ Agregar Parada',itin_label:'Itinerario de Showings',arrival:'ETA',departure:'Salida',
-    drive:'min de manejo a la próxima',sharelabel:'Compartir con Cliente:',copybtn:'📋 Copiar',
-    wabtn:'💬 WhatsApp',smsbtn:'📱 Texto',emailbtn:'📧 Email',printbtn:'🖨️ Imprimir',
+    drive:'min de manejo a la próxima',sharelabel:'Compartir con Cliente:',copybtn:'Copiar',
+    wabtn:'WhatsApp',smsbtn:'Texto',emailbtn:'Email',printbtn:'Imprimir',
     copied:'¡Copiado!',total:'Total',homes:'Paradas',returnlabel:'Regreso Est.',from:'Saliendo de',
     'mile-title':'Registro de Millas','mile-sub':'Registra millas para deducciones de impuestos y estimado de gasolina.',
     'mile-s1':'Datos del Vehículo','mile-s2':'Cómo Funciona','mile-result':'Resumen de Millas','mile-empty':'Genera tu itinerario primero, luego ven aquí para ver el registro de millas.',
@@ -647,55 +649,61 @@ async function optimizeRoute(){
   sp.classList.add('show');bt.textContent=t('optimizing');document.getElementById('optimizeBtn').disabled=true;er.classList.remove('show');
   try{
     const origin=document.getElementById('planStart').value.trim();
-    // Try waypoint optimization first
     let sorted=[];
     let driveMap={};
-    let totalDistMi=0;
-    try{
-      const wayptData=await getWaypointOrder(origin,filled.map(p=>p.address));
-      if(wayptData.routes&&wayptData.routes[0]){
-        const route=wayptData.routes[0];
-        const order=route.waypoint_order||filled.map((_,i)=>i);
-        sorted=order.map(i=>filled[i]);
-        // Apply closest/farthest preference by reversing if needed
-        if(orderPref==='farthest') sorted.reverse();
-        // Extract leg distances and times + validated addresses from Google
-        route.legs.forEach((leg,i)=>{
-          if(i<sorted.length){
-            sorted[i].distText=leg.distance?.text||'';
-            sorted[i].durText=leg.duration?.text||'';
-            sorted[i].distM=leg.distance?.value||0;
-            // Use Google validated address
-            if(leg.end_address) sorted[i].validatedAddress=leg.end_address.replace(/, USA$/,'');
-            totalDistMi+=leg.distance?.value||0;
-          }
-          if(i>0&&i<=sorted.length){
-            const from=sorted[i-1],to=sorted[i];
-            if(from&&to)driveMap[`${from.id}_${to.id}`]={minutes:Math.round((leg.duration?.value||0)/60),text:leg.duration?.text||'',dist:leg.distance?.text||''};
-          }
-        });
-        _totalMiles=Math.round(totalDistMi*0.000621371);
-      } else throw new Error('No waypoint route');
-    } catch(wayptErr){
-      // Fallback: distance matrix sort
-      const data=await getDistances(origin,filled.map(p=>p.address));
-      const withDist=filled.map((p,i)=>{
-        const el=data.rows[0].elements[i];
-        return{...p,distM:el.status==='OK'?el.distance.value:99999,distText:el.status==='OK'?el.distance.text:'?',durText:el.status==='OK'?el.duration.text:'?'};
-      });
-      sorted=[...withDist].sort((a,b)=>a.distM-b.distM);
-      for(let i=0;i<sorted.length-1;i++){
-        try{
-          const leg=await getDistances(sorted[i].address,[sorted[i+1].address]);
-          const el=leg.rows[0].elements[0];
-          if(el.status==='OK'){
-            driveMap[`${sorted[i].id}_${sorted[i+1].id}`]={minutes:Math.round(el.duration.value/60),text:el.duration.text,dist:el.distance.text};
-            _totalMiles+=(el.distance.value*0.000621371);
-          }
-        }catch(e){}
-      }
-      _totalMiles=Math.round(_totalMiles);
+    _totalMiles=0;
+
+    // Step 1: Get distances from origin to all stops
+    const originData=await getDistances(origin,filled.map(p=>p.address));
+    const withOriginDist=filled.map((p,i)=>{
+      const el=originData.rows[0].elements[i];
+      return{...p,
+        distFromOrigin:el.status==='OK'?el.distance.value:99999,
+        distText:el.status==='OK'?el.distance.text:'?',
+        durText:el.status==='OK'?el.duration.text:'?'
+      };
+    });
+
+    // Step 2: Greedy nearest-neighbor sort from each previous stop
+    // Closest First: always pick nearest unvisited stop from current location
+    // Farthest First: start with farthest from origin, then nearest-neighbor from there
+    const remaining=[...withOriginDist];
+    let currentAddr=origin;
+
+    if(orderPref==='farthest'){
+      // Start with the stop farthest from origin
+      remaining.sort((a,b)=>b.distFromOrigin-a.distFromOrigin);
+      const first=remaining.shift();
+      sorted.push(first);
+      currentAddr=first.address;
     }
+
+    // Greedy nearest-neighbor for the rest
+    while(remaining.length>0){
+      const legData=await getDistances(currentAddr,remaining.map(p=>p.address));
+      const withDist=remaining.map((p,i)=>{
+        const el=legData.rows[0].elements[i];
+        return{...p,legDistM:el.status==='OK'?el.distance.value:99999,legDistText:el.status==='OK'?el.distance.text:'?',legDurText:el.status==='OK'?el.duration.text:'?',legDurSec:el.status==='OK'?el.duration.value:99999};
+      });
+      // Always pick nearest from current location
+      withDist.sort((a,b)=>a.legDistM-b.legDistM);
+      const next=withDist[0];
+      // Store drive info for this leg
+      const prev=sorted.length>0?sorted[sorted.length-1]:null;
+      if(prev){
+        driveMap[`${prev.id}_${next.id}`]={
+          minutes:Math.round(next.legDurSec/60),
+          text:next.legDurText,
+          dist:next.legDistText
+        };
+        _totalMiles+=next.legDistM*0.000621371;
+      }
+      sorted.push(next);
+      currentAddr=next.address;
+      remaining.splice(remaining.findIndex(p=>p.id===next.id),1);
+    }
+    _totalMiles=Math.round(_totalMiles);
+
     renderOptResult(sorted,driveMap,origin);
   }catch(e){er.classList.add('show');}
   finally{sp.classList.remove('show');bt.textContent=t('optbtn');document.getElementById('optimizeBtn').disabled=false;}
@@ -708,7 +716,7 @@ function renderOptResult(sorted,driveMap,origin){
   const stopsHTML=sorted.map((p,i)=>{
     const nk=i<sorted.length-1?`${p.id}_${sorted[i+1].id}`:null;
     const di=nk&&driveMap[nk];
-    return`<div class="opt-stop"><div class="opt-stop-num">${i+1}</div><div class="opt-stop-content"><div class="opt-stop-addr">${p.validatedAddress||p.address}</div><div class="opt-stop-meta">${p.distText?`📍 ${p.distText} ${t('real_dist')}`:''}</div></div></div>${di?`<div class="opt-drive"><span class="opt-drive-badge">🚗 ${di.text}</span><span class="opt-drive-dist">${di.dist}</span></div>`:''}`;
+    return`<div class="opt-stop"><div class="opt-stop-num">${i+1}</div><div class="opt-stop-content"><div class="opt-stop-addr">${p.address}</div><div class="opt-stop-meta">${p.distText?`📍 ${p.distText} ${t('real_dist')}`:''}</div></div></div>${di?`<div class="opt-drive"><span class="opt-drive-badge">🚗 ${di.text}</span><span class="opt-drive-dist">${di.dist}</span></div>`:''}`;
   }).join('');
   const milesInfo=_totalMiles>0?`<div style="background:var(--green2);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--green);font-weight:600;margin-top:12px;">🛣️ ~${_totalMiles} mi total · ${totalDriveMin>=60?Math.floor(totalDriveMin/60)+'h '+( totalDriveMin%60>0?totalDriveMin%60+'min':''):totalDriveMin+' min'} drive time</div>`:'';
   document.getElementById('planResult').innerHTML=`<div class="opt-result">
@@ -780,11 +788,12 @@ function updateDriveList(dm,sorted){
   }
 }
 
-async function calcAllDriveTimes(){
+function calcAllDriveTimes(){
   const filled=itinProps.filter(p=>p.address.trim());
   if(!filled.length)return;
   const btn=document.getElementById('calcDriveBtn'),sp=document.getElementById('calcDriveSpinner'),txt=document.getElementById('calcDriveTxt');
   btn.disabled=true;sp.classList.add('show');txt.textContent=lang==='es'?'Calculando...':'Calculating...';
+  (async()=>{
   let totalM=0;
   try{
     const startAddr=document.getElementById('itinStart').value.trim();
@@ -820,6 +829,7 @@ async function calcAllDriveTimes(){
     setTimeout(()=>{txt.textContent=lang==='es'?'🗺️ Recalcular':'🗺️ Recalculate';},3000);
   }catch(e){txt.textContent='Error';setTimeout(()=>{txt.textContent='🗺️ Calculate with Google Maps';},2000);}
   finally{btn.disabled=false;sp.classList.remove('show');}
+  })();
 }
 
 function checkGenerate(){
