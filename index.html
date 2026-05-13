@@ -1045,3 +1045,11 @@ function copyMileageLog(b64){
   }catch(e){}
 }
 
+// ─── INIT ─────────────────────────────────────────────────────
+addPlanProp();addPlanProp();
+const _today=new Date();
+document.getElementById('showingDate').value=`${_today.getFullYear()}-${String(_today.getMonth()+1).padStart(2,'0')}-${String(_today.getDate()).padStart(2,'0')}`;
+updateAllTexts();
+</script>
+</body>
+</html>
