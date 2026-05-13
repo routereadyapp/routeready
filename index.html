@@ -684,7 +684,7 @@ async function optimizeRoute(){
           }
         });
         _totalMiles=Math.round(totalDistMi*0.000621371);
-      } else throw new Error('No waypoint route');
+      } else throw new Error('force fallback');
     } catch(wayptErr){
       // Fallback: distance matrix sort
       const data=await getDistances(origin,filled.map(p=>p.address));
