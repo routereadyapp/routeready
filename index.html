@@ -654,7 +654,38 @@ async function optimizeRoute(){
   sp.classList.add('show');bt.textContent=t('optimizing');document.getElementById('optimizeBtn').disabled=true;er.classList.remove('show');
   try{
     const origin=document.getElementById('planStart').value.trim();
-    
+    // Try waypoint optimization first
+    let sorted=[];
+    let driveMap={};
+    let totalDistMi=0;
+    try{
+      const wayptData=await getWaypointOrder(origin,filled.map(p=>p.address));
+      if(wayptData.routes&&wayptData.routes[0]){
+        const route=wayptData.routes[0];
+        const order=route.waypoint_order||filled.map((_,i)=>i);
+        sorted=order.map(i=>filled[i]);
+        // Apply closest/farthest preference by reversing if needed
+        const distData=await getDistances(origin,sorted.map(p=>p.address));
+        sorted.forEach((p,i)=>{p.distFromOrigin=distData.rows[0].elements[i]?.status==='OK'?distData.rows[0].elements[i].distance.value:99999;});
+        sorted.sort((a,b)=>orderPref==='closest'?a.distFromOrigin-b.distFromOrigin:b.distFromOrigin-a.distFromOrigin);
+        // Extract leg distances and times + validated addresses from Google
+        route.legs.forEach((leg,i)=>{
+          if(i<sorted.length){
+            sorted[i].distText=leg.distance?.text||'';
+            sorted[i].durText=leg.duration?.text||'';
+            sorted[i].distM=leg.distance?.value||0;
+            // Use Google validated address
+            if(leg.end_address) sorted[i].validatedAddress=leg.end_address.replace(/, USA$/,'');
+            totalDistMi+=leg.distance?.value||0;
+          }
+          if(i>0&&i<=sorted.length){
+            const from=sorted[i-1],to=sorted[i];
+            if(from&&to)driveMap[`${from.id}_${to.id}`]={minutes:Math.round((leg.duration?.value||0)/60),text:leg.duration?.text||'',dist:leg.distance?.text||''};
+          }
+        });
+        _totalMiles=Math.round(totalDistMi*0.000621371);
+      } else throw new Error('No waypoint route');
+    } catch(wayptErr){
       // Fallback: distance matrix sort
       const data=await getDistances(origin,filled.map(p=>p.address));
       const withDist=filled.map((p,i)=>{
