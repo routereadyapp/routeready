@@ -637,7 +637,7 @@ function checkOptimize(){
 }
 
 async function getDistances(origin,destinations){
-  const res=await fetch(`/.netlify/functions/maps?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destinations.join('|'))}`);
+  const res=await fetch(`/.netlify/functions/maps?origins=${encodeURIComponent(origin)}&waypoints=${encodeURIComponent(destinations.join('|'))}`);
   return res.json();
 }
 
