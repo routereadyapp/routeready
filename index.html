@@ -659,7 +659,7 @@ async function optimizeRoute(){
     let driveMap={};
     let totalDistMi=0;
     try{
-      const wayptData=await getWaypointOrder(origin,filled.map(p=>p.address));
+      throw new Error('use fallback');
       if(false){
         const route=wayptData.routes[0];
         const order=route.waypoint_order||filled.map((_,i)=>i);
