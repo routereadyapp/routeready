@@ -53,8 +53,8 @@
   .prop-num { width: 26px; height: 26px; border-radius: 50%; background: var(--burgundy); color: var(--white); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .prop-input { flex: 1; padding: 9px 12px; border: 1.5px solid var(--lightgray); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--burgundy3); outline: none; transition: border-color 0.2s; }
   .prop-input:focus { border-color: var(--gold); }
-  .prop-time { width: 80px; padding: 9px 8px; border: 1.5px solid var(--lightgray); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--green); font-weight: 600; outline: none; text-align: center; }
-  .prop-time:focus { border-color: var(--gold); }
+  .prop-time { display: none; } 
+  
   .prop-remove { width: 26px; height: 26px; border-radius: 50%; border: none; background: var(--lightgray); color: var(--gray); cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
   .prop-remove:hover { background: var(--red2); color: var(--red); }
   .add-btn { width: 100%; padding: 10px; border: 2px dashed var(--lightgray); border-radius: 8px; background: transparent; color: var(--gray); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
@@ -660,7 +660,7 @@ async function optimizeRoute(){
     let totalDistMi=0;
     try{
       const wayptData=await getWaypointOrder(origin,filled.map(p=>p.address));
-      if(wayptData.routes&&wayptData.routes[0]){
+      if(false){
         const route=wayptData.routes[0];
         const order=route.waypoint_order||filled.map((_,i)=>i);
         sorted=order.map(i=>filled[i]);
