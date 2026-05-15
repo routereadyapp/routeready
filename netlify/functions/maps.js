@@ -13,7 +13,7 @@ exports.handler = async function(event) {
   } else if (mode === 'directions') {
     url = `https://maps.googleapis.com/maps/api/directions/json?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&units=imperial&key=${KEY}`;
   } else {
-    url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(waypoints)}&units=imperial&key=${KEY}`;
+    url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${waypoints}&units=imperial&key=${KEY}`;
   }
 
   return new Promise((resolve) => {
