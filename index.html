@@ -646,8 +646,17 @@ function renderPlanProps(){
   const list=document.getElementById('planPropList');list.innerHTML='';
   planProps.forEach((p,i)=>{
     const d=document.createElement('div');d.className='prop-item';
-    d.innerHTML=`<div class="prop-num">${i+1}</div><input class="prop-input" placeholder="Address..." value="${p.address}" oninput="planProps[${i}].address=this.value;checkOptimize()"><input class="prop-time" placeholder="min" value="${p.price||''}" oninput="planProps[${i}].price=this.value" title="Time at stop (min)"><button class="prop-remove" onclick="removePlanProp(${p.id})">×</button>`;
+    d.innerHTML=`<div class="prop-num">${i+1}</div><input class="prop-input" placeholder="Address..." value="${p.address}" oninput="planProps[${i}].address=this.value;checkOptimize()"><button class="prop-remove" onclick="removePlanProp(${p.id})">×</button>`;
     list.appendChild(d);
+    const input=d.querySelector('.prop-input');
+    if(!input||!window.google||!window.google.maps||!window.google.maps.places)return;
+    try{
+      const ac=new google.maps.places.Autocomplete(input,{types:['address'],componentRestrictions:{country:'us'}});
+      ac.addListener('place_changed',()=>{
+        const place=ac.getPlace();
+        if(place.formatted_address){input.value=place.formatted_address.replace(/, USA$/,'');planProps[i].address=input.value;checkOptimize();}
+      });
+    }catch(e){}
   });
 }
 function checkOptimize(){
