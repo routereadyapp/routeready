@@ -1030,21 +1030,23 @@ function copyMileageLog(b64){
   }catch(e){}
 }
 
-
+  
 function initAutocomplete(){
   ['planStart','itinStart'].forEach(id=>{
     const input=document.getElementById(id);
-    if(!input||!window.google||!window.google.maps)return;
-    const ac=new google.maps.places.Autocomplete(input,{types:['address'],componentRestrictions:{country:'us'}});
-    ac.addListener('place_changed',()=>{
-      const place=ac.getPlace();
-      if(place.formatted_address)input.value=place.formatted_address.replace(/, USA$/,'');
-      if(id==='planStart')checkOptimize();
-      if(id==='itinStart'){window._startDriveInfo=null;updateDriveList();}
-  
-    });
+    if(!input||!window.google||!window.google.maps||!window.google.maps.places)return;
+    try{
+      const ac=new google.maps.places.Autocomplete(input,{types:['address'],componentRestrictions:{country:'us'}});
+      ac.addListener('place_changed',()=>{
+        const place=ac.getPlace();
+        if(place.formatted_address)input.value=place.formatted_address.replace(/, USA$/,'');
+        if(id==='planStart')checkOptimize();
+        if(id==='itinStart'){window._startDriveInfo=null;updateDriveList();}
+      });
+    }catch(e){}
   });
 }
+  
 setTimeout(()=>{
   if(window.google&&window.google.maps)initAutocomplete();
   else{const iv=setInterval(()=>{if(window.google&&window.google.maps){clearInterval(iv);initAutocomplete();}},500);}
