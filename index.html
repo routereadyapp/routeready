@@ -620,7 +620,27 @@ function selectOrder(o){
   document.getElementById('opt-farthest').classList.toggle('selected',o==='farthest');
 }
 function selectOrder(o){orderPref=o;document.getElementById('opt-closest').classList.toggle('selected',o==='closest');document.getElementById('opt-farthest').classList.toggle('selected',o==='farthest');}
-function addPlanProp(a='',p=''){const id=++planId;planProps.push({id,address:a,price:p});renderPlanProps();checkOptimize();}
+function addPlanProp(a='',p=''){
+  const id=++planId;
+  planProps.push({id,address:a,price:p});
+  renderPlanProps();
+  checkOptimize();
+  // Add autocomplete to new stop
+  setTimeout(()=>{
+    const inputs=document.querySelectorAll('#planPropList .prop-input');
+    const input=inputs[inputs.length-1];
+    if(!input||!window.google||!window.google.maps)return;
+    const ac=new google.maps.places.Autocomplete(input,{types:['address'],componentRestrictions:{country:'us'}});
+    ac.addListener('place_changed',()=>{
+      const place=ac.getPlace();
+      if(place.formatted_address){
+        input.value=place.formatted_address.replace(/, USA$/,'');
+        planProps[planProps.length-1].address=input.value;
+        checkOptimize();
+      }
+    });
+  },100);
+}
 function removePlanProp(id){planProps=planProps.filter(p=>p.id!==id);renderPlanProps();checkOptimize();}
 function renderPlanProps(){
   const list=document.getElementById('planPropList');list.innerHTML='';
@@ -1021,6 +1041,7 @@ function initAutocomplete(){
       if(place.formatted_address)input.value=place.formatted_address.replace(/, USA$/,'');
       if(id==='planStart')checkOptimize();
       if(id==='itinStart'){window._startDriveInfo=null;updateDriveList();}
+  
     });
   });
 }
