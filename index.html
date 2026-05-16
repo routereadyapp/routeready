@@ -624,27 +624,11 @@ function selectOrder(o){
   document.getElementById('opt-closest').classList.toggle('selected',o==='closest');
   document.getElementById('opt-farthest').classList.toggle('selected',o==='farthest');
 }
-function selectOrder(o){orderPref=o;document.getElementById('opt-closest').classList.toggle('selected',o==='closest');document.getElementById('opt-farthest').classList.toggle('selected',o==='farthest');}
 function addPlanProp(a='',p=''){
   const id=++planId;
   planProps.push({id,address:a,price:p});
   renderPlanProps();
   checkOptimize();
-  // Add autocomplete to new stop
-  setTimeout(()=>{
-    const inputs=document.querySelectorAll('#planPropList .prop-input');
-    const input=inputs[inputs.length-1];
-    if(!input||!window.google||!window.google.maps)return;
-    const ac=new google.maps.places.Autocomplete(input,{types:['address'],componentRestrictions:{country:'us'}});
-    ac.addListener('place_changed',()=>{
-      const place=ac.getPlace();
-      if(place.formatted_address){
-        input.value=place.formatted_address.replace(/, USA$/,'');
-        planProps[planProps.length-1].address=input.value;
-        checkOptimize();
-      }
-    });
-  },100);
 }
 function removePlanProp(id){planProps=planProps.filter(p=>p.id!==id);renderPlanProps();checkOptimize();}
 function renderPlanProps(){
@@ -694,29 +678,25 @@ async function optimizeRoute(){
     let totalDistMi=0;
     try{
       const wayptData=await getWaypointOrder(origin,filled.map(p=>p.address));
-      const route=wayptData.routes[0];    
-        const order=route.waypoint_order||filled.map((_,i)=>i);
-        sorted=order.map(i=>filled[i]);
-        // Apply closest/farthest preference by reversing if needed
-        const distData=await getDistances(origin,sorted.map(p=>p.address));
-        sorted.forEach((p,i)=>{p.distFromOrigin=distData.rows[0].elements[i]?.status==='OK'?distData.rows[0].elements[i].distance.value:99999;});
-        sorted.sort((a,b)=>orderPref==='closest'?a.distFromOrigin-b.distFromOrigin:b.distFromOrigin-a.distFromOrigin);
-        // Extract leg distances and times + validated addresses from Google
-        route.legs.forEach((leg,i)=>{
-          if(i<sorted.length){
-            sorted[i].distText=leg.distance?.text||'';
-            sorted[i].durText=leg.duration?.text||'';
-            sorted[i].distM=leg.distance?.value||0;
-            // Use Google validated address
-            if(leg.end_address) sorted[i].validatedAddress=leg.end_address.replace(/, USA$/,'');
-            totalDistMi+=leg.distance?.value||0;
-          }
-          if(i>0&&i<=sorted.length){
-            const from=sorted[i-1],to=sorted[i];
-            if(from&&to)driveMap[`${from.id}_${to.id}`]={minutes:Math.round((leg.duration?.value||0)/60),text:leg.duration?.text||'',dist:leg.distance?.text||''};
-          }
-        });
-        _totalMiles=Math.round(totalDistMi*0.000621371);
+      if(!wayptData.routes||!wayptData.routes[0]) throw new Error('no route');
+      const route=wayptData.routes[0];
+      const order=route.waypoint_order||filled.map((_,i)=>i);
+      sorted=order.map(i=>({...filled[i]}));
+      if(orderPref==='farthest') sorted.reverse();
+      const legs=route.legs||[];
+      legs.forEach((leg,i)=>{
+        totalDistMi+=leg.distance?.value||0;
+        if(i<sorted.length){
+          sorted[i].distText=leg.distance?.text||'';
+          sorted[i].distM=leg.distance?.value||0;
+          if(leg.end_address) sorted[i].validatedAddress=leg.end_address.replace(/, USA$/,'');
+        }
+        if(i>0&&i<sorted.length){
+          const from=sorted[i-1],to=sorted[i];
+          driveMap[`${from.id}_${to.id}`]={minutes:Math.round((leg.duration?.value||0)/60),text:leg.duration?.text||'',dist:leg.distance?.text||''};
+        }
+      });
+      _totalMiles=Math.round(totalDistMi*0.000621371);
     } catch(wayptErr){
       // Fallback: distance matrix sort
       const data=await getDistances(origin,filled.map(p=>p.address));
