@@ -880,7 +880,7 @@ function generate(){
   const totalH=Math.floor(totalMin/60),totalM=totalMin%60,totalStr=totalH>0?`${totalH}h ${totalM}m`:`${totalM}m`;
   const returnTime=formatTime(sh*60+sm+totalMin);
   _totalDriveMin=totalDrive;
-  window._itinData={client,agent,dateDisplay,dateVal,stops,totalStr,returnTime,showMin,startAddr,startDriveMin,totalDriveMin:totalDrive};
+  window._itinData={client,agent,dateDisplay,dateVal,stops,totalStr,returnTime,showMin,startAddr,startDriveMin,totalDriveMin:totalDrive,totalMiles:_totalMiles};
   const stopsHTML=stops.map((s,i)=>`
     <div class="stop">
       <div class="stop-timeline"><div class="stop-dot">${i+1}</div>${s.driveAfter!==null?'<div class="stop-line"></div>':''}</div>
@@ -962,6 +962,7 @@ function updateMileageCalc(){updateMileageOut();}
 function updateMileageOut(){
   const out=document.getElementById('mileageOut');
   const d=window._itinData;
+  if(d&&d.totalMiles) _totalMiles=d.totalMiles;
   if(!d){
     out.innerHTML=`<div class="card" style="min-height:300px;"><div class="card-title" id="txt-mile-result">${t('mile-result')}</div><div class="empty-state"><div class="empty-icon">🛣️</div><div class="empty-text">${t('mile-empty')}</div></div></div>`;
     return;
