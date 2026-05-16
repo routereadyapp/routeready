@@ -61,11 +61,12 @@
   .add-btn:hover { border-color: var(--gold); color: var(--gold); }
 
   .order-toggle { display: flex; gap: 10px; margin-bottom: 14px; }
-  .order-opt { flex: 1; padding: 10px 8px; border-radius: 10px; border: 2px solid var(--lightgray); cursor: pointer; text-align: center; transition: all 0.2s; background: var(--white); }
-  .order-opt.selected { border-color: var(--gold); background: #FFF8EE; }
-  .order-opt-icon { font-size: 18px; display: block; margin-bottom: 3px; }
-  .order-opt-label { font-size: 12px; font-weight: 700; color: var(--burgundy); }
-  .order-opt-sub { font-size: 10px; color: var(--gray); margin-top: 2px; }
+  .order-opt { flex: 1; padding: 12px 8px; border-radius: 10px; border: 2px solid var(--lightgray); cursor: pointer; text-align: center; transition: all 0.2s; background: var(--white); }
+  .order-opt.selected { border-color: var(--burgundy); background: var(--burgundy); }
+  .order-opt.selected .order-opt-label { color: var(--gold2); }
+  .order-opt-icon { display: none; }
+  .order-opt-label { font-size: 13px; font-weight: 700; color: var(--burgundy); }
+  .order-opt-sub { display: none; }
 
   .primary-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--burgundy), var(--burgundy2)); color: var(--gold2); border: none; border-radius: 12px; font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 16px; transition: all 0.2s; box-shadow: 0 6px 20px rgba(107,26,42,0.45), inset 0 1px 0 rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; gap: 8px; }
   .primary-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(107,26,42,0.4); }
@@ -296,27 +297,18 @@
           <div class="card-title" id="txt-plan-s3">Preferred Order</div>
           <div class="order-toggle">
             <div class="order-opt selected" id="opt-closest" onclick="selectOrder('closest')">
-              <span class="order-opt-icon">🏠➡️🏡</span>
-              <div class="order-opt-label" id="txt-closest">Closest First</div>
-              <div class="order-opt-sub" id="txt-closest-sub">Start near, end far</div>
+              <div class="order-opt-label" id="txt-closest">Closest Route</div>
             </div>
             <div class="order-opt" id="opt-farthest" onclick="selectOrder('farthest')">
-              <span class="order-opt-icon">🏡➡️🏠</span>
-              <div class="order-opt-label" id="txt-farthest">Farthest First</div>
-              <div class="order-opt-sub" id="txt-farthest-sub">Start far, end near</div>
+              <div class="order-opt-label" id="txt-farthest">Farthest Route</div>
             </div>
             <div class="order-opt" id="opt-smart" onclick="selectOrder('smart')">
-              <span class="order-opt-icon">⚡</span>
-              <div class="order-opt-label" id="txt-smart">Smart Optimize</div>
-              <div class="order-opt-sub" id="txt-smart-sub">Best overall route</div>
+              <div class="order-opt-label" id="txt-smart">Smart Route</div>
             </div>
           </div>
-          <div class="hint" id="txt-order-hint">💡 Farthest First = you end closer to home on the way back.</div>
+          <div class="hint" id="txt-order-hint">💡 Tap a button to optimize your route.</div>
         </div>
-                <button class="primary-btn" onclick="optimizeRoute()" id="optimizeBtn" disabled>
-          <div class="spinner" id="optimizeSpinner"></div>
-          <span id="txt-optbtn">✦ Optimize Route with Google Maps</span>
-        </button>
+        <div class="spinner" id="optimizeSpinner" style="margin:10px auto;display:none;"></div>
         <div class="error-msg" id="apiError">Could not reach Google Maps API. Check connection and try again.</div>
       </div>
       <div id="planResult">
@@ -518,7 +510,6 @@ function updateAllTexts(){
   ['step1','step2','step3','step4'].forEach(k=>{const el=document.getElementById('txt-'+k);if(el)el.innerHTML=t(k);});
   document.getElementById('planAddBtn').textContent=t('addprop');
   document.getElementById('itinAddBtn').textContent=t('addprop');
-  document.getElementById('txt-optbtn').textContent=t('optbtn');
   document.getElementById('stParseBtn').textContent=t('parsebtn');
 }
 function switchTab(tab){
@@ -624,9 +615,9 @@ function selectOrder(o){
   document.getElementById('opt-closest').classList.toggle('selected',o==='closest');
   document.getElementById('opt-farthest').classList.toggle('selected',o==='farthest');
   document.getElementById('opt-smart').classList.toggle('selected',o==='smart');
-  if(document.querySelector('.opt-result')&&!document.getElementById('optimizeBtn').disabled){
-    optimizeRoute();
-  }
+  const filled=planProps.filter(p=>p.address.trim()).length;
+  const hasStart=document.getElementById('planStart').value.trim().length>0;
+  if(filled>=2&&hasStart) optimizeRoute();
 }
 
 function addPlanProp(a='',p=''){
@@ -656,7 +647,7 @@ function renderPlanProps(){
 function checkOptimize(){
   const filled=planProps.filter(p=>p.address.trim()).length;
   const hasStart=document.getElementById('planStart').value.trim().length>0;
-  document.getElementById('optimizeBtn').disabled=filled<2||!hasStart;
+
 }
 
 async function getDistances(origin,destinations){
@@ -673,8 +664,8 @@ async function getWaypointOrder(origin,waypoints){
 async function optimizeRoute(){
   const filled=planProps.filter(p=>p.address.trim());
   if(filled.length<2)return;
-  const sp=document.getElementById('optimizeSpinner'),bt=document.getElementById('txt-optbtn'),er=document.getElementById('apiError');
-  sp.classList.add('show');bt.textContent=t('optimizing');document.getElementById('optimizeBtn').disabled=true;er.classList.remove('show');
+  const sp=document.getElementById('optimizeSpinner'),er=document.getElementById('apiError');
+  sp.classList.add('show');er.classList.remove('show');
   try{
     const origin=document.getElementById('planStart').value.trim();
     // Try waypoint optimization first
@@ -725,7 +716,7 @@ async function optimizeRoute(){
     renderOptResult(sorted,driveMap,origin);
     showRouteMap(origin,sorted);
   }catch(e){er.classList.add('show');}
-  finally{sp.classList.remove('show');bt.textContent=t('optbtn');document.getElementById('optimizeBtn').disabled=false;}
+  finally{sp.classList.remove('show');}
 }
 
 function renderOptResult(sorted,driveMap,origin){
