@@ -807,6 +807,7 @@ async function calcAllDriveTimes(){
   if(!filled.length)return;
   const btn=document.getElementById('calcDriveBtn'),sp=document.getElementById('calcDriveSpinner'),txt=document.getElementById('calcDriveTxt');
   btn.disabled=true;sp.classList.add('show');txt.textContent=lang==='es'?'Calculando...':'Calculating...';
+  _totalMiles=0;
   let totalM=0;
   try{
     const startAddr=document.getElementById('itinStart').value.trim();
