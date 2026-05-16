@@ -305,12 +305,12 @@
               <div class="order-opt-label" id="txt-farthest">Farthest First</div>
               <div class="order-opt-sub" id="txt-farthest-sub">Start far, end near</div>
             </div>
+            <div class="order-opt" id="opt-smart" onclick="selectOrder('smart')">
+              <span class="order-opt-icon">⚡</span>
+              <div class="order-opt-label" id="txt-smart">Smart Optimize</div>
+              <div class="order-opt-sub" id="txt-smart-sub">Best overall route</div>
+            </div>
           </div>
-          <div class="order-opt" id="opt-smart" onclick="selectOrder('smart')">
-  <span class="order-opt-icon">🧠➡️🗺️</span>
-  <div class="order-opt-label" id="txt-smart">Smart Optimize</div>
-  <div class="order-opt-sub" id="txt-smart-sub">Best overall route</div>
-</div>
           <div class="hint" id="txt-order-hint">💡 Farthest First = you end closer to home on the way back.</div>
         </div>
                 <button class="primary-btn" onclick="optimizeRoute()" id="optimizeBtn" disabled>
@@ -623,7 +623,9 @@ function selectOrder(o){
   orderPref=o;
   document.getElementById('opt-closest').classList.toggle('selected',o==='closest');
   document.getElementById('opt-farthest').classList.toggle('selected',o==='farthest');
+  document.getElementById('opt-smart').classList.toggle('selected',o==='smart');
 }
+
 function addPlanProp(a='',p=''){
   const id=++planId;
   planProps.push({id,address:a,price:p});
