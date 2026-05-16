@@ -61,12 +61,11 @@
   .add-btn:hover { border-color: var(--gold); color: var(--gold); }
 
   .order-toggle { display: flex; gap: 10px; margin-bottom: 14px; }
-  .order-opt { flex: 1; padding: 12px 8px; border-radius: 10px; border: 2px solid var(--lightgray); cursor: pointer; text-align: center; transition: all 0.2s; background: var(--white); }
-  .order-opt.selected { border-color: var(--burgundy); background: var(--burgundy); }
-  .order-opt.selected .order-opt-label { color: var(--gold2); }
-  .order-opt-icon { display: none; }
-  .order-opt-label { font-size: 13px; font-weight: 700; color: var(--burgundy); }
-  .order-opt-sub { display: none; }
+  .order-opt { flex: 1; padding: 10px 8px; border-radius: 10px; border: 2px solid var(--lightgray); cursor: pointer; text-align: center; transition: all 0.2s; background: var(--white); }
+  .order-opt.selected { border-color: var(--gold); background: #FFF8EE; }
+  .order-opt-icon { font-size: 18px; display: block; margin-bottom: 3px; }
+  .order-opt-label { font-size: 12px; font-weight: 700; color: var(--burgundy); }
+  .order-opt-sub { font-size: 10px; color: var(--gray); margin-top: 2px; }
 
   .primary-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--burgundy), var(--burgundy2)); color: var(--gold2); border: none; border-radius: 12px; font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 16px; transition: all 0.2s; box-shadow: 0 6px 20px rgba(107,26,42,0.45), inset 0 1px 0 rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; gap: 8px; }
   .primary-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(107,26,42,0.4); }
@@ -297,13 +296,19 @@
           <div class="card-title" id="txt-plan-s3">Preferred Order</div>
           <div class="order-toggle">
             <div class="order-opt selected" id="opt-closest" onclick="selectOrder('closest')">
-              <div class="order-opt-label" id="txt-closest">Closest Route</div>
+              <span class="order-opt-icon">🏠➡️🏡</span>
+              <div class="order-opt-label" id="txt-closest">Closest First</div>
+              <div class="order-opt-sub" id="txt-closest-sub">Start near, end far</div>
             </div>
             <div class="order-opt" id="opt-farthest" onclick="selectOrder('farthest')">
-              <div class="order-opt-label" id="txt-farthest">Farthest Route</div>
+              <span class="order-opt-icon">🏡➡️🏠</span>
+              <div class="order-opt-label" id="txt-farthest">Farthest First</div>
+              <div class="order-opt-sub" id="txt-farthest-sub">Start far, end near</div>
             </div>
             <div class="order-opt" id="opt-smart" onclick="selectOrder('smart')">
-              <div class="order-opt-label" id="txt-smart">Smart Route</div>
+              <span class="order-opt-icon">⚡</span>
+              <div class="order-opt-label" id="txt-smart">Smart Optimize</div>
+              <div class="order-opt-sub" id="txt-smart-sub">Best overall route</div>
             </div>
           </div>
           <div class="hint" id="txt-order-hint">💡 Tap a button to optimize your route.</div>
@@ -664,21 +669,19 @@ async function getWaypointOrder(origin,waypoints){
 async function optimizeRoute(){
   const filled=planProps.filter(p=>p.address.trim());
   if(filled.length<2)return;
+  const origin=document.getElementById('planStart').value.trim();
+  if(!origin)return;
   const sp=document.getElementById('optimizeSpinner'),er=document.getElementById('apiError');
   sp.classList.add('show');er.classList.remove('show');
+  let sorted=[],driveMap={},totalDistMi=0;
   try{
-    const origin=document.getElementById('planStart').value.trim();
-    // Try waypoint optimization first
-    let sorted=[];
-    let driveMap={};
-    let totalDistMi=0;
-    try{
+    if(orderPref==='smart'){
+      // Smart Route: Google Directions API — mejor ruta posible
       const wayptData=await getWaypointOrder(origin,filled.map(p=>p.address));
       if(!wayptData.routes||!wayptData.routes[0]) throw new Error('no route');
       const route=wayptData.routes[0];
       const order=route.waypoint_order||filled.map((_,i)=>i);
       sorted=order.map(i=>({...filled[i]}));
-      if(orderPref==='farthest') sorted.reverse();
       const legs=route.legs||[];
       legs.forEach((leg,i)=>{
         totalDistMi+=leg.distance?.value||0;
@@ -693,12 +696,12 @@ async function optimizeRoute(){
         }
       });
       _totalMiles=Math.round(totalDistMi*0.000621371);
-    } catch(wayptErr){
-      // Fallback: distance matrix sort
+    } else {
+      // Closest / Farthest: Distance Matrix desde el origen
       const data=await getDistances(origin,filled.map(p=>p.address));
       const withDist=filled.map((p,i)=>{
         const el=data.rows[0].elements[i];
-        return{...p,distM:el.status==='OK'?el.distance.value:99999,distText:el.status==='OK'?el.distance.text:'?',durText:el.status==='OK'?el.duration.text:'?'};
+        return{...p,distM:el.status==='OK'?el.distance.value:99999,distText:el.status==='OK'?el.distance.text:'?'};
       });
       sorted=[...withDist].sort((a,b)=>orderPref==='closest'?a.distM-b.distM:b.distM-a.distM);
       for(let i=0;i<sorted.length-1;i++){
@@ -707,11 +710,11 @@ async function optimizeRoute(){
           const el=leg.rows[0].elements[0];
           if(el.status==='OK'){
             driveMap[`${sorted[i].id}_${sorted[i+1].id}`]={minutes:Math.round(el.duration.value/60),text:el.duration.text,dist:el.distance.text};
-            _totalMiles+=(el.distance.value*0.000621371);
+            totalDistMi+=el.distance.value;
           }
         }catch(e){}
       }
-      _totalMiles=Math.round(_totalMiles);
+      _totalMiles=Math.round(totalDistMi*0.000621371);
     }
     renderOptResult(sorted,driveMap,origin);
     showRouteMap(origin,sorted);
@@ -1033,6 +1036,8 @@ function initAutocomplete(){
       });
     }catch(e){}
   });
+  // Re-inicializar autocomplete en todos los stops existentes
+  renderPlanProps();
 }
   
 setTimeout(()=>{
