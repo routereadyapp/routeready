@@ -693,19 +693,7 @@ async function optimizeRoute(){
     let driveMap={};
     let totalDistMi=0;
     try{
-      if(orderPref==='smart'){
-  const wayptData=await getWaypointOrder(origin,filled.map(p=>p.address));
-  if(wayptData.routes&&wayptData.routes[0]){
-    const route=wayptData.routes[0];
-    const order=route.waypoint_order||filled.map((_,i)=>i);
-    sorted=order.map(i=>filled[i]);
-    route.legs.forEach((leg,i)=>{
-      if(i<sorted.length){sorted[i].distText=leg.distance?.text||'';sorted[i].durText=leg.duration?.text||'';sorted[i].distM=leg.distance?.value||0;totalDistMi+=leg.distance?.value||0;}
-      if(i>0&&i<=sorted.length){const from=sorted[i-1],to=sorted[i];if(from&&to)driveMap[`${from.id}_${to.id}`]={minutes:Math.round((leg.duration?.value||0)/60),text:leg.duration?.text||'',dist:leg.distance?.text||''};}
-    });
-    _totalMiles=Math.round(totalDistMi*0.000621371);
-  } else throw new Error('use fallback');
-} else throw new Error('use fallback');
+      throw new Error('use fallback');
       if(false){
         const route=wayptData.routes[0];
         const order=route.waypoint_order||filled.map((_,i)=>i);
