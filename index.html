@@ -624,6 +624,9 @@ function selectOrder(o){
   document.getElementById('opt-closest').classList.toggle('selected',o==='closest');
   document.getElementById('opt-farthest').classList.toggle('selected',o==='farthest');
   document.getElementById('opt-smart').classList.toggle('selected',o==='smart');
+  if(document.querySelector('.opt-result')&&!document.getElementById('optimizeBtn').disabled){
+    optimizeRoute();
+  }
 }
 
 function addPlanProp(a='',p=''){
