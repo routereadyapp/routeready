@@ -12,8 +12,10 @@ exports.handler = async function(event) {
     url = `https://maps.googleapis.com/maps/api/directions/json?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&waypoints=optimize:true|${waypointStr}&units=imperial&key=${KEY}`;
   } else if (mode === 'directions') {
     url = `https://maps.googleapis.com/maps/api/directions/json?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&units=imperial&key=${KEY}`;
-  } else {
-    url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${waypoints}&units=imperial&key=${KEY}`;
+ } else {
+    const orig = params.origins || origin || '';
+    const dest = params.waypoints || waypoints || '';
+    url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(orig)}&destinations=${encodeURIComponent(dest)}&units=imperial&key=${KEY}`;
   }
 
   return new Promise((resolve) => {
