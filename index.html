@@ -852,7 +852,7 @@ function checkGenerate(){
 
 function formatTime(m){const h=Math.floor(m/60),min=m%60,suf=h>=12?'PM':'AM',dh=h>12?h-12:h===0?12:h;return`${dh}:${String(min).padStart(2,'0')} ${suf}`;}
 
-function generate(){ _totalMiles=0;
+function generate(){ 
   const client=document.getElementById('clientName').value||'Client',
     agent=document.getElementById('agentName').value||'',
     dateVal=document.getElementById('showingDate').value,
