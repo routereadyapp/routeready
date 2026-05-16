@@ -693,9 +693,8 @@ async function optimizeRoute(){
     let driveMap={};
     let totalDistMi=0;
     try{
-      
-      
-        const route=wayptData.routes[0];
+      const wayptData=await getWaypointOrder(origin,filled.map(p=>p.address));
+      const route=wayptData.routes[0];    
         const order=route.waypoint_order||filled.map((_,i)=>i);
         sorted=order.map(i=>filled[i]);
         // Apply closest/farthest preference by reversing if needed
@@ -718,7 +717,6 @@ async function optimizeRoute(){
           }
         });
         _totalMiles=Math.round(totalDistMi*0.000621371);
-      } 
     } catch(wayptErr){
       // Fallback: distance matrix sort
       const data=await getDistances(origin,filled.map(p=>p.address));
