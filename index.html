@@ -130,7 +130,7 @@
   .stop-times { display: flex; gap: 16px; margin-top: 6px; margin-bottom: 4px; }
   .time-chip { display: flex; flex-direction: column; }
   .time-chip-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray); font-weight: 600; }
-  .time-chip-val { font-size: 14px; font-weight: 700; font-family: 'Playfair Display', serif; }
+  .time-chip-val { font-size: 14px; font-weight: 700; font-family: 'DM Sans', sans-serif; }
   .time-chip-val.arrival { color: var(--green); }
   .time-chip-val.departure { color: var(--burgundy); }
   .drive-connector { display: flex; align-items: center; gap: 8px; padding: 4px 0; margin-left: 44px; }
@@ -311,9 +311,12 @@
               <div class="order-opt-sub" id="txt-smart-sub">Best overall route</div>
             </div>
           </div>
-          <div class="hint" id="txt-order-hint">💡 Tap a button to optimize your route.</div>
+          <div class="hint" id="txt-order-hint">💡 Farthest First = you end closer to home on the way back.</div>
         </div>
-        <div class="spinner" id="optimizeSpinner" style="margin:10px auto;display:none;"></div>
+                <button class="primary-btn" onclick="optimizeRoute()" id="optimizeBtn" disabled>
+          <div class="spinner" id="optimizeSpinner"></div>
+          <span id="txt-optbtn">✦ Optimize Route with Google Maps</span>
+        </button>
         <div class="error-msg" id="apiError">Could not reach Google Maps API. Check connection and try again.</div>
       </div>
       <div id="planResult">
@@ -515,6 +518,7 @@ function updateAllTexts(){
   ['step1','step2','step3','step4'].forEach(k=>{const el=document.getElementById('txt-'+k);if(el)el.innerHTML=t(k);});
   document.getElementById('planAddBtn').textContent=t('addprop');
   document.getElementById('itinAddBtn').textContent=t('addprop');
+  document.getElementById('txt-optbtn').textContent=t('optbtn');
   document.getElementById('stParseBtn').textContent=t('parsebtn');
 }
 function switchTab(tab){
@@ -620,9 +624,6 @@ function selectOrder(o){
   document.getElementById('opt-closest').classList.toggle('selected',o==='closest');
   document.getElementById('opt-farthest').classList.toggle('selected',o==='farthest');
   document.getElementById('opt-smart').classList.toggle('selected',o==='smart');
-  const filled=planProps.filter(p=>p.address.trim()).length;
-  const hasStart=document.getElementById('planStart').value.trim().length>0;
-  if(filled>=2&&hasStart) optimizeRoute();
 }
 
 function addPlanProp(a='',p=''){
@@ -652,7 +653,7 @@ function renderPlanProps(){
 function checkOptimize(){
   const filled=planProps.filter(p=>p.address.trim()).length;
   const hasStart=document.getElementById('planStart').value.trim().length>0;
-
+  document.getElementById('optimizeBtn').disabled=filled<2||!hasStart;
 }
 
 async function getDistances(origin,destinations){
@@ -669,19 +670,21 @@ async function getWaypointOrder(origin,waypoints){
 async function optimizeRoute(){
   const filled=planProps.filter(p=>p.address.trim());
   if(filled.length<2)return;
-  const origin=document.getElementById('planStart').value.trim();
-  if(!origin)return;
-  const sp=document.getElementById('optimizeSpinner'),er=document.getElementById('apiError');
-  sp.classList.add('show');er.classList.remove('show');
-  let sorted=[],driveMap={},totalDistMi=0;
+  const sp=document.getElementById('optimizeSpinner'),bt=document.getElementById('txt-optbtn'),er=document.getElementById('apiError');
+  sp.classList.add('show');bt.textContent=t('optimizing');document.getElementById('optimizeBtn').disabled=true;er.classList.remove('show');
   try{
-    if(orderPref==='smart'){
-      // Smart Route: Google Directions API — mejor ruta posible
+    const origin=document.getElementById('planStart').value.trim();
+    // Try waypoint optimization first
+    let sorted=[];
+    let driveMap={};
+    let totalDistMi=0;
+    try{
       const wayptData=await getWaypointOrder(origin,filled.map(p=>p.address));
       if(!wayptData.routes||!wayptData.routes[0]) throw new Error('no route');
       const route=wayptData.routes[0];
       const order=route.waypoint_order||filled.map((_,i)=>i);
       sorted=order.map(i=>({...filled[i]}));
+      if(orderPref==='farthest') sorted.reverse();
       const legs=route.legs||[];
       legs.forEach((leg,i)=>{
         totalDistMi+=leg.distance?.value||0;
@@ -696,12 +699,12 @@ async function optimizeRoute(){
         }
       });
       _totalMiles=Math.round(totalDistMi*0.000621371);
-    } else {
-      // Closest / Farthest: Distance Matrix desde el origen
+    } catch(wayptErr){
+      // Fallback: distance matrix sort
       const data=await getDistances(origin,filled.map(p=>p.address));
       const withDist=filled.map((p,i)=>{
         const el=data.rows[0].elements[i];
-        return{...p,distM:el.status==='OK'?el.distance.value:99999,distText:el.status==='OK'?el.distance.text:'?'};
+        return{...p,distM:el.status==='OK'?el.distance.value:99999,distText:el.status==='OK'?el.distance.text:'?',durText:el.status==='OK'?el.duration.text:'?'};
       });
       sorted=[...withDist].sort((a,b)=>orderPref==='closest'?a.distM-b.distM:b.distM-a.distM);
       for(let i=0;i<sorted.length-1;i++){
@@ -710,16 +713,16 @@ async function optimizeRoute(){
           const el=leg.rows[0].elements[0];
           if(el.status==='OK'){
             driveMap[`${sorted[i].id}_${sorted[i+1].id}`]={minutes:Math.round(el.duration.value/60),text:el.duration.text,dist:el.distance.text};
-            totalDistMi+=el.distance.value;
+            _totalMiles+=(el.distance.value*0.000621371);
           }
         }catch(e){}
       }
-      _totalMiles=Math.round(totalDistMi*0.000621371);
+      _totalMiles=Math.round(_totalMiles);
     }
     renderOptResult(sorted,driveMap,origin);
     showRouteMap(origin,sorted);
   }catch(e){er.classList.add('show');}
-  finally{sp.classList.remove('show');}
+  finally{sp.classList.remove('show');bt.textContent=t('optbtn');document.getElementById('optimizeBtn').disabled=false;}
 }
 
 function renderOptResult(sorted,driveMap,origin){
@@ -1036,8 +1039,6 @@ function initAutocomplete(){
       });
     }catch(e){}
   });
-  // Re-inicializar autocomplete en todos los stops existentes
-  renderPlanProps();
 }
   
 setTimeout(()=>{
